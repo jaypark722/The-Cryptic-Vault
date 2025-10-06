@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}THE CRYPTIC VAULT | Orders{% endblock %}
+
+{% block content %}
+<div class="w-full">
+    <h2 class="text-3xl text-market-gold font-bold mb-6 border-b border-market-border pb-3">Transaction History / Orders</h2>
+
+    {% if success %}
+        <p class="bg-green-900 border border-green-500 text-white p-3 rounded mb-4 font-semibold">{{ success }}</p>
+    {% endif %}
+    {% if error %}
+        <p class="bg-red-900 border border-red-500 text-white p-3 rounded mb-4 font-semibold">{{ error }}</p>
+    {% endif %}
+
+    {% if orders|length == 0 %}
+        <div class="bg-market-gray border border-market-border p-6 rounded-lg text-center">
+            <i class="fas fa-box-open text-market-gold text-4xl mb-4"></i>
+            <p class="text-xl text-white font-bold">No orders found.</p>
+            <p class="text-gray-400 mt-2">You haven't purchased any items yet.</p>
+            <a href="{{ url_for('listings') }}" class="mt-4 inline-block bg-market-gold text-black font-bold py-2 px-4 rounded transition duration-150 hover:bg-yellow-400">
+                Browse Listings
+            </a>
+        </div>
+    {% else %}
+
+        <div class="bg-market-gray border border-market-border p-4 rounded-lg shadow-xl">
+            <div class="grid grid-cols-10 text-market-gold font-bold border-b border-market-border pb-3 mb-3 text-xs uppercase tracking-wider">
+                <div class="col-span-1">ID</div>
+                <div class="col-span-4">Item/Vendor</div>
+                <div class="col-span-2 text-center">Price (BTC)</div>
+                <div class="col-span-1 text-center">Qty</div>
+                <div class="col-span-2 text-center">Status</div>
+            </div>
+
+            {% for order in orders %}
+            <div class="grid grid-cols-10 items-center py-3 border-b border-market-border hover:bg-market-black transition duration-100">
+                <div class="col-span-1 text-sm text-gray-500 font-mono">{{ order.display_id }}</div> {# REVISED: Used order.display_id #}
+                
+                <div class="col-span-4">
+                    <a href="{% if order.product_id != 'COUPON-REDTEAM' and order.product_id != 'N/A' %}{{ url_for('product_detail', product_id=order.product_id) }}{% else %}#{% endif %}" 
+                        class="text-white hover:text-market-gold font-semibold text-sm">
+                        {{ order.product_name }}
+                    </a>
+                    <p class="text-xs text-gray-500">Vendor: 
+                        {% if order.vendor_id %}
+                        {# Display as link if vendor ID is available (like ADMIN coupon orders) #}
+                        <a href="{{ url_for('vendor_profile', vendor_id=order.vendor_id) }}" class="text-gray-400 hover:text-market-gold">{{ order.vendor_username }}</a>
+                        {% else %}
+                        {# If vendor ID is missing (regular product orders), display vendor name as plain text #}
+                        <span class="text-gray-400">{{ order.vendor_username }}</span>
+                        {% endif %}
+                    </p>
+                </div>
+                
+                <div class="col-span-2 text-center text-market-gold font-bold text-sm">{{ order.total }}</div>
+                
+                <div class="col-span-1 text-center text-gray-300 text-sm">{{ order.quantity }}</div>
+                
+                <div class="col-span-2 flex flex-col items-center space-y-1">
+                    {% if order.status == 'DEPOSIT' %}
+                        <span class="text-green-500 font-bold text-xs">COUPON REDEEMED</span>
+                        <a href="{{ url_for('wallet') }}" class="text-xs bg-green-700 hover:bg-green-600 text-white px-2 py-1 rounded-sm">View Wallet</a>
+                    {% elif order.status == 'PENDING' %}
+                        <span class="text-yellow-500 font-bold text-xs">PENDING CONFIRMATION</span>
+                    {% elif order.status == 'SHIPPED' or order.status == 'PROCESSING' %}
+                        <span class="text-blue-500 font-bold text-xs">SHIPPED</span>
+                        {% if order.has_delivery %}
+                        <a href="{{ url_for('orders') }}?view={{ order.id }}" class="text-xs bg-blue-700 hover:bg-blue-600 text-white px-2 py-1 rounded-sm">View Delivery</a>
+                        {% endif %}
+                    {% elif order.status == 'DELIVERED' %}
+                        <span class="text-green-500 font-bold text-xs">DELIVERED</span>
+                    {% elif order.status == 'DISPUTED' %}
+                        <span class="text-red-500 font-bold text-xs">DISPUTED</span>
+                    {% elif order.status == 'COMPLETED' %}
+                        <span class="text-gray-400 font-bold text-xs">COMPLETED</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+            
+            <div class="flex justify-center mt-6">
+                <p class="text-xs text-gray-500">Page 1 of 1 (Showing {{ orders|length }} orders)</p>
+            </div>
+
+        </div>
+    {% endif %}
+</div>
+
+<div class="w-full mt-6">
+    <h3 class="text-xl text-white font-bold mb-4 border-b border-market-border pb-2">Order Delivery</h3>
+    {% set view_order_id = request.args.get('view') %}
+    {% set delivered_order = orders | selectattr('has_delivery') | selectattr('id', 'equalto', view_order_id|int) | first %}
+    
+    {% if delivered_order %}
+        <div class="bg-market-gray border border-market-gold p-4 rounded-lg">
+            {# NOTE: Displaying original ID here is often useful for support/internal reference, but I'll use display_id as requested for full revision #}
+            <p class="text-sm text-market-gold mb-2">Delivery for Order #{{ delivered_order.display_id }}:</p> {# REVISED: Used delivered_order.display_id #}
+            <div class="bg-market-black border border-blue-500 p-4 rounded font-mono text-xs text-green-300 overflow-x-auto whitespace-pre-wrap">
+                {{ delivered_order.encrypted_delivery }}
+            </div>
+        </div>
+    {% else %}
+          <div class="bg-market-gray border border-market-border p-4 rounded-lg text-gray-400">
+             <p class="text-sm">No new digital deliveries awaiting download, or the order is not yet ready.</p>
+          </div>
+    {% endif %}
+</div>
+
+{% endblock %}

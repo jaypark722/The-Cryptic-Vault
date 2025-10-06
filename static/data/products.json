@@ -1,0 +1,2283 @@
+[
+  {
+    "Product ID": "DATA-SIM-ORANGE-CUST-B0T",
+    "Product Name (Description)": "Orange Customer Credential Database",
+    "Vendor Name": "ThePhishKing",
+    "Price (BTC)": "0.00085",
+    "Decoy Hint": "ORANGE' is bait. File contains non-real data.",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "CRD-VISA-PREM-201A",
+    "Product Name (Description)": "Stolen VISA Prem. (50 cards, US/EU Mix)",
+    "Vendor Name": "CryptoGhost",
+    "Price (BTC)": "0.0075",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "CRD-VISA-PREM-201B",
+    "Product Name (Description)": "Stolen VISA Prem. (50 cards, Asia/AU Mix)",
+    "Vendor Name": "CryptoGhost",
+    "Price (BTC)": "0.008",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "CRD-MC-GOLD-105C",
+    "Product Name (Description)": "Stolen MasterCard Gold (100 cards, EU)",
+    "Vendor Name": "DataVault",
+    "Price (BTC)": "0.012",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "CRD-AMEX-PLAT-099X",
+    "Product Name (Description)": "Stolen Amex Platinum (25 cards, High-Limit)",
+    "Vendor Name": "SilentShade",
+    "Price (BTC)": "0.005",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "CRD-DISC-STD-112Y",
+    "Product Name (Description)": "Stolen Discover Standard (500 cards, Mixed)",
+    "Vendor Name": "DataVault",
+    "Price (BTC)": "0.018",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "DATA-IDS-SSN-1K-001",
+    "Product Name (Description)": "1,000 US SSN/DOB Records",
+    "Vendor Name": "NexusPrime",
+    "Price (BTC)": "0.009",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "DATA-IDS-SSN-5K-002",
+    "Product Name (Description)": "5,000 US SSN/DOB Records",
+    "Vendor Name": "NexusPrime",
+    "Price (BTC)": "0.038",
+    "Decoy Hint": "Bulk discount applied.",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "DATA-IDS-TLPH-EU-A",
+    "Product Name (Description)": "5,000 EU Telecom Records",
+    "Vendor Name": "ThePhishKing",
+    "Price (BTC)": "0.015",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "DATA-IDS-TLPH-EU-B",
+    "Product Name (Description)": "15,000 EU Telecom Records (Premium Vendors Only)",
+    "Vendor Name": "ThePhishKing",
+    "Price (BTC)": "0.04",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "DATA-IDS-PASSPRT-DE-B",
+    "Product Name (Description)": "German Passport Template (Vector File)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.004",
+    "Decoy Hint": "Digital template only.",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "DATA-IDS-PASSPRT-UK-C",
+    "Product Name (Description)": "UK Passport Template (Vector File)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.0045",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "DATA-IDS-PASSPRT-FR-D",
+    "Product Name (Description)": "French Passport Template (Vector File)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.0042",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "DATA-IDS-PASSPRT-IT-E",
+    "Product Name (Description)": "Italian Passport Template (Vector File)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.0041",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "DATA-IDS-EMAIL-PRO-C",
+    "Product Name (Description)": "10,000 Corporate Email/Password List",
+    "Vendor Name": "ShadowBroker",
+    "Price (BTC)": "0.01",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "DATA-IDS-EMAIL-PRO-D",
+    "Product Name (Description)": "50,000 Corporate Email/Password List (Tier 1)",
+    "Vendor Name": "ShadowBroker",
+    "Price (BTC)": "0.045",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "DATA-IDS-EMAIL-PRO-E",
+    "Product Name (Description)": "100,000 Corporate Email/Password List (Tier 1)",
+    "Vendor Name": "ShadowBroker",
+    "Price (BTC)": "0.08",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "DATA-IDS-PHARM-500-22",
+    "Product Name (Description)": "500 Patient Medical Records (HIPAA-style)",
+    "Vendor Name": "NexusPrime",
+    "Price (BTC)": "0.017",
+    "Decoy Hint": "US Northeast region specific.",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "DATA-IDS-PHARM-2K-23",
+    "Product Name (Description)": "2,000 Patient Medical Records (HIPAA-style)",
+    "Vendor Name": "NexusPrime",
+    "Price (BTC)": "0.065",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "DATA-IDS-PHARM-5K-24",
+    "Product Name (Description)": "5,000 Patient Medical Records (EU)",
+    "Vendor Name": "NexusPrime",
+    "Price (BTC)": "0.12",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "MAL-RANS-CRYP-V3-01",
+    "Product Name (Description)": "Encrypting Ransomware Kit (V3, 1-Year License)",
+    "Vendor Name": "ZeroCode",
+    "Price (BTC)": "0.05",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-RANS-CRYP-V3-02",
+    "Product Name (Description)": "Encrypting Ransomware Kit (V3, Lifetime License)",
+    "Vendor Name": "ZeroCode",
+    "Price (BTC)": "0.08",
+    "Decoy Hint": "Includes updates/support.",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-RANS-PAYL-V3-A",
+    "Product Name (Description)": "Ransomware Payload Drop Service (100 installs)",
+    "Vendor Name": "ZeroCode",
+    "Price (BTC)": "0.035",
+    "Decoy Hint": "Tier 2 Geo-targeting.",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-RANS-PAYL-V3-B",
+    "Product Name (Description)": "Ransomware Payload Drop Service (500 installs)",
+    "Vendor Name": "ZeroCode",
+    "Price (BTC)": "0.15",
+    "Decoy Hint": "Tier 2 Geo-targeting.",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-STEAL-X10-A",
+    "Product Name (Description)": "Browser Info-Stealer (Tier 1, 6-Month Access)",
+    "Vendor Name": "VoidLabs",
+    "Price (BTC)": "0.02",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-STEAL-X10-B",
+    "Product Name (Description)": "Browser Info-Stealer (Tier 1, Lifetime Access)",
+    "Vendor Name": "VoidLabs",
+    "Price (BTC)": "0.035",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-STEAL-X11-LITE",
+    "Product Name (Description)": "Browser Info-Stealer (Tier 2, Monthly)",
+    "Vendor Name": "VoidLabs",
+    "Price (BTC)": "0.008",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-BOT-DDOSE-SVR-C",
+    "Product Name (Description)": "Access to 500-Node DDoS Botnet (1 Month)",
+    "Vendor Name": "ThePhishKing",
+    "Price (BTC)": "0.04",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-BOT-DDOSE-SVR-D",
+    "Product Name (Description)": "Access to 2,000-Node DDoS Botnet (1 Month)",
+    "Vendor Name": "ThePhishKing",
+    "Price (BTC)": "0.12",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "EXP-ZERO-WIN-OS-Q123",
+    "Product Name (Description)": "Win OS Remote Code Execution Exploit",
+    "Vendor Name": "SilentShade",
+    "Price (BTC)": "0.15",
+    "Decoy Hint": "Requires custom target compilation.",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "EXP-ZERO-LIN-PHP-Q124",
+    "Product Name (Description)": "Linux PHP Local File Inclusion Exploit",
+    "Vendor Name": "SilentShade",
+    "Price (BTC)": "0.1",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "EXP-ZERO-IOS-Q125",
+    "Product Name (Description)": "iOS Sandbox Escape Exploit (Latest Version)",
+    "Vendor Name": "SilentShade",
+    "Price (BTC)": "0.25",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "EXP-ZERO-ANDR-A1",
+    "Product Name (Description)": "Android Kernel Exploit (Latest Version)",
+    "Vendor Name": "SilentShade",
+    "Price (BTC)": "0.18",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "DOC-ID-NY-REAL-001",
+    "Product Name (Description)": "High-Quality NY State Driver's License",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.005",
+    "Decoy Hint": "Physical item.",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "DOC-ID-CA-FAKE-002",
+    "Product Name (Description)": "Medium-Quality CA ID Card",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.0035",
+    "Decoy Hint": "Physical item.",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "DOC-ID-PA-HGH-003",
+    "Product Name (Description)": "High-Quality PA State ID Card",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.0055",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "DOC-ID-TX-REAL-004",
+    "Product Name (Description)": "High-Quality TX State Driver's License",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.0052",
+    "Decoy Hint": "Physical item.",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "DOC-ID-FL-FAKE-005",
+    "Product Name (Description)": "Medium-Quality FL ID Card",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.0036",
+    "Decoy Hint": "Physical item.",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "DOC-ID-BANK-CHASE-01",
+    "Product Name (Description)": "3-Months Chase Bank Statements (PDF Template)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.002",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "DOC-ID-BANK-WELLS-02",
+    "Product Name (Description)": "3-Months Wells Fargo Statements (PDF Template)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.002",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "DOC-ID-BANK-BAM-03",
+    "Product Name (Description)": "3-Months Bank of America Statements (PDF Template)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.0025",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "DOC-ID-BANK-CITI-04",
+    "Product Name (Description)": "3-Months Citi Bank Statements (PDF Template)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.0021",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "DOC-ID-INVOICE-AMZ-T",
+    "Product Name (Description)": "Amazon Invoice Template (Tax Evasion)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.001",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "DOC-ID-INVOICE-EBAY-T",
+    "Product Name (Description)": "eBay Invoice Template (Tax Evasion)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.0011",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "TUT-CYB-BASIC-PKG-1",
+    "Product Name (Description)": "Basic Cryptography and OpSec Guide (eBook)",
+    "Vendor Name": "ByteMentor",
+    "Price (BTC)": "0.001",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "TUT-CYB-ADV-PKG-2",
+    "Product Name (Description)": "Advanced Network Evasion Techniques (Video)",
+    "Vendor Name": "ByteMentor",
+    "Price (BTC)": "0.004",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "TUT-SOCENG-VIP-3",
+    "Product Name (Description)": "Phishing and Voice Impersonation Guide",
+    "Vendor Name": "ByteMentor",
+    "Price (BTC)": "0.003",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "TUT-RANS-MASTER-4",
+    "Product Name (Description)": "Ransomware Deployment Masterclass (Full Course)",
+    "Vendor Name": "ByteMentor",
+    "Price (BTC)": "0.015",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "TUT-CRD-FORG-5",
+    "Product Name (Description)": "Advanced Card Forging Techniques (PDF)",
+    "Vendor Name": "ByteMentor",
+    "Price (BTC)": "0.007",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-DDO-STD-1HR-007",
+    "Product Name (Description)": "1-Hour Standard DDoS Attack (Max 1Gbps)",
+    "Vendor Name": "NetHammer",
+    "Price (BTC)": "0.002",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-DDO-STD-4HR-007",
+    "Product Name (Description)": "4-Hour Standard DDoS Attack (Max 1Gbps)",
+    "Vendor Name": "NetHammer",
+    "Price (BTC)": "0.006",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-DDO-STD-12HR-007",
+    "Product Name (Description)": "12-Hour Standard DDoS Attack (Max 1Gbps)",
+    "Vendor Name": "NetHammer",
+    "Price (BTC)": "0.015",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-DDO-PRE-2HR-008",
+    "Product Name (Description)": "2-Hour Premium DDoS Attack (Max 10Gbps)",
+    "Vendor Name": "NetHammer",
+    "Price (BTC)": "0.006",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-DDO-PRE-8HR-008",
+    "Product Name (Description)": "8-Hour Premium DDoS Attack (Max 10Gbps)",
+    "Vendor Name": "NetHammer",
+    "Price (BTC)": "0.02",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-DDO-PRE-24HR-008",
+    "Product Name (Description)": "24-Hour Premium DDoS Attack (Max 10Gbps)",
+    "Vendor Name": "NetHammer",
+    "Price (BTC)": "0.045",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-CLEAN-EU-01",
+    "Product Name (Description)": "Money Cleaning Service (Min. $10K, 15% Fee)",
+    "Vendor Name": "ShadowBroker",
+    "Price (BTC)": "0.05",
+    "Decoy Hint": "Initial setup fee.",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-CLEAN-EU-02",
+    "Product Name (Description)": "Money Cleaning Service (Min. $50K, 10% Fee)",
+    "Vendor Name": "ShadowBroker",
+    "Price (BTC)": "0.15",
+    "Decoy Hint": "High-volume fee.",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-CLEAN-ASIA-02",
+    "Product Name (Description)": "Money Cleaning Service (Min. $20K, 20% Fee)",
+    "Vendor Name": "ShadowBroker",
+    "Price (BTC)": "0.08",
+    "Decoy Hint": "Initial setup fee.",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-CLEAN-ASIA-03",
+    "Product Name (Description)": "Money Cleaning Service (Min. $100K, 15% Fee)",
+    "Vendor Name": "ShadowBroker",
+    "Price (BTC)": "0.25",
+    "Decoy Hint": "High-volume fee.",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-VPN-PREM-6MO-X",
+    "Product Name (Description)": "Lifetime VPN Access (6-Month Code)",
+    "Vendor Name": "ZeroCode",
+    "Price (BTC)": "0.0015",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-VPN-PREM-1YR-Y",
+    "Product Name (Description)": "Lifetime VPN Access (1-Year Code)",
+    "Vendor Name": "ZeroCode",
+    "Price (BTC)": "0.0025",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-VPN-PREM-2YR-Z",
+    "Product Name (Description)": "Lifetime VPN Access (2-Year Code)",
+    "Vendor Name": "ZeroCode",
+    "Price (BTC)": "0.004",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-HACK-SOCIAL-1T",
+    "Product Name (Description)": "Custom Social Media Account Hack (1 Target)",
+    "Vendor Name": "HackPro",
+    "Price (BTC)": "0.03",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-HACK-SOCIAL-3T",
+    "Product Name (Description)": "Custom Social Media Account Hack (3 Targets)",
+    "Vendor Name": "HackPro",
+    "Price (BTC)": "0.08",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-HACK-EMAIL-5T",
+    "Product Name (Description)": "Custom Email Account Hack (5 Targets)",
+    "Vendor Name": "HackPro",
+    "Price (BTC)": "0.075",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-HACK-EMAIL-10T",
+    "Product Name (Description)": "Custom Email Account Hack (10 Targets)",
+    "Vendor Name": "HackPro",
+    "Price (BTC)": "0.14",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-HACK-WEB-PREM",
+    "Product Name (Description)": "Web Server Penetration Service (Quote Required)",
+    "Vendor Name": "HackPro",
+    "Price (BTC)": "0.12",
+    "Decoy Hint": "Initial consult fee.",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-HACK-WEB-ADV",
+    "Product Name (Description)": "Advanced Web Server Penetration Service (Quote Req.)",
+    "Vendor Name": "HackPro",
+    "Price (BTC)": "0.25",
+    "Decoy Hint": "Initial consult fee.",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "DRG-COKE-1G-COL-99",
+    "Product Name (Description)": "Cocaine (1g, 85% Purity, Colombia)",
+    "Vendor Name": "TheCartel",
+    "Price (BTC)": "0.006",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-COKE-3G-COL-99",
+    "Product Name (Description)": "Cocaine (3g, 85% Purity, Colombia)",
+    "Vendor Name": "TheCartel",
+    "Price (BTC)": "0.017",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-COKE-7G-COL-99",
+    "Product Name (Description)": "Cocaine (7g, 85% Purity, Colombia)",
+    "Vendor Name": "TheCartel",
+    "Price (BTC)": "0.038",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-COKE-14G-COL-99",
+    "Product Name (Description)": "Cocaine (14g, 85% Purity, Colombia)",
+    "Vendor Name": "TheCartel",
+    "Price (BTC)": "0.07",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-COKE-3G-PER-98",
+    "Product Name (Description)": "Cocaine (3g, 70% Purity, Peru)",
+    "Vendor Name": "TheCartel",
+    "Price (BTC)": "0.015",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-COKE-7G-PER-98",
+    "Product Name (Description)": "Cocaine (7g, 70% Purity, Peru)",
+    "Vendor Name": "TheCartel",
+    "Price (BTC)": "0.035",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-METH-1OZ-USA-55",
+    "Product Name (Description)": "Methamphetamine (1oz, Crystal, Domestic)",
+    "Vendor Name": "ChemLab",
+    "Price (BTC)": "0.009",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-METH-4OZ-USA-55",
+    "Product Name (Description)": "Methamphetamine (4oz, Crystal, Domestic)",
+    "Vendor Name": "ChemLab",
+    "Price (BTC)": "0.032",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-METH-1LB-USA-56",
+    "Product Name (Description)": "Methamphetamine (1lb, Crystal, Domestic)",
+    "Vendor Name": "ChemLab",
+    "Price (BTC)": "0.1",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-METH-0.5LB-USA-56",
+    "Product Name (Description)": "Methamphetamine (0.5lb, Crystal, Domestic)",
+    "Vendor Name": "ChemLab",
+    "Price (BTC)": "0.055",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-MDMA-PILS-BLU-40",
+    "Product Name (Description)": "10 MDMA Pills (Blue, \"Tesla\" Press)",
+    "Vendor Name": "PharmaKing",
+    "Price (BTC)": "0.004",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-MDMA-PILS-BLU-42",
+    "Product Name (Description)": "50 MDMA Pills (Blue, \"Tesla\" Press)",
+    "Vendor Name": "PharmaKing",
+    "Price (BTC)": "0.018",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-MDMA-PILS-BLU-43",
+    "Product Name (Description)": "100 MDMA Pills (Blue, \"Tesla\" Press)",
+    "Vendor Name": "PharmaKing",
+    "Price (BTC)": "0.035",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-MDMA-PILS-RED-41",
+    "Product Name (Description)": "10 MDMA Pills (Red, \"Star\" Press)",
+    "Vendor Name": "PharmaKing",
+    "Price (BTC)": "0.004",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-MDMA-PILS-RED-44",
+    "Product Name (Description)": "50 MDMA Pills (Red, \"Star\" Press)",
+    "Vendor Name": "PharmaKing",
+    "Price (BTC)": "0.018",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-SMK-OG-1OZ-1A",
+    "Product Name (Description)": "Cannabis Flower (1oz, OG Kush, Premium)",
+    "Vendor Name": "GreenThumb",
+    "Price (BTC)": "0.005",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-SMK-OG-4OZ-1B",
+    "Product Name (Description)": "Cannabis Flower (4oz, OG Kush, Premium)",
+    "Vendor Name": "GreenThumb",
+    "Price (BTC)": "0.018",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-SMK-OG-8OZ-1C",
+    "Product Name (Description)": "Cannabis Flower (8oz, OG Kush, Premium)",
+    "Vendor Name": "GreenThumb",
+    "Price (BTC)": "0.032",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-SMK-IND-1OZ-2B",
+    "Product Name (Description)": "Cannabis Flower (1oz, Indica Mix, Standard)",
+    "Vendor Name": "GreenThumb",
+    "Price (BTC)": "0.004",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-SMK-IND-8OZ-2C",
+    "Product Name (Description)": "Cannabis Flower (8oz, Indica Mix, Standard)",
+    "Vendor Name": "GreenThumb",
+    "Price (BTC)": "0.028",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-SMK-IND-1LB-2D",
+    "Product Name (Description)": "Cannabis Flower (1lb, Indica Mix, Standard)",
+    "Vendor Name": "GreenThumb",
+    "Price (BTC)": "0.05",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-PHARMA-VIAGRA-50",
+    "Product Name (Description)": "50 x 100mg Viagra (Generic)",
+    "Vendor Name": "PillsMan",
+    "Price (BTC)": "0.003",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-PHARMA-VIAGRA-100",
+    "Product Name (Description)": "100 x 100mg Viagra (Generic)",
+    "Vendor Name": "PillsMan",
+    "Price (BTC)": "0.005",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-PHARMA-OXY-20-10",
+    "Product Name (Description)": "10 x 20mg Oxycodone (Pressed)",
+    "Vendor Name": "PillsMan",
+    "Price (BTC)": "0.007",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-PHARMA-OXY-20-50",
+    "Product Name (Description)": "50 x 20mg Oxycodone (Pressed)",
+    "Vendor Name": "PillsMan",
+    "Price (BTC)": "0.03",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-PHARMA-ADDER-30",
+    "Product Name (Description)": "30 x 30mg Adderall (Generic)",
+    "Vendor Name": "PillsMan",
+    "Price (BTC)": "0.005",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-PHARMA-ADDER-60",
+    "Product Name (Description)": "60 x 30mg Adderall (Generic)",
+    "Vendor Name": "PillsMan",
+    "Price (BTC)": "0.009",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-LSD-BLOT-10-A",
+    "Product Name (Description)": "10 Hits LSD Blotter (150ug)",
+    "Vendor Name": "PsychoPharm",
+    "Price (BTC)": "0.0025",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-LSD-BLOT-50-B",
+    "Product Name (Description)": "50 Hits LSD Blotter (150ug)",
+    "Vendor Name": "PsychoPharm",
+    "Price (BTC)": "0.01",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-LSD-BLOT-100-C",
+    "Product Name (Description)": "100 Hits LSD Blotter (150ug)",
+    "Vendor Name": "PsychoPharm",
+    "Price (BTC)": "0.018",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-SHROOM-4OZ-A",
+    "Product Name (Description)": "Psilocybin Mushrooms (4oz, Dried)",
+    "Vendor Name": "GreenThumb",
+    "Price (BTC)": "0.007",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-SHROOM-8OZ-B",
+    "Product Name (Description)": "Psilocybin Mushrooms (8oz, Dried)",
+    "Vendor Name": "GreenThumb",
+    "Price (BTC)": "0.013",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "WPN-FIRE-GLK-9MM-Z",
+    "Product Name (Description)": "Unserialized 9mm Handgun (Custom Kit)",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.09",
+    "Decoy Hint": "Kit includes non-functional polymer lower.",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "WPN-FIRE-GLK-9MM-Z2",
+    "Product Name (Description)": "Unserialized 9mm Handgun (Complete Build)",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.15",
+    "Decoy Hint": "Requires FFL transfer (decoy hint).",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "WPN-FIRE-AR-15-KIT",
+    "Product Name (Description)": "Unserialized AR-15 Lower Receiver (80% Jig)",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.05",
+    "Decoy Hint": "Requires final machining/gunsmithing.",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "WPN-FIRE-AK-47-KIT",
+    "Product Name (Description)": "Unserialized AK-47 Receiver (80% Jig)",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.06",
+    "Decoy Hint": "Requires final machining/gunsmithing.",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "WPN-AMMO-556-500-Z1",
+    "Product Name (Description)": "500 Rounds 5.56 NATO Ammunition",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.01",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "WPN-AMMO-556-1000-Z2",
+    "Product Name (Description)": "1,000 Rounds 5.56 NATO Ammunition",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.018",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "WPN-AMMO-762-100-Z2",
+    "Product Name (Description)": "100 Rounds 7.62x39 Ammunition",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.002",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "WPN-AMMO-762-500-Z3",
+    "Product Name (Description)": "500 Rounds 7.62x39 Ammunition",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.008",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "WPN-AMMO-9MM-1000-Z",
+    "Product Name (Description)": "1,000 Rounds 9mm Ammunition",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.015",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "WPN-AMMO-45ACP-500-A",
+    "Product Name (Description)": "500 Rounds .45 ACP Ammunition",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.009",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "WPN-KNIFE-TAC-001",
+    "Product Name (Description)": "High-Grade Tactical Knife (Discreet Shipping)",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.003",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "WPN-KNIFE-TAC-002",
+    "Product Name (Description)": "Ballistic Knife (Non-Export)",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.005",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "CTF-CASH-USD-1K-A",
+    "Product Name (Description)": "$1,000 USD Counterfeit Bills (High Grade)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.015",
+    "Decoy Hint": "Min order $1k.",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "CTF-CASH-USD-5K-B",
+    "Product Name (Description)": "$5,000 USD Counterfeit Bills (High Grade)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.07",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "CTF-CASH-USD-10K-C",
+    "Product Name (Description)": "$10,000 USD Counterfeit Bills (High Grade)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.13",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "CTF-CASH-EUR-5K-B",
+    "Product Name (Description)": "\u00805,000 EUR Counterfeit Bills (Mid Grade)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.05",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "CTF-CASH-EUR-10K-C",
+    "Product Name (Description)": "\u008010,000 EUR Counterfeit Bills (Mid Grade)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.09",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "CTF-CASH-GBP-2K-C",
+    "Product Name (Description)": "\u00a32,000 GBP Counterfeit Bills (High Grade)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.032",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "CTF-CASH-GBP-5K-D",
+    "Product Name (Description)": "\u00a35,000 GBP Counterfeit Bills (High Grade)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.075",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "CTF-GOLD-BAR-1OZ",
+    "Product Name (Description)": "1oz Gold Bullion Bar (Counterfeit)",
+    "Vendor Name": "FakePrinter",
+    "Price (BTC)": "0.008",
+    "Decoy Hint": "For show/resale.",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "CTF-SILV-BAR-10OZ",
+    "Product Name (Description)": "10oz Silver Bullion Bar (Counterfeit)",
+    "Vendor Name": "FakePrinter",
+    "Price (BTC)": "0.002",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "CTF-WATCH-ROLEX-SUB",
+    "Product Name (Description)": "Counterfeit Rolex Submariner (Triple-A Quality)",
+    "Vendor Name": "FakePrinter",
+    "Price (BTC)": "0.012",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "CTF-WATCH-OMEGA-SEA",
+    "Product Name (Description)": "Counterfeit Omega Seamaster (Triple-A Quality)",
+    "Vendor Name": "FakePrinter",
+    "Price (BTC)": "0.009",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "ACC-SOCIAL-10K-001",
+    "Product Name (Description)": "10 Hacked Social Accounts (1K+ Followers)",
+    "Vendor Name": "ShadowBroker",
+    "Price (BTC)": "0.0025",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "ACC-SOCIAL-50K-002",
+    "Product Name (Description)": "50 Hacked Social Accounts (5K+ Followers)",
+    "Vendor Name": "ShadowBroker",
+    "Price (BTC)": "0.008",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "ACC-SOCIAL-100K-003",
+    "Product Name (Description)": "100 Hacked Social Accounts (10K+ Followers)",
+    "Vendor Name": "ShadowBroker",
+    "Price (BTC)": "0.015",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "ACC-WEB-GMAIL-HGH-10",
+    "Product Name (Description)": "100 Hacked Gmail Logins (High-Value Targets)",
+    "Vendor Name": "DataVault",
+    "Price (BTC)": "0.005",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "ACC-WEB-GMAIL-HGH-11",
+    "Product Name (Description)": "500 Hacked Gmail Logins (High-Value Targets)",
+    "Vendor Name": "DataVault",
+    "Price (BTC)": "0.02",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "ACC-WEB-GMAIL-HGH-12",
+    "Product Name (Description)": "1,000 Hacked Gmail Logins (High-Value Targets)",
+    "Vendor Name": "DataVault",
+    "Price (BTC)": "0.035",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "ACC-WEB-OUTLK-MED-11",
+    "Product Name (Description)": "500 Hacked Outlook Logins (Medium-Value)",
+    "Vendor Name": "DataVault",
+    "Price (BTC)": "0.008",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "ACC-WEB-OUTLK-MED-12",
+    "Product Name (Description)": "1,500 Hacked Outlook Logins (Medium-Value)",
+    "Vendor Name": "DataVault",
+    "Price (BTC)": "0.022",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "ACC-WEB-OUTLK-MED-13",
+    "Product Name (Description)": "3,000 Hacked Outlook Logins (Medium-Value)",
+    "Vendor Name": "DataVault",
+    "Price (BTC)": "0.04",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "ACC-WEB-EDU-1K-90",
+    "Product Name (Description)": "1,000 Hacked University (.edu) Logins",
+    "Vendor Name": "DataVault",
+    "Price (BTC)": "0.007",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "ACC-WEB-EDU-5K-91",
+    "Product Name (Description)": "5,000 Hacked University (.edu) Logins",
+    "Vendor Name": "DataVault",
+    "Price (BTC)": "0.03",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "ACC-WEB-CRYPT-BIN-2",
+    "Product Name (Description)": "Verified Crypto Exchange Account (BINANCE)",
+    "Vendor Name": "CryptoGhost",
+    "Price (BTC)": "0.015",
+    "Decoy Hint": "KYC complete.",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "ACC-WEB-CRYPT-KRK-3",
+    "Product Name (Description)": "Verified Crypto Exchange Account (KRAKEN)",
+    "Vendor Name": "CryptoGhost",
+    "Price (BTC)": "0.012",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "ACC-WEB-CRYPT-CBSE-4",
+    "Product Name (Description)": "Verified Crypto Exchange Account (COINBASE)",
+    "Vendor Name": "CryptoGhost",
+    "Price (BTC)": "0.016",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "DATA-LOG-RDP-US-100",
+    "Product Name (Description)": "100 RDP Access Logs (US Corporate, 50Mbps+)",
+    "Vendor Name": "LogKeeper",
+    "Price (BTC)": "0.014",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "DATA-LOG-RDP-EU-100",
+    "Product Name (Description)": "100 RDP Access Logs (EU Corporate, 50Mbps+)",
+    "Vendor Name": "LogKeeper",
+    "Price (BTC)": "0.013",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "DATA-LOG-RDP-AS-100",
+    "Product Name (Description)": "100 RDP Access Logs (Asia Corporate, 50Mbps+)",
+    "Vendor Name": "LogKeeper",
+    "Price (BTC)": "0.015",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "DATA-LOG-VDS-500-A",
+    "Product Name (Description)": "500 VDS/VPS Access Logs (Low Tier)",
+    "Vendor Name": "LogKeeper",
+    "Price (BTC)": "0.0075",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "DATA-LOG-VDS-1000-B",
+    "Product Name (Description)": "1,000 VDS/VPS Access Logs (Low Tier)",
+    "Vendor Name": "LogKeeper",
+    "Price (BTC)": "0.013",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "DATA-LOG-CC-TL-20K",
+    "Product Name (Description)": "20,000 Stolen Credit Card Track 1/2 Logs",
+    "Vendor Name": "BriansClub",
+    "Price (BTC)": "0.045",
+    "Decoy Hint": "Bulk dump.",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "DATA-LOG-CC-TL-50K",
+    "Product Name (Description)": "50,000 Stolen Credit Card Track 1/2 Logs",
+    "Vendor Name": "BriansClub",
+    "Price (BTC)": "0.1",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "CRD-VISA-CVM-10A",
+    "Product Name (Description)": "10 VISA CVV dumps with CVM (Cardholder Verification Method)",
+    "Vendor Name": "BriansClub",
+    "Price (BTC)": "0.004",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "CRD-VISA-CVM-50B",
+    "Product Name (Description)": "50 VISA CVV dumps with CVM",
+    "Vendor Name": "BriansClub",
+    "Price (BTC)": "0.018",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "CRD-MC-CVM-20B",
+    "Product Name (Description)": "20 MasterCard CVV dumps with CVM",
+    "Vendor Name": "BriansClub",
+    "Price (BTC)": "0.007",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "CRD-MC-CVM-100C",
+    "Product Name (Description)": "100 MasterCard CVV dumps with CVM",
+    "Vendor Name": "BriansClub",
+    "Price (BTC)": "0.03",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "CRD-AMEX-CVM-10D",
+    "Product Name (Description)": "10 AMEX CVV dumps with CVM",
+    "Vendor Name": "BriansClub",
+    "Price (BTC)": "0.005",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "FULLZ-US-50-HGH",
+    "Product Name (Description)": "50 High-Score US Fullz (PII, Credit, History)",
+    "Vendor Name": "EuroScammer",
+    "Price (BTC)": "0.015",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "FULLZ-US-100-HGH",
+    "Product Name (Description)": "100 High-Score US Fullz (PII, Credit, History)",
+    "Vendor Name": "EuroScammer",
+    "Price (BTC)": "0.028",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "FULLZ-CA-100-MED",
+    "Product Name (Description)": "100 Medium-Score CA Fullz (PII Only)",
+    "Vendor Name": "EuroScammer",
+    "Price (BTC)": "0.018",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "FULLZ-CA-200-MED",
+    "Product Name (Description)": "200 Medium-Score CA Fullz (PII Only)",
+    "Vendor Name": "EuroScammer",
+    "Price (BTC)": "0.035",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "FULLZ-EU-150-STD",
+    "Product Name (Description)": "150 Standard EU Fullz (PII + Basic History)",
+    "Vendor Name": "EuroScammer",
+    "Price (BTC)": "0.02",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "FULLZ-EU-300-STD",
+    "Product Name (Description)": "300 Standard EU Fullz (PII + Basic History)",
+    "Vendor Name": "EuroScammer",
+    "Price (BTC)": "0.038",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "MAL-RANS-PAYL-V3-C",
+    "Product Name (Description)": "Ransomware Payload Drop Service (1,000 installs)",
+    "Vendor Name": "ZeroCode",
+    "Price (BTC)": "0.28",
+    "Decoy Hint": "Tier 1 Geo-targeting.",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-STEAL-X12-PRO",
+    "Product Name (Description)": "Advanced Browser Info-Stealer (Lifetime + Support)",
+    "Vendor Name": "VoidLabs",
+    "Price (BTC)": "0.05",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "EXP-SQL-INJ-KIT-001",
+    "Product Name (Description)": "Automated SQL Injection Toolkit (Lifetime)",
+    "Vendor Name": "ExploitGuru",
+    "Price (BTC)": "0.009",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "EXP-PHP-RCE-002",
+    "Product Name (Description)": "PHP Remote Code Execution Script",
+    "Vendor Name": "ExploitGuru",
+    "Price (BTC)": "0.005",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "EXP-JS-XSS-003",
+    "Product Name (Description)": "JavaScript XSS Framework (Advanced)",
+    "Vendor Name": "ExploitGuru",
+    "Price (BTC)": "0.007",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-LOG-KEY-003",
+    "Product Name (Description)": "FUD (Fully Undetectable) Keylogger Kit",
+    "Vendor Name": "ExploitGuru",
+    "Price (BTC)": "0.012",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-LOG-KEY-004",
+    "Product Name (Description)": "FUD Keylogger + Exfiltration C&C Access (3 Months)",
+    "Vendor Name": "ExploitGuru",
+    "Price (BTC)": "0.025",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-LOG-KEY-005",
+    "Product Name (Description)": "FUD Keylogger + Exfiltration C&C Access (Lifetime)",
+    "Vendor Name": "ExploitGuru",
+    "Price (BTC)": "0.045",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-RAT-ANDROID-V1",
+    "Product Name (Description)": "Android RAT (Remote Access Trojan) Source Code",
+    "Vendor Name": "VoidLabs",
+    "Price (BTC)": "0.018",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-RAT-ANDROID-V2",
+    "Product Name (Description)": "Android RAT (Remote Access Trojan) C&C Access",
+    "Vendor Name": "VoidLabs",
+    "Price (BTC)": "0.025",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-RAT-WINDOWS-V2",
+    "Product Name (Description)": "Windows RAT (Remote Access Trojan) C&C",
+    "Vendor Name": "VoidLabs",
+    "Price (BTC)": "0.025",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-RAT-WINDOWS-V3",
+    "Product Name (Description)": "Windows RAT (Remote Access Trojan) Source Code",
+    "Vendor Name": "VoidLabs",
+    "Price (BTC)": "0.035",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-MAC-BACK-005",
+    "Product Name (Description)": "macOS Backdoor Utility",
+    "Vendor Name": "SilentShade",
+    "Price (BTC)": "0.03",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-MAC-BACK-006",
+    "Product Name (Description)": "macOS Backdoor Source Code",
+    "Vendor Name": "SilentShade",
+    "Price (BTC)": "0.045",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "TUT-CRD-FORG-5",
+    "Product Name (Description)": "Advanced Card Forging Techniques (PDF)",
+    "Vendor Name": "ByteMentor",
+    "Price (BTC)": "0.007",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "TUT-CRD-SKIM-6",
+    "Product Name (Description)": "Skimming Device Deployment Guide",
+    "Vendor Name": "ByteMentor",
+    "Price (BTC)": "0.005",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-DDO-STD-12HR-007",
+    "Product Name (Description)": "12-Hour Standard DDoS Attack (Max 1Gbps)",
+    "Vendor Name": "NetHammer",
+    "Price (BTC)": "0.015",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-DDO-PRE-24HR-008",
+    "Product Name (Description)": "24-Hour Premium DDoS Attack (Max 10Gbps)",
+    "Vendor Name": "NetHammer",
+    "Price (BTC)": "0.045",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-CLEAN-ASIA-03",
+    "Product Name (Description)": "Money Cleaning Service (Min. $100K, 15% Fee)",
+    "Vendor Name": "ShadowBroker",
+    "Price (BTC)": "0.25",
+    "Decoy Hint": "High-volume fee.",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-VPN-PREM-2YR-Z",
+    "Product Name (Description)": "Lifetime VPN Access (2-Year Code)",
+    "Vendor Name": "ZeroCode",
+    "Price (BTC)": "0.004",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-HACK-SOCIAL-3T",
+    "Product Name (Description)": "Custom Social Media Account Hack (3 Targets)",
+    "Vendor Name": "HackPro",
+    "Price (BTC)": "0.08",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-HACK-EMAIL-10T",
+    "Product Name (Description)": "Custom Email Account Hack (10 Targets)",
+    "Vendor Name": "HackPro",
+    "Price (BTC)": "0.14",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-HACK-WEB-ADV",
+    "Product Name (Description)": "Advanced Web Server Penetration Service (Quote Req.)",
+    "Vendor Name": "HackPro",
+    "Price (BTC)": "0.25",
+    "Decoy Hint": "Initial consult fee.",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "DRG-COKE-14G-COL-99",
+    "Product Name (Description)": "Cocaine (14g, 85% Purity, Colombia)",
+    "Vendor Name": "TheCartel",
+    "Price (BTC)": "0.07",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-COKE-7G-PER-98",
+    "Product Name (Description)": "Cocaine (7g, 70% Purity, Peru)",
+    "Vendor Name": "TheCartel",
+    "Price (BTC)": "0.035",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-METH-0.5LB-USA-56",
+    "Product Name (Description)": "Methamphetamine (0.5lb, Crystal, Domestic)",
+    "Vendor Name": "ChemLab",
+    "Price (BTC)": "0.055",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-MDMA-PILS-BLU-43",
+    "Product Name (Description)": "100 MDMA Pills (Blue, \"Tesla\" Press)",
+    "Vendor Name": "PharmaKing",
+    "Price (BTC)": "0.035",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-MDMA-PILS-RED-44",
+    "Product Name (Description)": "50 MDMA Pills (Red, \"Star\" Press)",
+    "Vendor Name": "PharmaKing",
+    "Price (BTC)": "0.018",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-SMK-OG-8OZ-1C",
+    "Product Name (Description)": "Cannabis Flower (8oz, OG Kush, Premium)",
+    "Vendor Name": "GreenThumb",
+    "Price (BTC)": "0.032",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-SMK-IND-1LB-2D",
+    "Product Name (Description)": "Cannabis Flower (1lb, Indica Mix, Standard)",
+    "Vendor Name": "GreenThumb",
+    "Price (BTC)": "0.05",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-PHARMA-VIAGRA-100",
+    "Product Name (Description)": "100 x 100mg Viagra (Generic)",
+    "Vendor Name": "PillsMan",
+    "Price (BTC)": "0.005",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-PHARMA-OXY-20-50",
+    "Product Name (Description)": "50 x 20mg Oxycodone (Pressed)",
+    "Vendor Name": "PillsMan",
+    "Price (BTC)": "0.03",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-PHARMA-ADDER-60",
+    "Product Name (Description)": "60 x 30mg Adderall (Generic)",
+    "Vendor Name": "PillsMan",
+    "Price (BTC)": "0.009",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-LSD-BLOT-100-C",
+    "Product Name (Description)": "100 Hits LSD Blotter (150ug)",
+    "Vendor Name": "PsychoPharm",
+    "Price (BTC)": "0.018",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-SHROOM-8OZ-B",
+    "Product Name (Description)": "Psilocybin Mushrooms (8oz, Dried)",
+    "Vendor Name": "GreenThumb",
+    "Price (BTC)": "0.013",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "WPN-FIRE-GLK-9MM-Z2",
+    "Product Name (Description)": "Unserialized 9mm Handgun (Complete Build)",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.15",
+    "Decoy Hint": "Requires FFL transfer (decoy hint).",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "WPN-FIRE-AK-47-KIT",
+    "Product Name (Description)": "Unserialized AK-47 Receiver (80% Jig)",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.06",
+    "Decoy Hint": "Requires final machining/gunsmithing.",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "WPN-AMMO-556-1000-Z2",
+    "Product Name (Description)": "1,000 Rounds 5.56 NATO Ammunition",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.018",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "WPN-AMMO-762-500-Z3",
+    "Product Name (Description)": "500 Rounds 7.62x39 Ammunition",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.008",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "WPN-AMMO-45ACP-500-A",
+    "Product Name (Description)": "500 Rounds .45 ACP Ammunition",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.009",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "WPN-KNIFE-TAC-002",
+    "Product Name (Description)": "Ballistic Knife (Non-Export)",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.005",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "CTF-CASH-USD-10K-C",
+    "Product Name (Description)": "$10,000 USD Counterfeit Bills (High Grade)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.13",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "CTF-CASH-EUR-10K-C",
+    "Product Name (Description)": "\u008010,000 EUR Counterfeit Bills (Mid Grade)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.09",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "CTF-CASH-GBP-5K-D",
+    "Product Name (Description)": "\u00a35,000 GBP Counterfeit Bills (High Grade)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.075",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "CTF-SILV-BAR-10OZ",
+    "Product Name (Description)": "10oz Silver Bullion Bar (Counterfeit)",
+    "Vendor Name": "FakePrinter",
+    "Price (BTC)": "0.002",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "CTF-WATCH-OMEGA-SEA",
+    "Product Name (Description)": "Counterfeit Omega Seamaster (Triple-A Quality)",
+    "Vendor Name": "FakePrinter",
+    "Price (BTC)": "0.009",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "ACC-SOCIAL-100K-003",
+    "Product Name (Description)": "100 Hacked Social Accounts (10K+ Followers)",
+    "Vendor Name": "ShadowBroker",
+    "Price (BTC)": "0.015",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "BOT-NET-25K-TIER1-D",
+    "Product Name (Description)": "25,000 Bot-Slave Rentals (Tier 1/High Bandwidth)",
+    "Vendor Name": "NetHammer",
+    "Price (BTC)": "0.065",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-RANS-PAYL-V3-C",
+    "Product Name (Description)": "Ransomware Payload Drop Service (1,000 installs)",
+    "Vendor Name": "ZeroCode",
+    "Price (BTC)": "0.28",
+    "Decoy Hint": "Tier 1 Geo-targeting.",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-STEAL-X12-PRO",
+    "Product Name (Description)": "Advanced Browser Info-Stealer (Lifetime + Support)",
+    "Vendor Name": "VoidLabs",
+    "Price (BTC)": "0.05",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "EXP-JS-XSS-003",
+    "Product Name (Description)": "JavaScript XSS Framework (Advanced)",
+    "Vendor Name": "ExploitGuru",
+    "Price (BTC)": "0.007",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-LOG-KEY-005",
+    "Product Name (Description)": "FUD Keylogger + Exfiltration C&C Access (Lifetime)",
+    "Vendor Name": "ExploitGuru",
+    "Price (BTC)": "0.045",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-RAT-ANDROID-V2",
+    "Product Name (Description)": "Android RAT (Remote Access Trojan) C&C Access",
+    "Vendor Name": "VoidLabs",
+    "Price (BTC)": "0.025",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-RAT-WINDOWS-V3",
+    "Product Name (Description)": "Windows RAT (Remote Access Trojan) Source Code",
+    "Vendor Name": "VoidLabs",
+    "Price (BTC)": "0.035",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-MAC-BACK-006",
+    "Product Name (Description)": "macOS Backdoor Source Code",
+    "Vendor Name": "SilentShade",
+    "Price (BTC)": "0.045",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "TUT-CRD-SKIM-6",
+    "Product Name (Description)": "Skimming Device Deployment Guide",
+    "Vendor Name": "ByteMentor",
+    "Price (BTC)": "0.005",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-HACK-SOCIAL-3T",
+    "Product Name (Description)": "Custom Social Media Account Hack (3 Targets)",
+    "Vendor Name": "HackPro",
+    "Price (BTC)": "0.08",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-HACK-EMAIL-10T",
+    "Product Name (Description)": "Custom Email Account Hack (10 Targets)",
+    "Vendor Name": "HackPro",
+    "Price (BTC)": "0.14",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "DRG-COKE-7G-PER-98-B",
+    "Product Name (Description)": "Cocaine (7g, 65% Purity, Ecuador)",
+    "Vendor Name": "TheCartel",
+    "Price (BTC)": "0.032",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-METH-1OZ-USA-57",
+    "Product Name (Description)": "Methamphetamine (1oz, Powder, Domestic)",
+    "Vendor Name": "ChemLab",
+    "Price (BTC)": "0.008",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-SMK-SATIVA-1OZ-3A",
+    "Product Name (Description)": "Cannabis Flower (1oz, Sativa Mix, Standard)",
+    "Vendor Name": "GreenThumb",
+    "Price (BTC)": "0.0045",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-SMK-SATIVA-4OZ-3B",
+    "Product Name (Description)": "Cannabis Flower (4oz, Sativa Mix, Standard)",
+    "Vendor Name": "GreenThumb",
+    "Price (BTC)": "0.016",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-PHARMA-KLON-1-50",
+    "Product Name (Description)": "50 x 1mg Klonopin (Generic)",
+    "Vendor Name": "PillsMan",
+    "Price (BTC)": "0.004",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-PHARMA-VCN-10-30",
+    "Product Name (Description)": "30 x 10mg Vicodin (Pressed)",
+    "Vendor Name": "PillsMan",
+    "Price (BTC)": "0.006",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-PHARMA-CFLX-10-10",
+    "Product Name (Description)": "10 x 10mg Carfentanil (Pressed - DANGER)",
+    "Vendor Name": "OpiumLord",
+    "Price (BTC)": "0.05",
+    "Decoy Hint": "Highly restricted/deadly.",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "WPN-AMMO-12GA-100-S",
+    "Product Name (Description)": "100 Rounds 12 Gauge Shotgun Ammo",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.003",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "CTF-CASH-CAD-1K-A",
+    "Product Name (Description)": "$1,000 CAD Counterfeit Bills (High Grade)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.016",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "ACC-WEB-FIN-BANK-1T",
+    "Product Name (Description)": "Hacked Online Banking Login (1 Target, $5k+ Bal)",
+    "Vendor Name": "CryptoGhost",
+    "Price (BTC)": "0.01",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "ACC-WEB-FIN-PAYP-1T",
+    "Product Name (Description)": "Hacked PayPal Login (1 Target, $1k+ Bal)",
+    "Vendor Name": "CryptoGhost",
+    "Price (BTC)": "0.007",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "DATA-IDS-EDU-FULL-DB",
+    "Product Name (Description)": "Full Database Dump of Small University (.edu)",
+    "Vendor Name": "NexusPrime",
+    "Price (BTC)": "0.025",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "MAL-RANS-CRYP-V4-01",
+    "Product Name (Description)": "Encrypting Ransomware Kit (V4, Beta, 6-Month)",
+    "Vendor Name": "ZeroCode",
+    "Price (BTC)": "0.07",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "MAL-STEAL-X13-VIP",
+    "Product Name (Description)": "Info-Stealer Custom Build (Single Target License)",
+    "Vendor Name": "VoidLabs",
+    "Price (BTC)": "0.09",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "EXP-ZERO-WIN-11-Q126",
+    "Product Name (Description)": "Windows 11 LPE Exploit",
+    "Vendor Name": "SilentShade",
+    "Price (BTC)": "0.12",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "DOC-ID-AUS-DL-HGH-1",
+    "Product Name (Description)": "High-Quality Australian Driver's License",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.006",
+    "Decoy Hint": "Physical item.",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "SVC-DDO-PRE-CUST",
+    "Product Name (Description)": "Custom DDoS Attack (Quote based on TLD)",
+    "Vendor Name": "NetHammer",
+    "Price (BTC)": "0.08",
+    "Decoy Hint": "Base quote fee.",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-CLEAN-EU-LOW-05",
+    "Product Name (Description)": "Money Cleaning Service (Min. $5K, 25% Fee)",
+    "Vendor Name": "ShadowBroker",
+    "Price (BTC)": "0.03",
+    "Decoy Hint": "High fee for small volume.",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "DRG-KET-POW-5G-NL",
+    "Product Name (Description)": "Ketamine Powder (5g, High Purity)",
+    "Vendor Name": "PsychoPharm",
+    "Price (BTC)": "0.005",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-GHB-LIQ-100ML",
+    "Product Name (Description)": "GHB Liquid (100ml)",
+    "Vendor Name": "PsychoPharm",
+    "Price (BTC)": "0.004",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "WPN-FIRE-SAIGA-12",
+    "Product Name (Description)": "Unserialized Saiga-12 Shotgun (Kit)",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.12",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "CTF-CASH-AUD-1K-A",
+    "Product Name (Description)": "$1,000 AUD Counterfeit Bills (High Grade)",
+    "Vendor Name": "FakePrinter",
+    "Price (BTC)": "0.017",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "BOT-NET-50K-TIER1-E",
+    "Product Name (Description)": "50,000 Bot-Slave Rentals (Tier 1/High Bandwidth)",
+    "Vendor Name": "NetHammer",
+    "Price (BTC)": "0.15",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "DATA-LOG-CC-TL-100K",
+    "Product Name (Description)": "100,000 Stolen Credit Card Track 1/2 Logs",
+    "Vendor Name": "BriansClub",
+    "Price (BTC)": "0.18",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "FULLZ-US-500-MED",
+    "Product Name (Description)": "500 Medium-Score US Fullz (PII Only)",
+    "Vendor Name": "EuroScammer",
+    "Price (BTC)": "0.045",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "MAL-RANS-CRYP-V3-03",
+    "Product Name (Description)": "Encrypting Ransomware Kit (V3, 5-Year License)",
+    "Vendor Name": "ZeroCode",
+    "Price (BTC)": "0.12",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "DOC-ID-BANK-HSBC-05",
+    "Product Name (Description)": "3-Months HSBC Bank Statements (PDF Template)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.0025",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "DRG-COKE-0.5G-COL-99",
+    "Product Name (Description)": "Cocaine (0.5g, 85% Purity, Colombia)",
+    "Vendor Name": "TheCartel",
+    "Price (BTC)": "0.0035",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-METH-0.5OZ-USA-55",
+    "Product Name (Description)": "Methamphetamine (0.5oz, Crystal, Domestic)",
+    "Vendor Name": "ChemLab",
+    "Price (BTC)": "0.005",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-SMK-OIL-10G-1D",
+    "Product Name (Description)": "Cannabis Oil (10g, Premium)",
+    "Vendor Name": "GreenThumb",
+    "Price (BTC)": "0.006",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "WPN-AMMO-308-200-S",
+    "Product Name (Description)": "200 Rounds .308 WIN Ammunition",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.006",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "SVC-HACK-EMAIL-1T-MIN",
+    "Product Name (Description)": "Custom Email Account Hack (1 Target, Low Effort)",
+    "Vendor Name": "HackPro",
+    "Price (BTC)": "0.015",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "TUT-SOCENG-BASIC-A",
+    "Product Name (Description)": "Basic Social Engineering Guide (PDF)",
+    "Vendor Name": "ByteMentor",
+    "Price (BTC)": "0.0005",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "CTF-CASH-JPY-100K",
+    "Product Name (Description)": "\u00a5100,000 JPY Counterfeit Bills (Mid Grade)",
+    "Vendor Name": "FakePrinter",
+    "Price (BTC)": "0.004",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "ACC-WEB-STREAM-1YR",
+    "Product Name (Description)": "1-Year Streaming Service Login (Premium)",
+    "Vendor Name": "DataVault",
+    "Price (BTC)": "0.001",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "DRG-HEROIN-1G-AFG",
+    "Product Name (Description)": "Heroin (1g, Black Tar, Afghanistan)",
+    "Vendor Name": "OpiumLord",
+    "Price (BTC)": "0.008",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-HEROIN-5G-AFG",
+    "Product Name (Description)": "Heroin (5g, Black Tar, Afghanistan)",
+    "Vendor Name": "OpiumLord",
+    "Price (BTC)": "0.035",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-MDMA-POWDER-1G",
+    "Product Name (Description)": "MDMA Powder (1g, High Purity)",
+    "Vendor Name": "PharmaKing",
+    "Price (BTC)": "0.007",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-SMK-KUSH-1G-SAM",
+    "Product Name (Description)": "Cannabis Flower (1g, OG Kush, Sample)",
+    "Vendor Name": "GreenThumb",
+    "Price (BTC)": "0.001",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-PHARMA-XANAX-100",
+    "Product Name (Description)": "100 x 2mg Xanax (Generic)",
+    "Vendor Name": "PillsMan",
+    "Price (BTC)": "0.006",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "WPN-GEAR-GAS-MASK",
+    "Product Name (Description)": "Industrial Gas Mask (New Condition)",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.004",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "WPN-GEAR-NVG-GEN3",
+    "Product Name (Description)": "Night Vision Goggles (Gen 3, Used)",
+    "Vendor Name": "SilentShade",
+    "Price (BTC)": "0.05",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "CTF-ID-SCAN-US-5",
+    "Product Name (Description)": "US Driver's License Scan (Template + PSD)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.003",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "CTF-ID-SCAN-EU-5",
+    "Product Name (Description)": "EU National ID Scan (Template + PSD)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.0032",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "ACC-WEB-SOCIAL-INSTA",
+    "Product Name (Description)": "10 Hacked Instagram Logins (5K+ Followers)",
+    "Vendor Name": "ShadowBroker",
+    "Price (BTC)": "0.002",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "ACC-WEB-SOCIAL-TWIT",
+    "Product Name (Description)": "10 Hacked Twitter Logins (5K+ Followers)",
+    "Vendor Name": "ShadowBroker",
+    "Price (BTC)": "0.0022",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "DATA-LOG-RDP-AU-50",
+    "Product Name (Description)": "50 RDP Access Logs (Australia Corporate)",
+    "Vendor Name": "LogKeeper",
+    "Price (BTC)": "0.008",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "CRD-DISC-STD-50-MIN",
+    "Product Name (Description)": "50 Stolen Discover Standard (Mixed)",
+    "Vendor Name": "DataVault",
+    "Price (BTC)": "0.0025",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "EXP-ZERO-WEB-004",
+    "Product Name (Description)": "Web Server Exploit (Specific PHP Version)",
+    "Vendor Name": "ExploitGuru",
+    "Price (BTC)": "0.006",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "SVC-DDO-PRE-CUSTOM-B",
+    "Product Name (Description)": "Custom DDoS Attack (1 Week Persistence)",
+    "Vendor Name": "NetHammer",
+    "Price (BTC)": "0.15",
+    "Decoy Hint": "Base quote fee.",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-HACK-SOCIAL-VIP",
+    "Product Name (Description)": "VIP Social Media Account Hack (Celebrity/Politician)",
+    "Vendor Name": "HackPro",
+    "Price (BTC)": "0.5",
+    "Decoy Hint": "Quote required.",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "DRG-COKE-28G-COL-99",
+    "Product Name (Description)": "Cocaine (28g/1oz, 85% Purity, Colombia)",
+    "Vendor Name": "TheCartel",
+    "Price (BTC)": "0.12",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-METH-4G-USA-55",
+    "Product Name (Description)": "Methamphetamine (4g, Crystal, Domestic)",
+    "Vendor Name": "ChemLab",
+    "Price (BTC)": "0.004",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-SHROOM-1LB-C",
+    "Product Name (Description)": "Psilocybin Mushrooms (1lb, Dried)",
+    "Vendor Name": "GreenThumb",
+    "Price (BTC)": "0.04",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "WPN-FIRE-SUP-9MM",
+    "Product Name (Description)": "Unserialized 9mm Suppressor (Kit)",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.03",
+    "Decoy Hint": "Requires final assembly.",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "CTF-CASH-RMB-500K",
+    "Product Name (Description)": "\u00a5500,000 RMB Counterfeit Bills (Mid Grade)",
+    "Vendor Name": "FakePrinter",
+    "Price (BTC)": "0.05",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "DATA-IDS-EDU-LITE-1K",
+    "Product Name (Description)": "1,000 Student Email/Password List (.edu)",
+    "Vendor Name": "NexusPrime",
+    "Price (BTC)": "0.005",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "MAL-STEAL-X10-MON",
+    "Product Name (Description)": "Browser Info-Stealer (Tier 1, Monthly Access)",
+    "Vendor Name": "VoidLabs",
+    "Price (BTC)": "0.006",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "TUT-HACK-FORUM-ACC",
+    "Product Name (Description)": "Access to Private Hacking Forum (1 Year)",
+    "Vendor Name": "ByteMentor",
+    "Price (BTC)": "0.002",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-CLEAN-MAX-1M-04",
+    "Product Name (Description)": "Money Cleaning Service (Min. $1M, 5% Fee)",
+    "Vendor Name": "ShadowBroker",
+    "Price (BTC)": "1",
+    "Decoy Hint": "Very high volume fee.",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "DRG-KET-POW-10G-NL",
+    "Product Name (Description)": "Ketamine Powder (10g, High Purity)",
+    "Vendor Name": "PsychoPharm",
+    "Price (BTC)": "0.009",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "WPN-GEAR-BODY-ARMOR",
+    "Product Name (Description)": "Level III+ Body Armor (Plate Carrier + Plates)",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.04",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "CTF-ID-SCAN-CA-HGH",
+    "Product Name (Description)": "High-Res Canadian Driver's License Scan (PSD)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.004",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "ACC-WEB-FIN-BANK-5T",
+    "Product Name (Description)": "Hacked Online Banking Logins (5 Targets, $10k+ Bal)",
+    "Vendor Name": "CryptoGhost",
+    "Price (BTC)": "0.045",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "DATA-IDS-TELECOM-GLOBAL",
+    "Product Name (Description)": "100,000 Telecom Records (Global Mix)",
+    "Vendor Name": "ThePhishKing",
+    "Price (BTC)": "0.08",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "MAL-RANS-CRYP-V4-02",
+    "Product Name (Description)": "Encrypting Ransomware Kit (V4, Beta, Lifetime)",
+    "Vendor Name": "ZeroCode",
+    "Price (BTC)": "0.15",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "EXP-ZERO-WEB-005",
+    "Product Name (Description)": "Zero-Day Web Exploit (Unpatched CMS)",
+    "Vendor Name": "SilentShade",
+    "Price (BTC)": "0.3",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "DOC-ID-NZ-REAL-001",
+    "Product Name (Description)": "High-Quality New Zealand Passport",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.007",
+    "Decoy Hint": "Physical item.",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "SVC-DDO-PRE-CUST-2W",
+    "Product Name (Description)": "Custom DDoS Attack (2 Week Persistence)",
+    "Vendor Name": "NetHammer",
+    "Price (BTC)": "0.3",
+    "Decoy Hint": "Base quote fee.",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "DRG-PHARMA-DIAZ-5-100",
+    "Product Name (Description)": "100 x 5mg Diazepam (Valium, Generic)",
+    "Vendor Name": "PillsMan",
+    "Price (BTC)": "0.005",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "WPN-AMMO-50CAL-50-S",
+    "Product Name (Description)": "50 Rounds .50 BMG Ammunition",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.035",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "CTF-WATCH-PATEK",
+    "Product Name (Description)": "Counterfeit Patek Philippe (Triple-A Quality)",
+    "Vendor Name": "FakePrinter",
+    "Price (BTC)": "0.02",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "BOT-NET-100K-TIER1-F",
+    "Product Name (Description)": "100,000 Bot-Slave Rentals (Tier 1/High Bandwidth)",
+    "Vendor Name": "NetHammer",
+    "Price (BTC)": "0.3",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "DATA-LOG-CC-CVM-1K",
+    "Product Name (Description)": "1,000 CVV dumps with CVM (Global Mix)",
+    "Vendor Name": "BriansClub",
+    "Price (BTC)": "0.05",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "FULLZ-EU-500-HGH",
+    "Product Name (Description)": "500 High-Score EU Fullz (PII, Credit, History)",
+    "Vendor Name": "EuroScammer",
+    "Price (BTC)": "0.075",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "MAL-STEAL-X14-SRC",
+    "Product Name (Description)": "Info-Stealer Source Code (Unpatched)",
+    "Vendor Name": "VoidLabs",
+    "Price (BTC)": "0.1",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "TUT-OSINT-MASTER-7",
+    "Product Name (Description)": "Advanced OSINT/Doxing Techniques (Video Course)",
+    "Vendor Name": "ByteMentor",
+    "Price (BTC)": "0.008",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-HACK-EMAIL-VIP-1",
+    "Product Name (Description)": "VIP Email Account Hack (Gov/Corp Exec)",
+    "Vendor Name": "HackPro",
+    "Price (BTC)": "0.2",
+    "Decoy Hint": "Quote required.",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "DRG-FENTANYL-1G-POW",
+    "Product Name (Description)": "Fentanyl Powder (1g, Pure - DANGER)",
+    "Vendor Name": "OpiumLord",
+    "Price (BTC)": "0.06",
+    "Decoy Hint": "Restricted/deadly.",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "DRG-MDMA-ROCK-10G",
+    "Product Name (Description)": "MDMA Crystal Rocks (10g, High Purity)",
+    "Vendor Name": "PharmaKing",
+    "Price (BTC)": "0.025",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "WPN-FIRE-SUP-556",
+    "Product Name (Description)": "Unserialized 5.56 Suppressor (Kit)",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.035",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "CTF-CASH-AUD-5K-B",
+    "Product Name (Description)": "$5,000 AUD Counterfeit Bills (High Grade)",
+    "Vendor Name": "FakePrinter",
+    "Price (BTC)": "0.08",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "DATA-IDS-HEALTH-GLOBAL",
+    "Product Name (Description)": "50,000 Assorted Medical Records (Global)",
+    "Vendor Name": "NexusPrime",
+    "Price (BTC)": "0.2",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "MAL-RANS-CRYP-V5-BETA",
+    "Product Name (Description)": "Encrypting Ransomware Kit (V5, Pre-release)",
+    "Vendor Name": "ZeroCode",
+    "Price (BTC)": "0.1",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "EXP-ZERO-LIN-KRNL",
+    "Product Name (Description)": "Linux Kernel Zero-Day Exploit",
+    "Vendor Name": "SilentShade",
+    "Price (BTC)": "0.4",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "DOC-ID-JPN-PASS-HGH",
+    "Product Name (Description)": "High-Quality Japanese Passport",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.009",
+    "Decoy Hint": "Physical item.",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "SVC-VPN-PREM-5YR",
+    "Product Name (Description)": "Lifetime VPN Access (5-Year Code)",
+    "Vendor Name": "ZeroCode",
+    "Price (BTC)": "0.006",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "DRG-LSD-LIQ-100DOSES",
+    "Product Name (Description)": "LSD Liquid Microdots (100 Doses)",
+    "Vendor Name": "PsychoPharm",
+    "Price (BTC)": "0.025",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "WPN-AMMO-545-500-S",
+    "Product Name (Description)": "500 Rounds 5.45x39 Ammunition",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.009",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "CTF-CASH-ZAR-10K",
+    "Product Name (Description)": "R10,000 ZAR Counterfeit Bills (Mid Grade)",
+    "Vendor Name": "FakePrinter",
+    "Price (BTC)": "0.005",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "ACC-WEB-FIN-BANK-10T",
+    "Product Name (Description)": "Hacked Online Banking Logins (10 Targets, $20k+ Bal)",
+    "Vendor Name": "CryptoGhost",
+    "Price (BTC)": "0.08",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "DATA-IDS-CORP-EXCEL",
+    "Product Name (Description)": "500 Corporate C-Level Executive Profiles",
+    "Vendor Name": "ShadowBroker",
+    "Price (BTC)": "0.03",
+    "Category": "Data & Leaks"
+  },
+  {
+    "Product ID": "MAL-BOT-DDOS-LIFETIME",
+    "Product Name (Description)": "Access to 5,000-Node DDoS Botnet (Lifetime)",
+    "Vendor Name": "ThePhishKing",
+    "Price (BTC)": "0.3",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "SVC-CLEAN-XMR-BTC",
+    "Product Name (Description)": "XMR/BTC Tumbling Service (Fee 3% + 0.001 BTC)",
+    "Vendor Name": "ShadowBroker",
+    "Price (BTC)": "0.01",
+    "Decoy Hint": "Base Fee.",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "DRG-MDMA-BULK-100G",
+    "Product Name (Description)": "MDMA Powder (100g, Bulk)",
+    "Vendor Name": "PharmaKing",
+    "Price (BTC)": "0.15",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "WPN-GEAR-DRONE-PRO",
+    "Product Name (Description)": "Surveillance Drone (Advanced, Stealth)",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.07",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "CTF-ID-SCAN-GLOBAL",
+    "Product Name (Description)": "Global ID Scan Template Pack (10 Countries)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.006",
+    "Category": "Forged Documents"
+  },
+  {
+    "Product ID": "BOT-NET-500-SMALL",
+    "Product Name (Description)": "500 Bot-Slave Rentals (Tier 3/Low Bandwidth)",
+    "Vendor Name": "NetHammer",
+    "Price (BTC)": "0.002",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "FULLZ-CA-50-MIN",
+    "Product Name (Description)": "50 Standard CA Fullz (PII Only)",
+    "Vendor Name": "EuroScammer",
+    "Price (BTC)": "0.008",
+    "Category": "Cards / CVVS / Fullz"
+  },
+  {
+    "Product ID": "MAL-LOG-KEY-TRIAL",
+    "Product Name (Description)": "FUD Keylogger (7-Day Trial License)",
+    "Vendor Name": "ExploitGuru",
+    "Price (BTC)": "0.001",
+    "Category": "Malware & Exploits"
+  },
+  {
+    "Product ID": "TUT-OPSEC-MASTER",
+    "Product Name (Description)": "Advanced OpSec/Anonymity Guide (Full Course)",
+    "Vendor Name": "ByteMentor",
+    "Price (BTC)": "0.01",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "SVC-HACK-ANY-QUICK",
+    "Product Name (Description)": "Quick Hack Request (Low Complexity)",
+    "Vendor Name": "HackPro",
+    "Price (BTC)": "0.05",
+    "Category": "Hacking Services"
+  },
+  {
+    "Product ID": "DRG-COKE-50G-COL-99",
+    "Product Name (Description)": "Cocaine (50g, 85% Purity, Colombia)",
+    "Vendor Name": "TheCartel",
+    "Price (BTC)": "0.18",
+    "Category": "Drugs & Pharmaceuticals"
+  },
+  {
+    "Product ID": "WPN-AMMO-223-500-S",
+    "Product Name (Description)": "500 Rounds .223 Ammunition",
+    "Vendor Name": "GunRunner",
+    "Price (BTC)": "0.008",
+    "Category": "Weapons & Ammo"
+  },
+  {
+    "Product ID": "CTF-CASH-EUR-20K-D",
+    "Product Name (Description)": "\u008020,000 EUR Counterfeit Bills (Mid Grade)",
+    "Vendor Name": "ForgerX",
+    "Price (BTC)": "0.16",
+    "Category": "Counterfeit Money"
+  },
+  {
+    "Product ID": "COUPON-REDTEAM",
+    "Product Name (Description)": "Coupon Redemption: Initial Deposit",
+    "Category": "SERVICE",
+    "Price (BTC)": "₿0.00000",
+    "Vendor": "ADMIN (SYSTEM)",
+    "Short Description": "Initial deposit made via coupon code REDTEAMBECODE.",
+    "Stock": "99999"
+}
+]

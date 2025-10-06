@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}THE CRYPTIC VAULT | Market{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'market-black': '#0a0a0a',
+                        'market-gold': '#ffcc00', // Primary accent color
+                        'market-gray': '#1f1f1f',
+                        'market-border': '#333333',
+                    },
+                    fontFamily: {
+                        mono: ['Inter', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script>
+        // JS Function for Show/Hide Password Toggle
+        (function() {
+            window.togglePassword = function(id) {
+                const passwordInput = document.getElementById(id);
+                const toggleIcon = document.getElementById(`toggle-${id}`);
+
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    toggleIcon.classList.remove('fa-eye-slash');
+                    toggleIcon.classList.add('fa-eye');
+                } else {
+                    passwordInput.type = 'password';
+                    toggleIcon.classList.remove('fa-eye');
+                    toggleIcon.classList.add('fa-eye-slash');
+                }
+            };
+            
+            // NEW: Function to show processing spinner and disable button
+            window.showProcessing = function(event) {
+                // event.submitter is the button that was clicked (modern browsers)
+                const button = event.submitter || event.target.querySelector('button[type="submit"]');
+
+                if (button) {
+                    // Disable button to prevent double-click
+                    button.disabled = true;
+                    
+                    // Store original text and change content to spinner
+                    button.setAttribute('data-original-html', button.innerHTML);
+                    
+                    // Apply classes to visually grey out the button (Tailwind classes)
+                    if (button.classList.contains('bg-market-gold')) {
+                        button.classList.remove('bg-market-gold', 'hover:bg-yellow-400', 'text-black');
+                        button.classList.add('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
+                    } else if (button.classList.contains('bg-green-700')) {
+                        button.classList.remove('bg-green-700', 'hover:bg-green-600', 'text-white');
+                        button.classList.add('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
+                    }
+
+                    // Store the HTML string in a variable to reduce linter issues
+                    const processingHtml = '<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>PROCESSING...';
+                    button.innerHTML = processingHtml;
+                }
+            };
+        })();
+    </script>
+
+    <style>
+        .toggle-icon {
+            /* Adjusting position to center vertically in the input field */
+            transform: translateY(10px); 
+        }
+        /* NEW: Minimal CSS for the spinning wheel */
+        .spinner-border {
+            display: inline-block;
+            width: 1.25rem;
+            height: 1.25rem;
+            vertical-align: middle;
+            border: .2em solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spinner-border .75s linear infinite;
+        }
+        @keyframes spinner-border {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-market-black text-gray-300 font-mono min-h-screen flex flex-col">
+
+    {% include 'header.html' %} 
+
+    <div class="container mx-auto max-w-7xl flex-grow flex p-8 space-x-8">
+
+        <aside class="w-64 flex-shrink-0">
+            <div class="bg-market-gray border border-market-border p-4 mb-6 rounded-md">
+                <h3 class="text-market-gold text-lg font-bold border-b border-market-border pb-2 mb-3">PRODUCT CATEGORIES</h3>
+                
+                <ul class="space-y-2 text-sm">
+                    <li><a href="{{ url_for('listings', cat='data') }}" class="text-white hover:text-market-gold">Data & Leaks</a></li>
+                    <li><a href="{{ url_for('listings', cat='exploit') }}" class="text-white hover:text-market-gold">Malware & Exploits</a></li>
+                    <li><a href="{{ url_for('listings', cat='cards') }}" class="text-white hover:text-market-gold">Cards / CVVS / Fullz</a></li>
+                    <li><a href="{{ url_for('listings', cat='forged') }}" class="text-white hover:text-market-gold">Forged Documents</a></li>
+                    <li><a href="{{ url_for('listings', cat='services') }}" class="text-white hover:text-market-gold">Hacking Services</a></li>
+                    <li><a href="{{ url_for('listings', cat='pharma') }}" class="text-red-400 hover:text-market-gold">Drugs & Pharmaceuticals</a></li>
+                    <li><a href="{{ url_for('listings', cat='counterfeit') }}" class="text-white hover:text-market-gold">Counterfeit Money</a></li>
+                    <li><a href="{{ url_for('listings', cat='guns') }}" class="text-red-400 hover:text-market-gold">Weapons & Ammo</a></li>
+                </ul>
+
+                <a href="{{ url_for('listings') }}" class="block w-full bg-market-gold text-center text-black font-bold py-1 mt-4 hover:bg-yellow-400 transition duration-150 text-xs rounded-sm">VIEW ALL LISTINGS</a>
+            </div>
+        </aside>
+
+        <main class="flex-grow">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <footer class="bg-market-gray text-center py-3 border-t border-market-border text-gray-500 text-xs mt-auto">
+        <p>This service is only accessible via Tor Browser. <span class="text-green-500 font-bold">MARKET ONLINE V5.0</span></p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/product_loader.js') }}"></script>
+    
+</body>
+</html>

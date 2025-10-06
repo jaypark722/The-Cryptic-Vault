@@ -1,0 +1,115 @@
+<div class="bg-market-gray border-b border-market-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-2 text-sm">
+        <a href="{{ url_for('index') }}" class="font-bold text-lg text-market-gold tracking-wider">THE CRYPTIC VAULT</a>
+        <nav class="space-x-4">
+            
+            {% if session.logged_in %}
+                <a href="{{ url_for('profile') }}" class="text-gray-400 hover:text-market-gold">PROFILE</a>
+                <a href="{{ url_for('orders') }}" class="text-gray-400 hover:text-market-gold">ORDERS</a>
+            {% endif %}
+
+            <a href="{{ url_for('cart') }}" class="text-gray-400 hover:text-market-gold">
+                CART 
+                {% if session.get('logged_in') %}
+                    {% set cart_count = session.get('cart_count', 0) %}
+                {% else %}
+                    {% set cart_count = session.get('cart', []) | length %}
+                {% endif %}
+                
+                {% if cart_count > 0 %}
+                    (<span class="text-red-500 font-bold">{{ cart_count }}</span>)
+                {% endif %}
+            </a>
+            
+            <a href="{{ url_for('messages') }}" class="text-gray-400 hover:text-market-gold relative">
+                MESSAGES 
+                {% set msg_count = session.get('message_count', 0) %}
+                {% if msg_count > 0 %}
+                    (<span class="text-red-500 font-bold" id="message-count">{{ msg_count }}</span>)
+                {% endif %}
+            </a>
+            
+            {% set pgp_status = 'UNVERIFIED' %}
+            {% set pgp_color = 'text-red-500' %}
+            {% if session.get('logged_in') and session.get('pgp_verified') %}
+                {% set pgp_status = 'VERIFIED' %}
+                {% set pgp_color = 'text-green-500' %}
+            {% endif %}
+            
+            <span class="text-gray-400">PGP: <span class="{{ pgp_color }} font-bold" id="pgp-status">{{ pgp_status }}</span></span>
+            
+            {% if session.logged_in %}
+                <a href="{{ url_for('wallet') }}" id="balance-link" class="text-market-gold hover:text-white font-bold transition-colors">BALANCE: {{ session.balance | default('₿0.00000') }}</a>
+                <span class="text-white font-bold">Welcome, {{ session.username }}</span>
+                <a href="{{ url_for('logout') }}" id="auth-action-link" class="text-red-400 hover:text-white font-bold">LOGOUT</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" id="balance-link" class="text-market-gold hover:text-white font-bold transition-colors">BALANCE: ₿0.00000</a>
+                <a href="{{ url_for('login') }}" id="auth-action-link" class="text-market-gold hover:text-white font-bold">LOGIN</a>
+                <a href="{{ url_for('register') }}" id="register-link" class="text-gray-400 hover:text-market-gold">REGISTER</a>
+            {% endif %}
+        </nav>
+    </div>
+</div>
+
+<div class="bg-market-black border-b border-market-gold shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+        <nav class="flex space-x-1">
+            
+            <a href="{{ url_for('index') }}" 
+                class="px-5 py-3 font-bold transition-colors 
+                {% if request.endpoint == 'index' %}
+                    bg-market-gold text-black border-x border-market-gold
+                {% else %}
+                    text-market-gold hover:bg-market-gray
+                {% endif %}"
+            >HOME</a>
+            
+            <a href="{{ url_for('listings') }}" 
+                class="px-5 py-3 font-bold transition-colors 
+                {% if request.endpoint == 'listings' or request.endpoint == 'product_detail' %}
+                    bg-market-gold text-black border-x border-market-gold
+                {% else %}
+                    text-market-gold hover:bg-market-gray
+                {% endif %}"
+            >LISTINGS</a>
+            
+            {# CRITICAL FIX: Use .get() to safely check for the 'has_orders' session variable #}
+            {% if session.get('logged_in') and session.get('has_orders', False) %}
+            <a href="{{ url_for('orders') }}" 
+                class="px-5 py-3 font-bold transition-colors 
+                {% if request.endpoint == 'orders' %}
+                    bg-market-gold text-black border-x border-market-gold
+                {% else %}
+                    text-market-gold hover:bg-market-gray
+                {% endif %}"
+            >ORDERS</a>
+            {% endif %}
+            
+            <a href="{{ url_for('support') }}" 
+                class="px-5 py-3 font-bold transition-colors 
+                {% if request.endpoint == 'support' %}
+                    bg-market-gold text-black border-x border-market-gold
+                {% else %}
+                    text-market-gold hover:bg-market-gray
+                {% endif %}"
+            >SUPPORT</a>
+            
+            <a href="{{ url_for('vendor') }}" 
+                class="px-5 py-3 font-bold transition-colors 
+                {% if request.endpoint == 'vendor' %}
+                    bg-market-gold text-black border-x border-market-gold
+                {% else %}
+                    text-market-gold hover:bg-market-gray
+                {% endif %}"
+            >BECOME A VENDOR</a>
+            
+        </nav>
+        
+        <form id="search-form" class="flex items-center space-x-2" action="{{ url_for('listings') }}" method="GET">
+            <input type="text" name="q" id="search-input" placeholder="Search Listings..." 
+                    class="p-2 bg-market-black border border-market-gold text-white focus:ring-market-gold focus:border-market-gold w-64 text-sm rounded-sm" 
+                    value="{{ request.args.get('q', '') }}" />
+            <button type="submit" class="bg-market-gold text-black font-bold px-4 py-2 hover:bg-yellow-400 transition duration-150 rounded-sm">GO</button>
+        </form>
+    </div>
+</div>

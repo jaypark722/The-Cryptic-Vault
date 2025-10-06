@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}THE CRYPTIC VAULT | Wallet{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+    <h2 class="text-3xl text-market-gold font-bold mb-6 border-b border-market-border pb-3">Digital Wallet</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+        <div class="bg-market-gray border border-market-gold p-6 rounded-lg shadow-xl">
+            <p class="text-sm text-gray-400">Current Balance</p>
+            <p class="text-4xl text-white font-mono font-bold mt-1">{{ session.balance | default('₿0.00000') }}</p>
+        </div>
+
+        {% set pgp_status = 'UNVERIFIED' %}
+        {% set pgp_color = 'text-red-500' %}
+        {% if session.get('pgp_verified') %}
+            {% set pgp_status = 'VERIFIED' %}
+            {% set pgp_color = 'text-green-500' %}
+        {% endif %}
+
+        <div class="bg-market-gray border border-market-border p-6 rounded-lg shadow-xl">
+            <p class="text-sm text-gray-400">Security Status</p>
+            <p class="text-xl font-bold mt-1">PGP: <span class="{{ pgp_color }}">{{ pgp_status }}</span></p>
+            <p class="text-xs text-gray-500 mt-2">PGP VERIFIED accounts minimize risk during transactions.</p>
+        </div>
+
+        <div class="bg-market-gray border border-market-border p-6 rounded-lg shadow-xl">
+            <p class="text-sm text-market-gold">Pending Actions</p>
+            <p class="text-xl text-white font-bold mt-1">No Orders in Progress</p>
+            <p class="text-xs text-gray-500 mt-2">Check 'Orders' for status updates on placed items.</p>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+        <div class="bg-market-gray border border-market-border p-6 rounded-lg shadow-xl">
+            <h3 class="text-2xl text-market-gold font-bold mb-4">Deposit Funds</h3>
+            <p class="text-gray-400 mb-4">Select this option to connect your external wallet and fund your account.</p>
+            <button onclick="showConnectWallet('Deposit')" 
+                        class="w-full bg-green-700 hover:bg-green-600 text-white font-bold py-3 rounded transition duration-150">
+                INITIATE DEPOSIT
+            </button>
+        </div>
+
+        <div class="bg-market-gray border border-market-border p-6 rounded-lg shadow-xl">
+            <h3 class="text-2xl text-red-500 font-bold mb-4">Withdraw Funds</h3>
+            <p class="text-gray-400 mb-4">Select this option to connect your external wallet and withdraw your balance.</p>
+            <button onclick="showConnectWallet('Withdrawal')" 
+                        class="w-full bg-red-700 hover:bg-red-600 text-white font-bold py-3 rounded transition duration-150">
+                INITIATE WITHDRAWAL
+            </button>
+        </div>
+    </div>
+    
+    <h3 class="text-2xl text-market-gold font-bold mb-4 border-b border-market-border pb-2">Transaction History</h3>
+
+    <div class="bg-market-gray border border-market-border p-6 rounded-lg shadow-xl">
+        {% if history %}
+        <table class="min-w-full table-auto">
+            <thead>
+                <tr class="text-gray-400 text-sm border-b border-market-border">
+                    <th class="px-4 py-2 text-left">Date/Time</th>
+                    <th class="px-4 py-2 text-left">Type</th>
+                    <th class="px-4 py-2 text-left">Description</th>
+                    <th class="px-4 py-2 text-right">Amount (BTC)</th>
+                </tr>
+            </thead>
+            <tbody class="text-white text-sm">
+                {% for tx in history %}
+                <tr class="hover:bg-market-gray-dark border-b border-market-border last:border-b-0">
+                    <td class="px-4 py-3 font-mono text-gray-500">{{ tx.date }}</td>
+                    <td class="px-4 py-3 font-bold {% if tx.type == 'DEPOSIT' %}text-green-500{% else %}text-red-500{% endif %}">{{ tx.type }}</td>
+                    <td class="px-4 py-3">{{ tx.description }}</td>
+                    <td class="px-4 py-3 text-right font-mono">{{ tx.amount }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-gray-400 text-center py-4">No transactions recorded yet.</p>
+        {% endif %}
+    </div>
+
+
+    <div id="connect-wallet-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+        <div class="bg-market-gray border border-market-gold p-8 rounded-lg w-full max-w-md">
+            <h3 id="modal-header" class="text-2xl text-market-gold font-bold mb-4"></h3>
+            
+            <p class="text-white mb-4">
+                Funding is initiated through a **strictly PGP-encrypted wallet address handshake**. This process ensures the integrity of the deposit address and protects your funds against passive monitoring or address tampering.
+            </p>
+            <p class="text-yellow-400 font-bold mb-6">
+                **STATUS:** Awaiting encrypted wallet connection handshake. Funds will be credited upon 3 network confirmations.
+            </p>
+            <button onclick="hideConnectWallet()" 
+                        class="w-full mt-6 bg-market-gold hover:bg-yellow-400 text-black font-bold py-2 rounded transition duration-150">
+                CLOSE
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function showConnectWallet(action) {
+        document.getElementById('modal-header').innerText = `Secure ${action} via Wallet`;
+        document.getElementById('connect-wallet-modal').classList.remove('hidden');
+    }
+
+    function hideConnectWallet() {
+        document.getElementById('connect-wallet-modal').classList.add('hidden');
+    }
+</script>
+{% endblock %}

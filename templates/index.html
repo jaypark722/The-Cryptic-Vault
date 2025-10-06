@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}THE CRYPTIC VAULT | Home{% endblock %}
+
+{% block content %}
+<div class="p-6 bg-market-gray border border-market-gold rounded-lg shadow-xl mb-8">
+    <p class="text-xl text-white font-bold mb-3 border-b border-market-border pb-2">Welcome to the Vault</p>
+    <p class="text-gray-400" id="welcome-message">Secure, PGP-enforced transactions for digital and physical assets. **MONERO (XMR) is strongly preferred.**</p>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <div class="bg-market-gray border border-market-border p-5 rounded-lg">
+        <h3 class="text-market-gold font-bold text-lg mb-3">Hot Listings</h3>
+        
+        {% if hot_listing %}
+        <p class="text-sm font-semibold text-red-400 mb-1">FEATURED EXPLOIT</p>
+        <a href="{{ url_for('product_detail', product_id=hot_listing['Product ID']) }}" class="text-white hover:text-market-gold transition duration-150 block text-md font-bold mb-1">
+            {{ hot_listing['Product Name (Description)'] }}
+        </a>
+        <p class="text-market-gold mb-3">{{ hot_listing['Price (BTC)'] }}</p>
+        {% endif %}
+
+        <p class="text-gray-400 border-t border-market-border pt-3 mt-3">
+            Top zero-days and fresh data dumps available now. <a href="{{ url_for('listings') }}" class="text-market-gold hover:text-white">View All.</a>
+        </p>
+    </div>
+    
+    <div class="bg-market-gray border border-market-border p-5 rounded-lg">
+        <h3 class="text-market-gold font-bold text-lg mb-3">Site News</h3>
+        <p class="text-gray-400">V5.0 Update: Monero (XMR) deposits now automatically converted to BTC display units. Stealth improved.</p>
+    </div>
+    
+    <div class="bg-market-gray border border-market-border p-5 rounded-lg">
+        <h3 class="text-market-gold font-bold text-lg mb-3">Support & Safety</h3>
+        <p class="text-gray-400">Always use PGP encryption for communications. Never discuss clearnet details. <a href="{{ url_for('support') }}" class="text-market-gold hover:text-white">Need Help?</a></p>
+    </div>
+</div>
+
+{% endblock %}

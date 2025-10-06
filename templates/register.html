@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}THE CRYPTIC VAULT | Register{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-market-gray border border-market-gold p-8 rounded-lg shadow-xl mt-12">
+    <h2 class="text-3xl text-market-gold font-bold mb-6">Handler Registration</h2>
+    
+    {% if error %}
+        <p class="bg-red-900 border border-red-500 text-white p-3 rounded mb-4">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('register') }}" id="register-form" onsubmit="showProcessing(event)">
+        <div class="mb-4">
+            <label for="username" class="block text-gray-400 text-sm font-bold mb-2">Username</label>
+            <input type="text" id="username" name="username" required 
+                    class="shadow appearance-none border border-market-border bg-white rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+        
+        <div class="mb-4 relative">
+            <label for="password" class="block text-gray-400 text-sm font-bold mb-2">Password (Min 8 Chars)</label>
+            <input type="password" id="password" name="password" required 
+                    class="shadow appearance-none border border-market-border bg-white rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline">
+            <i class="fas fa-eye-slash absolute right-3 top-1/2 toggle-icon cursor-pointer text-gray-600" 
+                id="toggle-password" onclick="togglePassword('password')"></i>
+        </div>
+        
+        <div class="mb-4">
+            <label for="coupon" class="block text-gray-400 text-sm font-bold mb-2">Registration Coupon (Optional)</label>
+            <input type="text" id="coupon" name="coupon" 
+                    class="shadow appearance-none border border-market-border bg-white rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline">
+            <p class="text-xs text-market-gold mt-1">Enter **REDTEAMBECODE** for an initial balance of **₿0.000850**.</p>
+        </div>
+        
+        <div class="mb-6">
+            <label for="pgp_key" class="block text-red-400 text-sm font-bold mb-2">PGP Public Key (Optional)</label>
+            <textarea id="pgp_key" name="pgp_key" rows="5" placeholder="-----BEGIN PGP PUBLIC KEY BLOCK-----...-----END PGP PUBLIC KEY BLOCK-----"
+                      class="shadow appearance-none border border-market-border bg-white rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline text-xs font-mono"></textarea>
+            <p class="text-xs text-gray-500 mt-1">Submit your PGP key for **VERIFIED** status on your profile.</p>
+            <div id="pgp-warning" class="hidden text-xs text-red-500 mt-1 font-semibold">
+                ⚠️ Key seems improperly formatted. Must start with -----BEGIN PGP PUBLIC KEY BLOCK-----.
+            </div>
+        </div>
+
+        <button type="submit" 
+                class="w-full bg-market-gold hover:bg-yellow-400 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150">
+            REGISTER HANDLER
+        </button>
+    </form>
+    
+    <p class="mt-4 text-center text-gray-400">
+        Already a handler? <a href="{{ url_for('login') }}" class="text-market-gold hover:underline">Log In Here</a>
+    </p>
+</div>
+
+<script>
+    // Note: This local togglePassword function is redundant since base.html already defines window.togglePassword.
+    // It's left here to avoid breaking existing logic, but the base.html version is preferred.
+    function togglePassword(id) {
+        const input = document.getElementById(id);
+        const icon = document.getElementById(`toggle-${id}`);
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('register-form');
+        const pgpKey = document.getElementById('pgp_key');
+        const pgpWarning = document.getElementById('pgp-warning');
+        
+        // --- Client-side PGP hint ---
+        pgpKey.addEventListener('input', () => {
+            const keyContent = pgpKey.value.trim();
+            if (keyContent === '') {
+                pgpWarning.classList.add('hidden');
+                return;
+            }
+            // Basic check for the PGP header
+            const startsWithHeader = keyContent.startsWith('-----BEGIN PGP PUBLIC KEY BLOCK-----');
+            if (startsWithHeader) {
+                pgpWarning.classList.add('hidden');
+            } else {
+                pgpWarning.classList.remove('hidden');
+            }
+        });
+        // -----------------------------------
+
+        // Target all form elements (including the new textarea)
+        const formElements = form.querySelectorAll('input, textarea'); 
+
+        formElements.forEach(element => {
+            element.addEventListener('keypress', function(e) {
+                // Check if the pressed key is 'Enter' (key code 13 or 'Enter' string)
+                if (e.key === 'Enter' || e.keyCode === 13) {
+                    // Prevent the default action (which is usually a form submit)
+                    e.preventDefault(); 
+                    
+                    // Manually submit the form if the element is NOT the textarea
+                    if (element.tagName.toLowerCase() !== 'textarea') {
+                        form.submit();
+                    }
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

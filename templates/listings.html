@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}THE CRYPTIC VAULT | Listings{% endblock %}
+
+{% block content %}
+<h1 class="text-3xl font-bold text-market-gold mb-6 border-b border-market-border pb-3">MARKET LISTINGS</h1>
+
+<table id="product-table" class="min-w-full divide-y divide-market-border bg-market-gray border border-market-border rounded-md shadow-lg">
+    <thead class="bg-market-gray text-xs uppercase tracking-wider">
+        <tr>
+            <th class="px-6 py-3 text-left font-medium text-gray-300">Product ID</th>
+            <th class="px-6 py-3 text-left font-medium text-gray-300">Category</th>
+            <th class="px-6 py-3 text-left font-medium text-gray-300">Description</th>
+            <th class="px-6 py-3 text-left font-medium text-gray-300">Vendor</th>
+            <th class="px-6 py-3 text-left font-medium text-gray-300">Price (BTC)</th>
+        </tr>
+    </thead>
+    <tbody class="divide-y divide-market-border text-sm text-gray-400">
+        </tbody>
+</table>
+
+{% endblock %}

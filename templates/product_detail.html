@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}VAULT | {{ product['Product ID'] }}{% endblock %}
+
+{% block content %}
+<div class="bg-market-gray border border-market-gold p-8 rounded-lg shadow-xl">
+    
+    <h1 class="text-3xl font-bold text-white mb-2">{{ product['Product Name (Description)'] }}</h1>
+    <p class="text-gray-400 mb-6 border-b border-market-border pb-3">
+        Listing ID: <span class="text-market-gold font-mono">{{ product['Product ID'] }}</span>
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div class="border border-market-border p-4 rounded-md">
+            <h3 class="text-market-gold font-bold text-lg mb-2">Vendor Information</h3>
+            <p class="text-gray-300">Vendor: <span class="font-semibold">{{ product['Vendor Name'] }}</span></p>
+            <p class="text-gray-300">Category: <span class="font-semibold">{{ product['Category'] }}</span></p>
+            {# REVISED LINE BELOW: Use the randomized keys inserted by get_product_by_id #}
+            <p class="text-gray-500 text-sm mt-2">
+                Vendor score: <span class="font-semibold">{{ product['Vendor score'] }}</span> ({{ product['Sales'] }} sales)
+            </p>
+        </div>
+
+        <div class="border border-market-border p-4 rounded-md bg-market-border">
+            <h3 class="text-market-gold font-bold text-lg mb-3">Price & Purchase</h3>
+            <p class="text-4xl text-white font-extrabold mb-4">{{ product['Price (BTC)'] }} <span class="text-2xl font-normal">BTC</span></p>
+            
+            <form method="POST" action="{{ url_for('add_to_cart', listing_id=product['Product ID']) }}">
+                <button type="submit" class="w-full bg-market-gold text-black font-bold text-lg py-3 hover:bg-yellow-400 transition duration-150 rounded-sm">
+                    <i class="fas fa-cart-plus mr-2"></i> ADD TO BASKET
+                </button>
+            </form>
+            <p class="text-gray-500 text-sm mt-2 text-center">Monero (XMR) deposits auto-convert to BTC display.</p>
+        </div>
+    </div>
+    
+    {# REMOVED: The entire Jinja block that displayed product['Decoy Hint'] has been removed. #}
+
+    <div class="mt-8 border-t border-market-border pt-6">
+        <h3 class="text-market-gold font-bold text-lg mb-3">Item Details</h3>
+        <p class="text-gray-400 leading-relaxed">
+            This item is encrypted and stored off-chain until sale is finalized. Delivery will occur within 24-48 hours via PGP encrypted message to your registered public key. Confirm your PGP is active before completing checkout.
+        </p>
+    </div>
+
+    <a href="{{ url_for('listings') }}" class="inline-block mt-8 text-market-gold hover:text-white">
+        &larr; Back to Listings
+    </a>
+</div>
+
+{% include '404.html' ignore missing %}
+
+{% endblock %}
