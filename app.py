@@ -1,7 +1,7 @@
 import os
 import json
 import csv
-from flask import Flask, render_template, redirect, url_for, session, request, abort, flash
+from flask import Flask, render_template, redirect, url_for, session, request, abort, flash, send_file
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc
 from sqlalchemy.exc import OperationalError
@@ -25,6 +25,22 @@ gpg = gnupg.GPG()
 
 ADMIN_ID = 1
 HOT_LISTING_ID = 'DATA-SIM-ORANGE-CUST-B0T'
+
+# Static encrypted message for hot listing deliveries
+STATIC_ENCRYPTED_MESSAGE = """-----BEGIN PGP MESSAGE-----
+
+hF4DlqYV2UBytUgSAQdA9HZYEphcR5MSFfaUWcVEA8wuCboXnn6PhwTXXADLynIw
+qIMPG9/yYpX1/tcvvDPPwfJQNR29Y2Zi6CpGHxK/M0SeaIo5AD2AJfbDyvDp8sAl
+1MCTAQkCEIMsjzARifIF4yPFFq5ifCukmKW3BgcZZv4OxCT2ewp7snA+lAwWwg2S
+GiINR6VBGij65Yle91nbqKVNtw7PTiZbOKNzr1tFp+SlsG7uI1cEySH+5Y9Svhs4
+8EzpTL1E5TrUsp/PHr1GNILPZOhDV8gyAVrV3CB9UYRm9or96M30T3f68vQvJcku
+Y8Lo0jPFKju3RIIs+MombhlOpPx4ubdqKkpDt91YmIRf+bgURiyaqp6Lwm23KakB
+MYBiIesMzzjxRC4LoVTGQffMdjbPTvdS4T8g6YPLZA+Oc/67S/mdSDZ+y6nbWnnn
+iczoVXzsRWgHBqKGSKtD6l17LYOzXAatNI4/+AkNUoW2c4hCPrUvglT6p+fD4W5q
+jfO0MKqdkukDJJB7AynptaM0vh1VuYH4VbR1pHKDyG6NXAszBRQmQZHjoM0xyIG0
+I+FaDffg
+=M1j5
+-----END PGP MESSAGE-----"""
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -85,11 +101,11 @@ def create_welcome_message(user_id, username, has_pgp):
     pgp_reminder = ""
     if not has_pgp:
         pgp_reminder = ("\n\n🚨 **SECURITY WARNING:** We noticed you did not submit a PGP Public Key. "
-                        "For your own safety and to guarantee privacy for all transaction details, "
-                        "please set up PGP on your profile immediately. Unencrypted orders are placed at your own risk. ")
+                         "For your own safety and to guarantee privacy for all transaction details, "
+                         "please set up PGP on your profile immediately. Unencrypted orders are placed at your own risk. ")
     else:
         pgp_reminder = ("\n\n✅ **PGP Verified:** Thank you for prioritizing security. Your account is PGP VERIFIED. "
-                        "Please ensure you protect your private key at all times.")
+                         "Please ensure you protect your private key at all times.")
     body = (f"Welcome, {username}.\n\n"
               "You have successfully registered a new Handler account on The Cryptic Vault. "
               "Your starting balance is now available for trade. "
@@ -135,7 +151,13 @@ def get_product_by_id(product_id):
                         product['price_float'] = 0.0
 
                     random.seed(product_id)
-                    random_score = round(random.uniform(4.3, 4.9), 1)
+                    
+                    if product_id == HOT_LISTING_ID:
+                        random_score = 4.8
+                    else:
+                        random_score = round(random.uniform(2.9, 4.8), 1)
+                        random_score = min(random_score, 4.8)
+
                     random_sales = random.randint(1000, 9999)
                     random.seed(None)
 
@@ -228,9 +250,9 @@ def cart():
     error_message = request.args.get('error')
 
     return render_template('cart.html',
-                            cart_details=cart_details,
-                            total_price=total_price_formatted,
-                            error=error_message)
+                           cart_details=cart_details,
+                           total_price=total_price_formatted,
+                           error=error_message)
 
 @app.route('/remove_from_cart/<string:listing_id>', methods=['POST'])
 def remove_from_cart(listing_id):
@@ -258,18 +280,7 @@ def register():
         coupon = request.form.get('coupon', '')
         pgp_key = request.form.get('pgp_key', '').strip()
 
-        if pgp_key:
-            import_result = gpg.import_keys(pgp_key)
-
-            if not import_result.results:
-                return render_template('register.html', error='Invalid PGP Public Key format. Please submit a valid ASCII-armored key block.')
-
-            try:
-                for fingerprint in [r['fingerprint'] for r in import_result.results]:
-                    gpg.delete_keys(fingerprint)
-            except Exception as e:
-                print(f"Warning: Failed to delete imported key: {e}")
-
+        # PGP key validation removed - now just for show
 
         if User.query.filter_by(username=username).first():
             return render_template('register.html', error='Username already taken.')
@@ -431,7 +442,6 @@ def checkout():
         else:
             return redirect(url_for('cart', error=f'ERROR: Product {item_id} not found in listings.'))
 
-
     current_balance = btc_to_float(user.balance)
 
     if current_balance < total_btc:
@@ -439,7 +449,6 @@ def checkout():
 
     new_balance_float = current_balance - total_btc
     user.balance = f'₿{new_balance_float:.5f}'
-
 
     new_order = Order(
         user_id=user.id,
@@ -449,7 +458,7 @@ def checkout():
         encrypted_delivery="Processing delivery... Please wait on the orders page."
     )
     db.session.add(new_order)
-
+    db.session.flush() 
 
     transaction_history = json.loads(user.transaction_history_json)
 
@@ -462,55 +471,43 @@ def checkout():
         })
 
     user.transaction_history_json = json.dumps(transaction_history)
-
     user.cart_json = '[]'
     db.session.commit()
+    
     session['balance'] = user.balance
     session['cart_count'] = 0
     session['has_orders'] = True
     session.modified = True
 
-
     final_encrypted_content = None
     final_status = 'SHIPPED'
-
+    prefixed_order_id = f'54987{new_order.id}' 
+    
     if HOT_LISTING_ID in cart_items:
         try:
             file_name = 'orange.csv'
             file_path = os.path.join(app.root_path, 'static', 'data', file_name)
 
-            product_records = []
-            with open(file_path, 'r', encoding='latin-1') as f:
-                csv_reader = csv.DictReader(f)
-                for row in csv_reader:
-                    product_records.append(row)
+            if not os.path.exists(file_path):
+                raise FileNotFoundError
+            
+            download_token = f"ORDER-{new_order.id}"
+            download_link = url_for('download_delivery', token=download_token, _external=True)
 
-            product_content = json.dumps(product_records, indent=4)
-
-            encrypted_result = gpg.encrypt(product_content, user.pgp_public_key)
-
-            if encrypted_result.ok:
-                final_encrypted_content = str(encrypted_result)
-            else:
-                final_encrypted_content = f"ERROR: PGP encryption of delivery failed. Check your public key. ({encrypted_result.status})"
-                final_status = 'ERROR'
+            # Use the static encrypted message instead of actual encryption
+            final_encrypted_content = STATIC_ENCRYPTED_MESSAGE
 
         except FileNotFoundError:
-            final_encrypted_content = f"ERROR: Product file {file_name} not found on vendor system."
+            final_encrypted_content = f"ERROR: Product file {file_name} not found on vendor system. Contact support with order ID #{prefixed_order_id}."
             final_status = 'ERROR'
         except Exception as e:
-            final_encrypted_content = f"ERROR: System failed to process delivery (CSV/JSON error: {e})."
+            safe_error_msg = str(e).encode('ascii', errors='replace').decode('ascii')
+            final_encrypted_content = f"ERROR: System failed to process delivery ({safe_error_msg}). Contact support."
             final_status = 'ERROR'
     else:
-        delivery_message = "Your order has been placed. Delivery details for items other than the Orange SIM are pending vendor fulfillment."
-        encrypted_result = gpg.encrypt(delivery_message, user.pgp_public_key)
-
-        if encrypted_result.ok:
-            final_encrypted_content = str(encrypted_result)
-        else:
-            final_encrypted_content = "Generic Delivery Error"
-            final_status = 'ERROR'
-
+        # For non-hot listing items, provide a generic message
+        final_encrypted_content = "Your order has been placed. Delivery details for items other than the Orange SIM are pending vendor fulfillment."
+        final_status = 'SHIPPED'
 
     with app.app_context():
         order_to_update = Order.query.get(new_order.id)
@@ -519,8 +516,37 @@ def checkout():
             order_to_update.status = final_status
             db.session.commit()
 
+    return redirect(url_for('orders', success=f'Transaction successful! Order #{prefixed_order_id} placed and processing initiated.'))
 
-    return redirect(url_for('orders', success=f'Transaction successful! Order #{new_order.id} placed and processing initiated.'))
+
+@app.route('/download/delivery/<string:token>')
+def download_delivery(token):
+    if not token.startswith('ORDER-') or not token[6:].isdigit():
+        return "Invalid download token.", 403
+    
+    order_id = int(token[6:])
+    order = Order.query.get(order_id)
+    
+    if not session.get('logged_in') or not order or order.user_id != session['user_id']:
+        return "Unauthorized access or invalid order token.", 403
+
+    order_items = json.loads(order.items_json)
+    if HOT_LISTING_ID not in order_items:
+        return "Download not available for this product.", 403
+
+    if order.status not in ['SHIPPED', 'DELIVERED']:
+        return "Delivery is not finalized yet. Decrypt the message for status updates.", 403
+    
+    file_name = 'orange.csv'
+    file_path = os.path.join(app.root_path, 'static', 'data', file_name)
+    
+    if not os.path.exists(file_path):
+        return "File not found on server.", 404
+
+    return send_file(file_path, 
+                     as_attachment=True, 
+                     download_name=file_name,
+                     mimetype='text/csv')
 
 
 @app.route('/profile', methods=['GET', 'POST'])
@@ -541,24 +567,14 @@ def profile():
         if not pgp_key:
             error_message = 'Please paste a valid PGP Public Key to verify your account.'
         else:
-            import_result = gpg.import_keys(pgp_key)
+            # No validation - just save it for show
+            user.pgp_public_key = pgp_key
+            db.session.commit()
 
-            if not import_result.results:
-                error_message = 'Invalid PGP Public Key format. Please submit a valid ASCII-armored key block.'
-            else:
-                try:
-                    for fingerprint in [r['fingerprint'] for r in import_result.results]:
-                        gpg.delete_keys(fingerprint)
-                except Exception as e:
-                    print(f"Warning: Failed to delete imported key: {e}")
+            session['pgp_verified'] = True
+            success_message = 'PGP Public Key successfully saved and account is now VERIFIED.'
 
-                user.pgp_public_key = pgp_key
-                db.session.commit()
-
-                session['pgp_verified'] = True
-                success_message = 'PGP Public Key successfully saved and account is now VERIFIED.'
-
-                return redirect(url_for('profile', success=success_message))
+            return redirect(url_for('profile', success=success_message))
 
     pgp_verified = bool(user.pgp_public_key)
     pgp_status = 'VERIFIED' if pgp_verified else 'UNVERIFIED'
@@ -577,9 +593,9 @@ def profile():
     }
 
     return render_template('profile.html',
-                            user_data=user_data,
-                            error=error_message,
-                            success=success_message)
+                           user_data=user_data,
+                           error=error_message,
+                           success=success_message)
 
 
 @app.route('/orders')
@@ -588,7 +604,6 @@ def orders():
         return redirect(url_for('login'))
 
     user_id = session['user_id']
-
     user_orders = Order.query.filter_by(user_id=user_id).order_by(desc(Order.order_date)).all()
 
     orders_data = []
@@ -638,18 +653,16 @@ def orders():
                     item_name = f"ERROR: Unknown Product ({display_id})"
                     item_id = display_id
 
-
         except (json.JSONDecodeError, TypeError) as e:
             item_name = f"Items List Corrupted"
             item_id = 'N/A'
             item_qty = len(item_ids) if 'item_ids' in locals() else 0
 
-
         has_delivery = order.status == 'SHIPPED' or order.status == 'ERROR'
 
         orders_data.append({
             'id': order.id,
-            'display_id': f'54987{order.id}',  # <--- ADDED LINE FOR DISPLAY ID
+            'display_id': f'54987{order.id}', 
             'date': order.order_date.strftime('%Y-%m-%d %H:%M:%S'),
             'total': order.total_amount,
             'status': order.status,
@@ -738,8 +751,8 @@ def wallet():
         transaction_history = []
 
     return render_template('wallet.html',
-                            balance=user.balance,
-                            history=transaction_history)
+                           balance=user.balance,
+                           history=transaction_history)
 
 @app.route('/support', methods=['GET', 'POST'])
 def support():
@@ -770,7 +783,7 @@ def support():
                 db.session.rollback()
                 error = f"Failed to submit ticket due to database error: {e}"
 
-        return redirect(url_for('support', success=success, error=error))
+            return redirect(url_for('support', success=success, error=error))
 
     error_message = request.args.get('error')
     success_message = request.args.get('success')
@@ -808,7 +821,7 @@ def vendor():
                 db.session.rollback()
                 error = f"Failed to submit application due to database error: {e}"
 
-        return redirect(url_for('vendor', success=success, error=error))
+            return redirect(url_for('vendor', success=success, error=error))
 
     error_message = request.args.get('error')
     success_message = request.args.get('success')
@@ -816,13 +829,23 @@ def vendor():
 
 @app.route('/vendor_profile/<int:vendor_id>')
 def vendor_profile(vendor_id):
-    return render_template('vendor.html')
-
-@app.errorhandler(404)
-def page_not_found(e):
-    return "404 Not Found - Custom Handler", 404
+    # This route is not fully implemented in your provided context,
+    # but for completeness in a real app, it would fetch vendor info
+    # and display a profile/review page. For now, it's a basic stub.
+    return f"Vendor Profile for ID {vendor_id} - Route stub."
 
 if __name__ == '__main__':
     with app.app_context():
-        os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+        # db.drop_all() # Uncomment to reset database
         db.create_all()
+        
+        if not User.query.get(ADMIN_ID):
+            admin_user = User(
+                id=ADMIN_ID,
+                username='ADMIN',
+                password='password123',
+                balance='₿0.00000',
+                pgp_public_key='PGP_KEY_NOT_NEEDED_FOR_ADMIN_INBOUND'
+            )
+            db.session.add(admin_user)
+            db.session.commit()

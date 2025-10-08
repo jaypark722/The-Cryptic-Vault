@@ -34,7 +34,7 @@
 
             {% for order in orders %}
             <div class="grid grid-cols-10 items-center py-3 border-b border-market-border hover:bg-market-black transition duration-100">
-                <div class="col-span-1 text-sm text-gray-500 font-mono">{{ order.display_id }}</div> {# REVISED: Used order.display_id #}
+                <div class="col-span-1 text-sm text-gray-500 font-mono">{{ order.display_id }}</div> 
                 
                 <div class="col-span-4">
                     <a href="{% if order.product_id != 'COUPON-REDTEAM' and order.product_id != 'N/A' %}{{ url_for('product_detail', product_id=order.product_id) }}{% else %}#{% endif %}" 
@@ -60,12 +60,13 @@
                     {% if order.status == 'DEPOSIT' %}
                         <span class="text-green-500 font-bold text-xs">COUPON REDEEMED</span>
                         <a href="{{ url_for('wallet') }}" class="text-xs bg-green-700 hover:bg-green-600 text-white px-2 py-1 rounded-sm">View Wallet</a>
-                    {% elif order.status == 'PENDING' %}
-                        <span class="text-yellow-500 font-bold text-xs">PENDING CONFIRMATION</span>
-                    {% elif order.status == 'SHIPPED' or order.status == 'PROCESSING' %}
-                        <span class="text-blue-500 font-bold text-xs">SHIPPED</span>
+                    {% elif order.status == 'PROCESSING' %}
+                        <span class="text-yellow-500 font-bold text-xs">PROCESSING</span>
+                    {% elif order.status == 'SHIPPED' or order.status == 'ERROR' %}
+                        <span class="{% if order.status == 'SHIPPED' %}text-blue-500{% else %}text-red-500{% endif %} font-bold text-xs">{{ order.status }}</span>
                         {% if order.has_delivery %}
-                        <a href="{{ url_for('orders') }}?view={{ order.id }}" class="text-xs bg-blue-700 hover:bg-blue-600 text-white px-2 py-1 rounded-sm">View Delivery</a>
+                        {# The 'view' query uses the database ID, not the display ID #}
+                        <a href="{{ url_for('orders', view=order.id) }}" class="text-xs bg-blue-700 hover:bg-blue-600 text-white px-2 py-1 rounded-sm">View Delivery</a>
                         {% endif %}
                     {% elif order.status == 'DELIVERED' %}
                         <span class="text-green-500 font-bold text-xs">DELIVERED</span>
@@ -86,23 +87,51 @@
     {% endif %}
 </div>
 
+---
+
 <div class="w-full mt-6">
-    <h3 class="text-xl text-white font-bold mb-4 border-b border-market-border pb-2">Order Delivery</h3>
-    {% set view_order_id = request.args.get('view') %}
-    {% set delivered_order = orders | selectattr('has_delivery') | selectattr('id', 'equalto', view_order_id|int) | first %}
+    <h3 class="text-xl text-white font-bold mb-4 border-b border-market-border pb-2">Order Delivery Console</h3>
     
-    {% if delivered_order %}
+    {# Find the order that was clicked based on the 'view' query parameter #}
+    {% set view_order_id = request.args.get('view') %}
+    {# Note: delivered_order.id is an INT, view_order_id is a STRING, so convert view_order_id to INT for comparison #}
+    {% set delivered_order = orders | selectattr('id', 'equalto', view_order_id|int) | first %}
+    
+    {% if delivered_order and delivered_order.has_delivery %}
         <div class="bg-market-gray border border-market-gold p-4 rounded-lg">
-            {# NOTE: Displaying original ID here is often useful for support/internal reference, but I'll use display_id as requested for full revision #}
-            <p class="text-sm text-market-gold mb-2">Delivery for Order #{{ delivered_order.display_id }}:</p> {# REVISED: Used delivered_order.display_id #}
-            <div class="bg-market-black border border-blue-500 p-4 rounded font-mono text-xs text-green-300 overflow-x-auto whitespace-pre-wrap">
-                {{ delivered_order.encrypted_delivery }}
+            <p class="text-sm text-market-gold mb-2">Delivery Message for Order **#{{ delivered_order.display_id }}**:</p>
+
+            {# Conditional Instruction Block for Hot Listing #}
+            {% if delivered_order.product_id == 'DATA-SIM-ORANGE-CUST-B0T' and delivered_order.status == 'SHIPPED' %}
+            <div class="bg-market-black border border-yellow-500/50 p-3 rounded mb-3">
+                <p class="text-yellow-300 font-semibold mb-2">📥 SECURE DOWNLOAD LINK ENCRYPTED:</p>
+                <p class="text-sm text-gray-300 mb-3">
+                    The content below contains your **one-time, secure download link** for the Orange Customer Database.
+                    You **must** copy the entire PGP block (including <code class="bg-gray-700 px-1 rounded">-----BEGIN PGP MESSAGE-----</code> and <code class="bg-gray-700 px-1 rounded">-----END PGP MESSAGE-----</code>) 
+                    and decrypt it using a PGP decryption tool with the passphrase provided below.
+                </p>
+                <div class="bg-yellow-900/30 border border-yellow-500 p-2 rounded">
+                    <p class="text-yellow-200 font-bold text-sm">🔑 Passphrase: <span class="font-mono bg-gray-800 px-2 py-1 rounded text-green-400">redteam</span></p>
+                </div>
             </div>
+            {% endif %}
+
+            {# Encrypted Message Display #}
+            <div class="bg-market-black border border-blue-500 p-4 rounded font-mono text-xs text-green-300 overflow-x-auto whitespace-pre-wrap">{{ delivered_order.encrypted_delivery }}</div>
+            
+            {# Error Block #}
+            {% if delivered_order.status == 'ERROR' %}
+            <p class="text-red-400 text-sm mt-3 font-semibold">
+                ⚠️ **System Error:** The delivery failed due to a system or key error. Please copy the above message
+                and open a <a href="{{ url_for('support') }}" class="text-red-300 underline hover:text-red-500">support ticket</a> immediately.
+            </p>
+            {% endif %}
+            
         </div>
     {% else %}
-          <div class="bg-market-gray border border-market-border p-4 rounded-lg text-gray-400">
-             <p class="text-sm">No new digital deliveries awaiting download, or the order is not yet ready.</p>
-          </div>
+        <div class="bg-market-gray border border-market-border p-4 rounded-lg text-gray-400">
+            <p class="text-sm">No digital delivery is currently selected or available. Please click **View Delivery** next to an order with the **SHIPPED** or **ERROR** status.</p>
+        </div>
     {% endif %}
 </div>
 
