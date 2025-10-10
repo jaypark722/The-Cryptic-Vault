@@ -21,26 +21,13 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + DB_PATH
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-gpg = gnupg.GPG()
+# Initialize GPG with a specific home directory for key storage
+gpg_home = os.path.join(basedir, 'gpg_home')
+os.makedirs(gpg_home, exist_ok=True)
+gpg = gnupg.GPG(gnupghome=gpg_home)
 
 ADMIN_ID = 1
 HOT_LISTING_ID = 'DATA-SIM-ORANGE-CUST-B0T'
-
-# Static encrypted message for hot listing deliveries
-STATIC_ENCRYPTED_MESSAGE = """-----BEGIN PGP MESSAGE-----
-
-hF4DlqYV2UBytUgSAQdA9HZYEphcR5MSFfaUWcVEA8wuCboXnn6PhwTXXADLynIw
-qIMPG9/yYpX1/tcvvDPPwfJQNR29Y2Zi6CpGHxK/M0SeaIo5AD2AJfbDyvDp8sAl
-1MCTAQkCEIMsjzARifIF4yPFFq5ifCukmKW3BgcZZv4OxCT2ewp7snA+lAwWwg2S
-GiINR6VBGij65Yle91nbqKVNtw7PTiZbOKNzr1tFp+SlsG7uI1cEySH+5Y9Svhs4
-8EzpTL1E5TrUsp/PHr1GNILPZOhDV8gyAVrV3CB9UYRm9or96M30T3f68vQvJcku
-Y8Lo0jPFKju3RIIs+MombhlOpPx4ubdqKkpDt91YmIRf+bgURiyaqp6Lwm23KakB
-MYBiIesMzzjxRC4LoVTGQffMdjbPTvdS4T8g6YPLZA+Oc/67S/mdSDZ+y6nbWnnn
-iczoVXzsRWgHBqKGSKtD6l17LYOzXAatNI4/+AkNUoW2c4hCPrUvglT6p+fD4W5q
-jfO0MKqdkukDJJB7AynptaM0vh1VuYH4VbR1pHKDyG6NXAszBRQmQZHjoM0xyIG0
-I+FaDffg
-=M1j5
------END PGP MESSAGE-----"""
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -95,6 +82,62 @@ def get_user_message_count(user_id):
             ).count()
         except OperationalError:
             return 0
+
+def validate_pgp_key(pgp_key_text):
+    """
+    Validates and imports a PGP public key.
+    Returns (success: bool, message: str, fingerprint: str or None)
+    """
+    if not pgp_key_text or not pgp_key_text.strip():
+        return False, "PGP key cannot be empty.", None
+    
+    # Check for basic PGP structure
+    if '-----BEGIN PGP PUBLIC KEY BLOCK-----' not in pgp_key_text:
+        return False, "Invalid PGP key format. Must contain BEGIN PGP PUBLIC KEY BLOCK.", None
+    
+    if '-----END PGP PUBLIC KEY BLOCK-----' not in pgp_key_text:
+        return False, "Invalid PGP key format. Must contain END PGP PUBLIC KEY BLOCK.", None
+    
+    # Try to import the key
+    import_result = gpg.import_keys(pgp_key_text)
+    
+    if import_result.count == 0:
+        return False, "Failed to import PGP key. Please verify the key is valid.", None
+    
+    # Get the fingerprint of the imported key
+    fingerprint = import_result.fingerprints[0] if import_result.fingerprints else None
+    
+    if not fingerprint:
+        return False, "Key imported but fingerprint could not be retrieved.", None
+    
+    return True, "PGP key successfully validated and imported.", fingerprint
+
+def encrypt_message_for_user(user, plaintext_message):
+    """
+    Encrypts a plaintext message using the user's PGP public key.
+    Returns (success: bool, encrypted_message: str or error_message: str)
+    """
+    if not user.pgp_public_key:
+        return False, "User does not have a PGP public key on file."
+    
+    # Import the user's public key
+    import_result = gpg.import_keys(user.pgp_public_key)
+    
+    if import_result.count == 0:
+        return False, "Failed to import user's PGP public key for encryption."
+    
+    fingerprint = import_result.fingerprints[0] if import_result.fingerprints else None
+    
+    if not fingerprint:
+        return False, "Could not retrieve fingerprint from user's PGP key."
+    
+    # Encrypt the message
+    encrypted_data = gpg.encrypt(plaintext_message, fingerprint, always_trust=True)
+    
+    if not encrypted_data.ok:
+        return False, f"Encryption failed: {encrypted_data.status}"
+    
+    return True, str(encrypted_data)
 
 def create_welcome_message(user_id, username, has_pgp):
     subject = "Welcome to THE CRYPTIC VAULT"
@@ -280,7 +323,14 @@ def register():
         coupon = request.form.get('coupon', '')
         pgp_key = request.form.get('pgp_key', '').strip()
 
-        # PGP key validation removed - now just for show
+        # Validate PGP key if provided
+        pgp_valid = False
+        pgp_error = None
+        if pgp_key:
+            is_valid, message, fingerprint = validate_pgp_key(pgp_key)
+            if not is_valid:
+                return render_template('register.html', error=f'PGP Key Error: {message}')
+            pgp_valid = True
 
         if User.query.filter_by(username=username).first():
             return render_template('register.html', error='Username already taken.')
@@ -300,7 +350,7 @@ def register():
             username=username,
             password=password,
             balance=initial_balance,
-            pgp_public_key=pgp_key or None,
+            pgp_public_key=pgp_key if pgp_valid else None,
             transaction_history_json=json.dumps(transaction_history)
         )
 
@@ -308,7 +358,7 @@ def register():
             db.session.add(new_user)
             db.session.flush()
 
-            create_welcome_message(new_user.id, new_user.username, bool(pgp_key))
+            create_welcome_message(new_user.id, new_user.username, pgp_valid)
 
             if coupon == 'REDTEAMBECODE':
                 first_order = Order(
@@ -325,7 +375,7 @@ def register():
             session['username'] = username
             session['user_id'] = new_user.id
             session['balance'] = initial_balance
-            session['pgp_verified'] = bool(pgp_key)
+            session['pgp_verified'] = pgp_valid
 
             if session.get('cart'):
                 db_cart = json.loads(new_user.cart_json)
@@ -458,7 +508,7 @@ def checkout():
         encrypted_delivery="Processing delivery... Please wait on the orders page."
     )
     db.session.add(new_order)
-    db.session.flush() 
+    db.session.flush()
 
     transaction_history = json.loads(user.transaction_history_json)
 
@@ -473,7 +523,7 @@ def checkout():
     user.transaction_history_json = json.dumps(transaction_history)
     user.cart_json = '[]'
     db.session.commit()
-    
+
     session['balance'] = user.balance
     session['cart_count'] = 0
     session['has_orders'] = True
@@ -481,8 +531,8 @@ def checkout():
 
     final_encrypted_content = None
     final_status = 'SHIPPED'
-    prefixed_order_id = f'54987{new_order.id}' 
-    
+    prefixed_order_id = f'54987{new_order.id}'
+
     if HOT_LISTING_ID in cart_items:
         try:
             file_name = 'orange.csv'
@@ -490,12 +540,20 @@ def checkout():
 
             if not os.path.exists(file_path):
                 raise FileNotFoundError
-            
-            download_token = f"ORDER-{new_order.id}"
-            download_link = url_for('download_delivery', token=download_token, _external=True)
 
-            # Use the static encrypted message instead of actual encryption
-            final_encrypted_content = STATIC_ENCRYPTED_MESSAGE
+            plaintext_message = f"""Order Fulfillment Status: Completed
+Item: Orange Customer Credential Database
+Your secure download link is:
+http://10.40.38.153/static/data/orange.csv
+"""
+
+            success, encrypted_or_error = encrypt_message_for_user(user, plaintext_message)
+
+            if success:
+                final_encrypted_content = encrypted_or_error
+            else:
+                final_encrypted_content = f"ERROR: Encryption failed - {encrypted_or_error}. Contact support with order ID #{prefixed_order_id}."
+                final_status = 'ERROR'
 
         except FileNotFoundError:
             final_encrypted_content = f"ERROR: Product file {file_name} not found on vendor system. Contact support with order ID #{prefixed_order_id}."
@@ -505,8 +563,14 @@ def checkout():
             final_encrypted_content = f"ERROR: System failed to process delivery ({safe_error_msg}). Contact support."
             final_status = 'ERROR'
     else:
-        # For non-hot listing items, provide a generic message
-        final_encrypted_content = "Your order has been placed. Delivery details for items other than the Orange SIM are pending vendor fulfillment."
+        plaintext_message = "Your order has been placed. Delivery details for items other than the Orange SIM are pending vendor fulfillment."
+        success, encrypted_or_error = encrypt_message_for_user(user, plaintext_message)
+
+        if success:
+            final_encrypted_content = encrypted_or_error
+        else:
+            final_encrypted_content = "Your order has been placed. Delivery details pending."
+
         final_status = 'SHIPPED'
 
     with app.app_context():
@@ -517,7 +581,6 @@ def checkout():
             db.session.commit()
 
     return redirect(url_for('orders', success=f'Transaction successful! Order #{prefixed_order_id} placed and processing initiated.'))
-
 
 @app.route('/download/delivery/<string:token>')
 def download_delivery(token):
@@ -567,14 +630,19 @@ def profile():
         if not pgp_key:
             error_message = 'Please paste a valid PGP Public Key to verify your account.'
         else:
-            # No validation - just save it for show
-            user.pgp_public_key = pgp_key
-            db.session.commit()
+            # Validate the PGP key
+            is_valid, message, fingerprint = validate_pgp_key(pgp_key)
+            
+            if not is_valid:
+                error_message = f'PGP Key Validation Failed: {message}'
+            else:
+                user.pgp_public_key = pgp_key
+                db.session.commit()
 
-            session['pgp_verified'] = True
-            success_message = 'PGP Public Key successfully saved and account is now VERIFIED.'
+                session['pgp_verified'] = True
+                success_message = f'PGP Public Key successfully validated and saved. Your account is now VERIFIED.'
 
-            return redirect(url_for('profile', success=success_message))
+            return redirect(url_for('profile', success=success_message, error=error_message))
 
     pgp_verified = bool(user.pgp_public_key)
     pgp_status = 'VERIFIED' if pgp_verified else 'UNVERIFIED'
@@ -849,3 +917,6 @@ if __name__ == '__main__':
             )
             db.session.add(admin_user)
             db.session.commit()
+
+    app.run(debug=True, host='0.0.0.0', port=5000)
+            
