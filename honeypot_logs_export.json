@@ -1,0 +1,186 @@
+{
+  "export_date": "2025-10-13T13:05:53.636660",
+  "sessions": [
+    {
+      "session_id": "bfb29f49-7c63-470c-b845-d5d512894eca",
+      "ip_address": "127.0.0.1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+      "first_seen": "2025-10-13 12:58:46.365120",
+      "last_seen": "2025-10-13 13:05:44.916916",
+      "total_events": 7,
+      "registered": 0,
+      "logged_in": 1,
+      "username": "admin",
+      "purchases_made": 0,
+      "downloads_attempted": 0,
+      "pgp_submitted": 0
+    },
+    {
+      "session_id": "b2e4ba6a-83ee-4b7e-96c4-47dfcd364514",
+      "ip_address": "127.0.0.1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+      "first_seen": "2025-10-13 12:58:34.126887",
+      "last_seen": "2025-10-13 12:58:46.252020",
+      "total_events": 3,
+      "registered": 0,
+      "logged_in": 1,
+      "username": "admin",
+      "purchases_made": 0,
+      "downloads_attempted": 0,
+      "pgp_submitted": 0
+    }
+  ],
+  "events": [
+    {
+      "id": 10,
+      "session_id": "bfb29f49-7c63-470c-b845-d5d512894eca",
+      "timestamp": "2025-10-13 13:05:44.917123",
+      "event_type": "PAGE_VIEW",
+      "ip_address": "127.0.0.1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+      "path": "/profile",
+      "method": "GET",
+      "username": "admin",
+      "product_id": null,
+      "additional_data": {
+        "page": "profile"
+      }
+    },
+    {
+      "id": 9,
+      "session_id": "bfb29f49-7c63-470c-b845-d5d512894eca",
+      "timestamp": "2025-10-13 13:05:44.886823",
+      "event_type": "LOGIN",
+      "ip_address": "127.0.0.1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+      "path": "/login",
+      "method": "POST",
+      "username": "admin",
+      "product_id": null,
+      "additional_data": {
+        "username": "admin",
+        "user_id": 1
+      }
+    },
+    {
+      "id": 8,
+      "session_id": "bfb29f49-7c63-470c-b845-d5d512894eca",
+      "timestamp": "2025-10-13 13:05:39.336174",
+      "event_type": "PAGE_VIEW",
+      "ip_address": "127.0.0.1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+      "path": "/login",
+      "method": "GET",
+      "username": null,
+      "product_id": null,
+      "additional_data": {
+        "page": "login"
+      }
+    },
+    {
+      "id": 7,
+      "session_id": "bfb29f49-7c63-470c-b845-d5d512894eca",
+      "timestamp": "2025-10-13 13:05:37.737845",
+      "event_type": "PAGE_VIEW",
+      "ip_address": "127.0.0.1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+      "path": "/",
+      "method": "GET",
+      "username": null,
+      "product_id": null,
+      "additional_data": {
+        "page": "index"
+      }
+    },
+    {
+      "id": 6,
+      "session_id": "bfb29f49-7c63-470c-b845-d5d512894eca",
+      "timestamp": "2025-10-13 12:59:07.265734",
+      "event_type": "LOGIN_FAILED",
+      "ip_address": "127.0.0.1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+      "path": "/login",
+      "method": "POST",
+      "username": null,
+      "product_id": null,
+      "additional_data": {
+        "username": "admin"
+      }
+    },
+    {
+      "id": 5,
+      "session_id": "bfb29f49-7c63-470c-b845-d5d512894eca",
+      "timestamp": "2025-10-13 12:58:58.374176",
+      "event_type": "PAGE_VIEW",
+      "ip_address": "127.0.0.1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+      "path": "/login",
+      "method": "GET",
+      "username": null,
+      "product_id": null,
+      "additional_data": {
+        "page": "login"
+      }
+    },
+    {
+      "id": 4,
+      "session_id": "bfb29f49-7c63-470c-b845-d5d512894eca",
+      "timestamp": "2025-10-13 12:58:46.365914",
+      "event_type": "PAGE_VIEW",
+      "ip_address": "127.0.0.1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+      "path": "/",
+      "method": "GET",
+      "username": null,
+      "product_id": null,
+      "additional_data": {
+        "page": "index"
+      }
+    },
+    {
+      "id": 3,
+      "session_id": "b2e4ba6a-83ee-4b7e-96c4-47dfcd364514",
+      "timestamp": "2025-10-13 12:58:46.252322",
+      "event_type": "LOGOUT",
+      "ip_address": "127.0.0.1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+      "path": "/logout",
+      "method": "GET",
+      "username": "admin",
+      "product_id": null,
+      "additional_data": {
+        "username": "admin"
+      }
+    },
+    {
+      "id": 2,
+      "session_id": "b2e4ba6a-83ee-4b7e-96c4-47dfcd364514",
+      "timestamp": "2025-10-13 12:58:46.205861",
+      "event_type": "PAGE_VIEW",
+      "ip_address": "127.0.0.1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+      "path": "/profile",
+      "method": "GET",
+      "username": "admin",
+      "product_id": null,
+      "additional_data": {
+        "page": "profile"
+      }
+    },
+    {
+      "id": 1,
+      "session_id": "b2e4ba6a-83ee-4b7e-96c4-47dfcd364514",
+      "timestamp": "2025-10-13 12:58:34.130657",
+      "event_type": "PAGE_VIEW",
+      "ip_address": "127.0.0.1",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+      "path": "/",
+      "method": "GET",
+      "username": "admin",
+      "product_id": null,
+      "additional_data": {
+        "page": "index"
+      }
+    }
+  ]
+}

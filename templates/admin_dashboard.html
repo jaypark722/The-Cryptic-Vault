@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block title %}ADMIN | Honeypot Monitor{% endblock %}
+
+{% block content %}
+<div class="p-6 bg-market-gray border border-red-500 rounded-lg shadow-xl mb-8">
+    <p class="text-2xl text-red-500 font-bold mb-3 border-b border-market-border pb-2">HONEYPOT MONITORING DASHBOARD</p>
+    <a href="{{ url_for('export_logs') }}" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-150 shadow-lg inline-block">
+        📥 EXPORT ALL LOGS (JSON)
+    </a>
+</div>
+
+<div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+    
+    {# Stat Card: Total Sessions #}
+    <div class="bg-market-gray border border-green-500 p-4 rounded-lg text-center shadow-lg">
+        <h3 class="text-green-500 text-sm mb-1">TOTAL SESSIONS</h3>
+        <div class="text-3xl text-red-500 font-bold">{{ stats.total_sessions }}</div>
+    </div>
+    
+    {# Stat Card: Total Events #}
+    <div class="bg-market-gray border border-green-500 p-4 rounded-lg text-center shadow-lg">
+        <h3 class="text-green-500 text-sm mb-1">TOTAL EVENTS</h3>
+        <div class="text-3xl text-red-500 font-bold">{{ stats.total_events }}</div>
+    </div>
+    
+    {# Stat Card: Registrations #}
+    <div class="bg-market-gray border border-green-500 p-4 rounded-lg text-center shadow-lg">
+        <h3 class="text-green-500 text-sm mb-1">REGISTRATIONS</h3>
+        <div class="text-3xl text-red-500 font-bold">{{ stats.total_registrations }}</div>
+    </div>
+    
+    {# Stat Card: Purchases #}
+    <div class="bg-market-gray border border-green-500 p-4 rounded-lg text-center shadow-lg">
+        <h3 class="text-green-500 text-sm mb-1">PURCHASES</h3>
+        <div class="text-3xl text-red-500 font-bold">{{ stats.total_purchases }}</div>
+    </div>
+    
+    {# Stat Card: Downloads (Critical) #}
+    <div class="bg-market-gray border border-red-700 p-4 rounded-lg text-center shadow-lg animate-pulse">
+        <h3 class="text-red-500 text-sm mb-1">🎯 BAIT DOWNLOADS</h3>
+        <div class="text-3xl text-red-500 font-extrabold">{{ stats.total_downloads }}</div>
+    </div>
+</div>
+
+<div class="space-y-8">
+    
+    {# Active Sessions Table #}
+    <div class="bg-market-gray border border-green-500 p-6 rounded-lg shadow-xl overflow-x-auto">
+        <h2 class="text-red-500 font-bold text-xl mb-4 border-b border-market-border pb-2">🔍 ACTIVE SESSIONS</h2>
+        <table class="w-full text-left text-sm text-gray-400">
+            <thead class="text-xs text-red-500 uppercase bg-gray-800">
+                <tr>
+                    <th scope="col" class="px-3 py-2">Session ID</th>
+                    <th scope="col" class="px-3 py-2">IP Address</th>
+                    <th scope="col" class="px-3 py-2">First Seen</th>
+                    <th scope="col" class="px-3 py-2">Last Seen</th>
+                    <th scope="col" class="px-3 py-2">Events</th>
+                    <th scope="col" class="px-3 py-2">Pages</th>
+                    <th scope="col" class="px-3 py-2">Products</th>
+                    <th scope="col" class="px-3 py-2">Cart</th>
+                    <th scope="col" class="px-3 py-2">Downloads</th>
+                    <th scope="col" class="px-3 py-2">Purchases</th>
+                    <th scope="col" class="px-3 py-2">Reg.</th>
+                    <th scope="col" class="px-3 py-2">Profile</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in sessions %}
+                <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                    <td class="px-3 py-2">
+                        <a href="{{ url_for('admin_session_detail', session_id=s.session_id) }}" class="text-cyan-400 hover:text-cyan-300 font-mono text-xs">
+                            {{ s.session_id[:12] }}...
+                        </a>
+                    </td>
+                    <td class="px-3 py-2">{{ s.ip_address }}</td>
+                    <td class="px-3 py-2 text-xs">{{ s.first_seen }}</td>
+                    <td class="px-3 py-2 text-xs">{{ s.last_seen }}</td>
+                    <td class="px-3 py-2 font-semibold">{{ s.total_events }}</td>
+                    <td class="px-3 py-2">{{ s.pages_viewed }}</td>
+                    <td class="px-3 py-2">{{ s.products_viewed }}</td>
+                    <td class="px-3 py-2">{{ s.cart_additions }}</td>
+                    <td class="px-3 py-2">
+                        {% if s.downloads_attempted > 0 %}
+                            <span class="text-red-500 font-bold">{{ s.downloads_attempted }} 🎯</span>
+                        {% else %}
+                            {{ s.downloads_attempted }}
+                        {% endif %}
+                    </td>
+                    <td class="px-3 py-2">{{ s.purchases_made }}</td>
+                    <td class="px-3 py-2 text-xl font-bold">{{ '✓' if s.registered else '✗' }}</td>
+                    <td class="px-3 py-2">{{ s.assigned_profile or 'N/A' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    {# Recent Events Table #}
+    <div class="bg-market-gray border border-green-500 p-6 rounded-lg shadow-xl overflow-x-auto">
+        <h2 class="text-red-500 font-bold text-xl mb-4 border-b border-market-border pb-2">📋 RECENT EVENTS (Last 100)</h2>
+        <table class="w-full text-left text-sm text-gray-400">
+            <thead class="text-xs text-red-500 uppercase bg-gray-800">
+                <tr>
+                    <th scope="col" class="px-3 py-2">Timestamp</th>
+                    <th scope="col" class="px-3 py-2">Event Type</th>
+                    <th scope="col" class="px-3 py-2">IP Address</th>
+                    <th scope="col" class="px-3 py-2">User</th>
+                    <th scope="col" class="px-3 py-2">Endpoint</th>
+                    <th scope="col" class="px-3 py-2">Product ID</th>
+                    <th scope="col" class="px-3 py-2">Additional Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for event in events %}
+                <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                    <td class="px-3 py-2 text-xs">{{ event.timestamp }}</td>
+                    <td class="px-3 py-2">
+                        {% set event_color = {
+                            'DOWNLOAD': 'bg-red-600 text-black',
+                            'PURCHASE': 'bg-orange-500 text-black',
+                            'REGISTER': 'bg-green-500 text-black',
+                            'LOGIN': 'bg-cyan-400 text-black',
+                            'PRODUCT_VIEW': 'bg-purple-500 text-white',
+                            'CART_ADD': 'bg-yellow-400 text-black',
+                        }.get(event.event_type, 'bg-gray-600 text-white') %}
+                        <span class="inline-block px-2 py-1 text-xs font-semibold rounded {{ event_color }}">
+                            {{ event.event_type }}
+                        </span>
+                    </td>
+                    <td class="px-3 py-2">{{ event.ip_address }}</td>
+                    <td class="px-3 py-2">{{ event.username or 'Anonymous' }}</td>
+                    <td class="px-3 py-2">{{ event.endpoint }}</td>
+                    <td class="px-3 py-2 text-xs font-mono">{{ event.product_id or '-' }}</td>
+                    <td class="px-3 py-2 text-xs text-gray-500">{{ event.additional_data }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

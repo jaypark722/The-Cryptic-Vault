@@ -11,6 +11,9 @@ import gnupg
 import random
 import time
 
+# Import the honeypot logger
+from honeypot_logger import HoneypotLogger, log_page_view
+
 app = Flask(__name__)
 
 app.secret_key = 'your_super_secret_key_change_me'
@@ -20,6 +23,9 @@ DB_PATH = os.path.join(basedir, 'database', 'users.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + DB_PATH
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
+# Initialize the honeypot logger
+logger = HoneypotLogger(db_path=os.path.join(basedir, 'database', 'honeypot_logs.db'))
 
 # Initialize GPG with a specific home directory for key storage
 gpg_home = os.path.join(basedir, 'gpg_home')
@@ -220,11 +226,13 @@ def btc_to_float(btc_str):
     return float(btc_str.replace('₿', ''))
 
 @app.route('/')
+@log_page_view(logger)
 def index():
     hot_listing_product = get_product_by_id(HOT_LISTING_ID)
     return render_template('index.html', hot_listing=hot_listing_product)
 
 @app.route('/listings')
+@log_page_view(logger)
 def listings():
     return render_template('listings.html')
 
@@ -235,6 +243,13 @@ def product_detail(product_id):
     if product is None:
         abort(404)
 
+    # LOG: Product view
+    logger.log_event('PRODUCT_VIEW', product_id=product_id, additional_data={
+        'product_name': product.get('Product Name (Description)'),
+        'price': product.get('Price (BTC)'),
+        'vendor': product.get('Vendor')
+    })
+
     return render_template('product_detail.html', product=product)
 
 @app.route('/add_to_cart/<string:listing_id>', methods=['POST'])
@@ -243,9 +258,13 @@ def add_to_cart(listing_id):
     current_cart.append(listing_id)
     update_current_cart(current_cart)
 
+    # LOG: Cart addition
+    logger.log_event('CART_ADD', product_id=listing_id)
+
     return redirect(url_for('cart'))
 
 @app.route('/cart')
+@log_page_view(logger)
 def cart():
     cart_items = get_current_cart()
 
@@ -305,6 +324,9 @@ def remove_from_cart(listing_id):
         try:
             current_cart.remove(listing_id)
             update_current_cart(current_cart)
+            
+            # LOG: Cart removal
+            logger.log_event('CART_REMOVE', product_id=listing_id)
         except ValueError:
             pass
 
@@ -388,12 +410,21 @@ def register():
             session['has_orders'] = Order.query.filter_by(user_id=new_user.id).count() > 0
             session.modified = True
 
+            # LOG: Registration
+            logger.log_event('REGISTER', additional_data={
+                'username': username,
+                'used_coupon': coupon == 'REDTEAMBECODE',
+                'pgp_verified': pgp_valid
+            })
+
             return redirect(url_for('profile'))
 
         except Exception as e:
             db.session.rollback()
             return render_template('register.html', error=f'Database error: {e}')
 
+    # LOG: Registration page view
+    logger.log_event('PAGE_VIEW', additional_data={'page': 'register'})
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -425,14 +456,31 @@ def login():
             session['has_orders'] = user.orders.count() > 0
             session.modified = True
 
+            # LOG: Successful login
+            logger.log_event('LOGIN', additional_data={
+                'username': username,
+                'user_id': user.id
+            })
+
             return redirect(url_for('profile'))
         else:
+            # LOG: Failed login attempt
+            logger.log_event('LOGIN_FAILED', additional_data={
+                'username': username
+            })
             return render_template('login.html', error='Invalid credentials.')
 
+    # LOG: Login page view
+    logger.log_event('PAGE_VIEW', additional_data={'page': 'login'})
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
+    # LOG: Logout
+    logger.log_event('LOGOUT', additional_data={
+        'username': session.get('username')
+    })
+    
     session.clear()
     return redirect(url_for('index'))
 
@@ -463,6 +511,12 @@ def change_password():
     try:
         user.password = new_password
         db.session.commit()
+        
+        # LOG: Password change
+        logger.log_event('PASSWORD_CHANGE', additional_data={
+            'user_id': user_id
+        })
+        
         return redirect(url_for('login', success_message='Password updated successfully. Please log in with your new password.'))
     except Exception as e:
         db.session.rollback()
@@ -528,6 +582,15 @@ def checkout():
     session['cart_count'] = 0
     session['has_orders'] = True
     session.modified = True
+
+    # LOG: Purchase event
+    logger.log_event('PURCHASE', additional_data={
+        'order_id': new_order.id,
+        'total': f'₿{total_btc:.5f}',
+        'items_count': len(purchased_items),
+        'contains_bait': HOT_LISTING_ID in cart_items,
+        'items': cart_items
+    })
 
     final_encrypted_content = None
     final_status = 'SHIPPED'
@@ -606,6 +669,15 @@ def download_delivery(token):
     if not os.path.exists(file_path):
         return "File not found on server.", 404
 
+    # LOG: CRITICAL - BAIT FILE DOWNLOAD
+    logger.log_event('DOWNLOAD', product_id=HOT_LISTING_ID, additional_data={
+        'order_id': order_id,
+        'file_name': file_name,
+        'download_token': token,
+        'user_id': session.get('user_id'),
+        'username': session.get('username')
+    })
+
     return send_file(file_path, 
                      as_attachment=True, 
                      download_name=file_name,
@@ -613,6 +685,7 @@ def download_delivery(token):
 
 
 @app.route('/profile', methods=['GET', 'POST'])
+@log_page_view(logger)
 def profile():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
@@ -641,6 +714,12 @@ def profile():
 
                 session['pgp_verified'] = True
                 success_message = f'PGP Public Key successfully validated and saved. Your account is now VERIFIED.'
+                
+                # LOG: PGP key added
+                logger.log_event('PGP_VERIFIED', additional_data={
+                    'user_id': user.id,
+                    'username': user.username
+                })
 
             return redirect(url_for('profile', success=success_message, error=error_message))
 
@@ -667,6 +746,7 @@ def profile():
 
 
 @app.route('/orders')
+@log_page_view(logger)
 def orders():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
@@ -750,6 +830,7 @@ def orders():
 
 
 @app.route('/messages')
+@log_page_view(logger)
 def messages():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
@@ -806,6 +887,7 @@ def delete_message(message_id):
     return redirect(url_for('messages'))
 
 @app.route('/wallet')
+@log_page_view(logger)
 def wallet():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
@@ -847,6 +929,12 @@ def support():
                 db.session.add(new_message)
                 db.session.commit()
                 success = "Support ticket submitted. An administrator will respond via secure message shortly."
+                
+                # LOG: Support ticket submitted
+                logger.log_event('SUPPORT_TICKET', additional_data={
+                    'subject': subject,
+                    'user_id': session['user_id']
+                })
             except Exception as e:
                 db.session.rollback()
                 error = f"Failed to submit ticket due to database error: {e}"
@@ -855,6 +943,9 @@ def support():
 
     error_message = request.args.get('error')
     success_message = request.args.get('success')
+    
+    # LOG: Support page view
+    logger.log_event('PAGE_VIEW', additional_data={'page': 'support'})
 
     return render_template('support.html', error=error_message, success=success_message)
 
@@ -885,6 +976,12 @@ def vendor():
                 db.session.add(new_message)
                 db.session.commit()
                 success = "Vendor application submitted. An administrator will contact you via secure message."
+                
+                # LOG: Vendor application
+                logger.log_event('VENDOR_APPLICATION', additional_data={
+                    'specialty': specialty,
+                    'user_id': session['user_id']
+                })
             except Exception as e:
                 db.session.rollback()
                 error = f"Failed to submit application due to database error: {e}"
@@ -893,6 +990,10 @@ def vendor():
 
     error_message = request.args.get('error')
     success_message = request.args.get('success')
+    
+    # LOG: Vendor page view
+    logger.log_event('PAGE_VIEW', additional_data={'page': 'vendor'})
+    
     return render_template('vendor.html', error=error_message, success=success_message)
 
 @app.route('/vendor_profile/<int:vendor_id>')
@@ -902,21 +1003,100 @@ def vendor_profile(vendor_id):
     # and display a profile/review page. For now, it's a basic stub.
     return f"Vendor Profile for ID {vendor_id} - Route stub."
 
-if __name__ == '__main__':
-    with app.app_context():
-        # db.drop_all() # Uncomment to reset database
-        db.create_all()
-        
-        if not User.query.get(ADMIN_ID):
-            admin_user = User(
-                id=ADMIN_ID,
-                username='ADMIN',
-                password='password123',
-                balance='₿0.00000',
-                pgp_public_key='PGP_KEY_NOT_NEEDED_FOR_ADMIN_INBOUND'
-            )
-            db.session.add(admin_user)
-            db.session.commit()
 
-    app.run(debug=True, host='0.0.0.0', port=5000)
+# ADMIN ROUTES FOR MONITORING
+@app.route('/admin/dashboard')
+def admin_dashboard():
+    """Admin dashboard to view honeypot logs"""
+    if not session.get('logged_in') or session.get('username').lower() != 'admin':
+        abort(403)
+    
+    sessions = logger.get_all_sessions(limit=50)
+    recent_events = logger.get_all_events(limit=100)
+    
+    # Calculate summary statistics
+    total_sessions = len(sessions)
+    total_downloads = sum(1 for s in sessions if s['downloads_attempted'] > 0)
+    total_purchases = sum(1 for s in sessions if s['purchases_made'] > 0)
+    total_registrations = sum(1 for s in sessions if s['registered'])
+    
+    stats = {
+        'total_sessions': total_sessions,
+        'total_downloads': total_downloads,
+        'total_purchases': total_purchases,
+        'total_registrations': total_registrations,
+        'total_events': sum(s['total_events'] for s in sessions)
+    }
+    
+    return render_template('admin_dashboard.html', 
+                         sessions=sessions, 
+                         events=recent_events,
+                         stats=stats)
+
+@app.route('/admin/export_logs')
+def export_logs():
+    """Export all honeypot logs as JSON"""
+    if not session.get('logged_in') or session.get('username').lower() != 'admin':
+        abort(403)
+    
+    output_file = logger.export_logs_json(output_file='honeypot_logs_export.json')
+    return send_file(output_file, as_attachment=True)
+
+@app.route('/admin/session/<string:session_id>')
+def admin_session_detail(session_id):
+    """View detailed information about a specific session"""
+    if not session.get('logged_in') or session.get('username').lower() != 'admin':
+        abort(403)
+    
+    session_stats = logger.get_session_stats(session_id)
+    session_events = logger.get_all_events(session_id=session_id, limit=500)
+    
+    return render_template('admin_session_detail.html',
+                         session_stats=session_stats,
+                         events=session_events)
+
+def setup_admin_user():
+    """Initializes the database and creates the admin user if it doesn't exist."""
+    # This must be run inside an app context
+    db.create_all()
+    
+    # Check if admin exists by username, not ID
+    admin_user = User.query.filter_by(username='admin').first()
+    
+    if not admin_user:
+        # Find the next available ID or use a specific one
+        existing_user_1 = User.query.get(1)
+        
+        if existing_user_1 and existing_user_1.username != 'admin':
+            print(f"Warning: User ID 1 is taken by '{existing_user_1.username}'. Using next available ID for admin.")
+            admin_user = User(
+                username='admin',
+                password='adminadmin',
+                balance='₿999.99999',
+                pgp_public_key='ADMIN_ACCOUNT'
+            )
+        else:
+            # Create admin with ID 1
+            admin_user = User(
+                id=1,
+                username='admin',
+                password='adminadmin',
+                balance='₿999.99999',
+                pgp_public_key='ADMIN_ACCOUNT'
+            )
             
+        db.session.add(admin_user)
+        db.session.commit()
+        print(f"Admin user created with ID: {admin_user.id}, username: 'admin', password: 'adminadmin'")
+    else:
+        print(f"Admin user already exists with ID: {admin_user.id}")
+
+
+# The setup function needs to be executed once when the app starts
+with app.app_context():
+    setup_admin_user()
+
+# Standard run block for when you use 'python app.py'
+if __name__ == '__main__':
+    # setup_admin_user() is now outside the if block, so no need to call it here.
+    app.run(debug=True, host='0.0.0.0', port=5000)
