@@ -598,7 +598,7 @@ def checkout():
 
     if HOT_LISTING_ID in cart_items:
         try:
-            file_name = 'orange.csv'
+            file_name = 'orange.xlsx'
             file_path = os.path.join(app.root_path, 'static', 'data', file_name)
 
             if not os.path.exists(file_path):
@@ -607,7 +607,7 @@ def checkout():
             plaintext_message = f"""Order Fulfillment Status: Completed
 Item: Orange Customer Credential Database
 Your secure download link is:
-http://10.40.38.153/static/data/orange.csv
+http://192.168.1.25:5000/static/data/orange.xlsx
 """
 
             success, encrypted_or_error = encrypt_message_for_user(user, plaintext_message)
@@ -663,7 +663,7 @@ def download_delivery(token):
     if order.status not in ['SHIPPED', 'DELIVERED']:
         return "Delivery is not finalized yet. Decrypt the message for status updates.", 403
     
-    file_name = 'orange.csv'
+    file_name = 'orange.xlsx'
     file_path = os.path.join(app.root_path, 'static', 'data', file_name)
     
     if not os.path.exists(file_path):
