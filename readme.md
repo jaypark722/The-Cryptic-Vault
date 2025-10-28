@@ -403,14 +403,6 @@ This is a research project. Contributions that enhance the honeypot's realism, l
 
 ---
 
-## 📞 Contact & Support
-
-For research collaboration or questions:
-- Open an issue on GitHub
-- Email: [your-email@domain.com]
-
----
-
 ## 📄 License
 
 This project is licensed for research and educational purposes only. See LICENSE file for details.
