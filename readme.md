@@ -405,7 +405,7 @@ This is a research project. Contributions that enhance the honeypot's realism, l
 
 ## 📄 License
 
-This project is licensed for research and educational purposes only. See LICENSE file for details.
+This project is licensed for research and educational purposes only.
 
 ---
 
