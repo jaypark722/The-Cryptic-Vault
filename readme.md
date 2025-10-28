@@ -398,8 +398,8 @@ This is a research project. Contributions that enhance the honeypot's realism, l
 - MITRE ATT&CK Framework
 - OWASP Honeypot Project
 - Kippo SSH Honeypot
-- Modern Honey Network (MHN)
-- Dark Web Marketplace Research (academic papers)
+- Modern Honey Network
+- Dark Web Marketplace Research
 
 ---
 
