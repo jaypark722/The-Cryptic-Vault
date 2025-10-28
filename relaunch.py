@@ -1,6 +1,7 @@
 import subprocess
 import os
 import sys
+import time
 
 # --- Configuration ---
 IMAGE_NAME = "cryptic-vault"
@@ -8,11 +9,6 @@ CONTAINER_NAME = "honeypot-instance"
 DB_FILES = ["users.db", "honeypot_logs.db"]
 HOST_PORT = 5000
 CONTAINER_PORT = 5000
-
-# The complex command to initialize the database
-DB_INIT_COMMAND = """from app import db, app
-with app.app_context():
-    db.create_all()"""
 
 def run_command(command, check_success=True, shell=False, ignore_errors=None):
     """Executes a shell command."""
@@ -36,9 +32,12 @@ def run_command(command, check_success=True, shell=False, ignore_errors=None):
         
         # Handle errors
         if result.returncode != 0:
-            if ignore_errors and ignore_errors in result.stderr:
-                print(f"[INFO] Ignored expected error: {ignore_errors.strip()}")
-                return True
+            if ignore_errors:
+                error_messages = ignore_errors if isinstance(ignore_errors, list) else [ignore_errors]
+                for error_msg in error_messages:
+                    if error_msg in result.stderr:
+                        print(f"[INFO] Ignored expected error: {error_msg.strip()}")
+                        return True
             
             if result.stderr:
                 print(f"[STDERR] {result.stderr.strip()}")
@@ -60,80 +59,143 @@ def run_command(command, check_success=True, shell=False, ignore_errors=None):
             print(f"[STDERR] {e.stderr}")
         return False
     except FileNotFoundError:
-        print(f"[ERROR] Command not found.")
+        print(f"[ERROR] Command not found. Make sure Docker is installed.")
         return False
 
 def relaunch_app():
-    print(f"--- Starting Cryptic Vault Relaunch/Rebuild Process ---")
+    print("=" * 70)
+    print("    Cryptic Vault - Relaunch/Rebuild Process")
+    print("=" * 70)
 
     # 1. Stop and remove the old container instance
-    print("\n--- Step 1: Cleaning up old container ---")
+    print("\n[Step 1/5] Cleaning up old container...")
     
-    # Stop: Ignore error if container is not running
+    # Stop container (ignore if not running)
     run_command(
         ["docker", "stop", CONTAINER_NAME],
         check_success=False,
-        ignore_errors="No such container"
+        ignore_errors=["No such container", "is not running"]
     )
     
-    # Remove: Ignore error if container is not found
+    # Remove container (ignore if not found)
     run_command(
         ["docker", "rm", CONTAINER_NAME],
         check_success=False,
-        ignore_errors="No such container"
+        ignore_errors=["No such container", "Error: No such container"]
     )
     
-    print(f"[SUCCESS] Old container '{CONTAINER_NAME}' cleaned up.")
+    print("✓ Old container cleaned up.")
 
-    # 2. Delete database files
-    print("\n--- Step 2: Deleting database files for clean start ---")
+    # 2. Delete database files for fresh start
+    print(f"\n[Step 2/5] Deleting database files...")
     for db_file in DB_FILES:
         db_path = os.path.join("database", db_file)
         if os.path.exists(db_path):
             os.remove(db_path)
-            print(f"[DELETE] Removed {db_path}")
+            print(f"  ✓ Removed {db_path}")
         else:
-            print(f"[INFO] {db_path} not found, skipping removal.")
+            print(f"  - {db_path} not found (skipping)")
+
+    # Ensure database directory exists
+    os.makedirs("database", exist_ok=True)
+    print("✓ Database directory ready.")
 
     # 3. Build the new Docker image
-    print("\n--- Step 3: Building new Docker image ---")
+    print(f"\n[Step 3/5] Building Docker image '{IMAGE_NAME}'...")
     if not run_command(["docker", "build", "-t", IMAGE_NAME, "."]):
-        print("[CRITICAL] Docker build failed. Cannot proceed.")
+        print("\n❌ CRITICAL: Docker build failed. Cannot proceed.")
+        print("   Check your Dockerfile and requirements.txt")
         sys.exit(1)
-    print(f"[SUCCESS] Image '{IMAGE_NAME}:latest' built successfully.")
+    print(f"✓ Image '{IMAGE_NAME}:latest' built successfully.")
 
-    # 4. Initialize the database
-    print("\n--- Step 4: Initializing database tables ---")
-    db_command = f'docker run --rm {IMAGE_NAME} python -c "{DB_INIT_COMMAND}"'
-    if not run_command(db_command, shell=True):
-        print("[CRITICAL] Database initialization failed. Cannot proceed.")
-        sys.exit(1)
-    print(f"[SUCCESS] Database initialized.")
-
-    # 5. Launch the new container instance
-    print("\n--- Step 5: Launching new container ---")
-    if not run_command([
+    # 4. Launch the new container with volume mount
+    print(f"\n[Step 4/5] Launching container '{CONTAINER_NAME}'...")
+    
+    # Get absolute path to database directory
+    db_abs_path = os.path.abspath("database")
+    
+    # Also mount static/data if it exists
+    static_data_path = os.path.abspath("static/data")
+    
+    # Build the docker run command properly
+    docker_run_cmd = [
         "docker", "run", "-d",
         "-p", f"{HOST_PORT}:{CONTAINER_PORT}",
-        "--name", CONTAINER_NAME,
-        IMAGE_NAME
-    ]):
-        print("[CRITICAL] Container launch failed.")
+        "-v", f"{db_abs_path}:/app/database"
+    ]
+    
+    # Add static data mount if directory exists
+    if os.path.exists(static_data_path):
+        docker_run_cmd.extend(["-v", f"{static_data_path}:/app/static/data"])
+    
+    # Add container name and image at the end
+    docker_run_cmd.extend(["--name", CONTAINER_NAME, IMAGE_NAME])
+    
+    if not run_command(docker_run_cmd):
+        print("\n❌ CRITICAL: Container launch failed.")
         sys.exit(1)
 
-    print(f"\n========================================================")
-    print(f"✅ Success! The application is running.")
-    print(f"Container: {CONTAINER_NAME}")
-    print(f"Image: {IMAGE_NAME}")
-    print(f"Access the app at: http://localhost:{HOST_PORT}")
-    print(f"========================================================")
+    print(f"✓ Container launched.")
+    
+    # 5. Wait for application to initialize
+    print(f"\n[Step 5/5] Waiting for application to initialize...")
+    time.sleep(5)
+    
+    # Check if container is still running
+    result = subprocess.run(
+        ["docker", "ps", "-q", "-f", f"name={CONTAINER_NAME}"],
+        capture_output=True,
+        text=True
+    )
+    
+    if not result.stdout.strip():
+        print("\n❌ ERROR: Container failed to start or exited immediately.")
+        print("\n--- Container Logs ---")
+        run_command(["docker", "logs", CONTAINER_NAME], check_success=False)
+        print("\n--- Troubleshooting ---")
+        print("1. Check if all dependencies are in requirements.txt")
+        print("2. Verify honeypot_logger.py exists and is importable")
+        print("3. Check for syntax errors in app.py")
+        sys.exit(1)
+
+    print("✓ Application started successfully.")
+
+    # Success message
+    print("\n" + "=" * 70)
+    print("✅ SUCCESS! The Cryptic Vault is now running.")
+    print("=" * 70)
+    print(f"\n📍 Access the application:")
+    print(f"   http://localhost:{HOST_PORT}")
+    print(f"\n🔐 Admin credentials:")
+    print(f"   Username: admin")
+    print(f"   Password: adminadmin")
+    print(f"\n📊 Container info:")
+    print(f"   Name: {CONTAINER_NAME}")
+    print(f"   Image: {IMAGE_NAME}")
     
     # Show container status
     print("\n--- Container Status ---")
     run_command(["docker", "ps", "-f", f"name={CONTAINER_NAME}"], check_success=False)
     
-    print("\n--- View logs with: ---")
-    print(f"docker logs -f {CONTAINER_NAME}")
+    # Show initial logs
+    print("\n--- Initial Application Logs ---")
+    run_command(["docker", "logs", "--tail", "15", CONTAINER_NAME], check_success=False)
+    
+    # Helpful commands
+    print("\n--- Useful Commands ---")
+    print(f"📋 View live logs:     docker logs -f {CONTAINER_NAME}")
+    print(f"🛑 Stop container:     docker stop {CONTAINER_NAME}")
+    print(f"🔄 Restart container:  docker restart {CONTAINER_NAME}")
+    print(f"🐚 Access shell:       docker exec -it {CONTAINER_NAME} /bin/bash")
+    print(f"🗑️  Remove container:   docker rm -f {CONTAINER_NAME}")
+    print("\n")
 
 if __name__ == "__main__":
-    relaunch_app()
+    try:
+        relaunch_app()
+    except KeyboardInterrupt:
+        print("\n\n⚠️  Process interrupted by user.")
+        sys.exit(1)
+    except Exception as e:
+        print(f"\n\n❌ Unexpected error: {e}")
+        sys.exit(1)

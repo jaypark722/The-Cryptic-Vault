@@ -5,6 +5,17 @@
 <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
     <h2 class="text-3xl text-market-gold font-bold mb-6 border-b border-market-border pb-3">Digital Wallet</h2>
 
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="mb-4 p-4 rounded-lg {% if category == 'success' %}bg-green-900 border border-green-500 text-green-100{% else %}bg-red-900 border border-red-500 text-red-100{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
         <div class="bg-market-gray border border-market-gold p-6 rounded-lg shadow-xl">
             <p class="text-sm text-gray-400">Current Balance</p>
@@ -26,27 +37,32 @@
 
         <div class="bg-market-gray border border-market-border p-6 rounded-lg shadow-xl">
             <p class="text-sm text-market-gold">Pending Actions</p>
-            <p class="text-xl text-white font-bold mt-1">No Orders in Progress</p>
-            <p class="text-xs text-gray-500 mt-2">Check 'Orders' for status updates on placed items.</p>
+            {% if user.pending_deposit %}
+                <p class="text-xl text-yellow-400 font-bold mt-1">⏳ Deposit Pending</p>
+                <p class="text-xs text-gray-400 mt-2">Awaiting blockchain confirmations</p>
+            {% else %}
+                <p class="text-xl text-white font-bold mt-1">No Orders in Progress</p>
+                <p class="text-xs text-gray-500 mt-2">Check 'Orders' for status updates on placed items.</p>
+            {% endif %}
         </div>
     </div>
     
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
         <div class="bg-market-gray border border-market-border p-6 rounded-lg shadow-xl">
             <h3 class="text-2xl text-market-gold font-bold mb-4">Deposit Funds</h3>
-            <p class="text-gray-400 mb-4">Select this option to connect your external wallet and fund your account.</p>
-            <button onclick="showConnectWallet('Deposit')" 
+            <p class="text-gray-400 mb-4">Send Bitcoin to your unique deposit address below to fund your account.</p>
+            <button onclick="showDepositModal()" 
                         class="w-full bg-green-700 hover:bg-green-600 text-white font-bold py-3 rounded transition duration-150">
-                INITIATE DEPOSIT
+                VIEW DEPOSIT ADDRESS
             </button>
         </div>
 
         <div class="bg-market-gray border border-market-border p-6 rounded-lg shadow-xl">
             <h3 class="text-2xl text-red-500 font-bold mb-4">Withdraw Funds</h3>
-            <p class="text-gray-400 mb-4">Select this option to connect your external wallet and withdraw your balance.</p>
-            <button onclick="showConnectWallet('Withdrawal')" 
+            <p class="text-gray-400 mb-4">Request a withdrawal to transfer your balance to an external Bitcoin wallet.</p>
+            <button onclick="alert('Withdrawals require manual review by administration. Please contact support to initiate a withdrawal request.');" 
                         class="w-full bg-red-700 hover:bg-red-600 text-white font-bold py-3 rounded transition duration-150">
-                INITIATE WITHDRAWAL
+                REQUEST WITHDRAWAL
             </button>
         </div>
     </div>
@@ -54,7 +70,7 @@
     <h3 class="text-2xl text-market-gold font-bold mb-4 border-b border-market-border pb-2">Transaction History</h3>
 
     <div class="bg-market-gray border border-market-border p-6 rounded-lg shadow-xl">
-        {% if history %}
+        {% if transactions %}
         <table class="min-w-full table-auto">
             <thead>
                 <tr class="text-gray-400 text-sm border-b border-market-border">
@@ -65,10 +81,16 @@
                 </tr>
             </thead>
             <tbody class="text-white text-sm">
-                {% for tx in history %}
-                <tr class="hover:bg-market-gray-dark border-b border-market-border last:border-b-0">
+                {% for tx in transactions %}
+                <tr class="hover:bg-market-gray-dark border-b border-market-border last:border-b-0
+                           {% if tx.get('status') == 'PENDING' %}bg-yellow-900 bg-opacity-20{% endif %}">
                     <td class="px-4 py-3 font-mono text-gray-500">{{ tx.date }}</td>
-                    <td class="px-4 py-3 font-bold {% if tx.type == 'DEPOSIT' %}text-green-500{% else %}text-red-500{% endif %}">{{ tx.type }}</td>
+                    <td class="px-4 py-3 font-bold {% if tx.type == 'DEPOSIT' %}text-green-500{% else %}text-red-500{% endif %}">
+                        {{ tx.type }}
+                        {% if tx.get('status') == 'PENDING' %}
+                            <span class="ml-2 text-xs bg-yellow-600 text-white px-2 py-1 rounded">PENDING</span>
+                        {% endif %}
+                    </td>
                     <td class="px-4 py-3">{{ tx.description }}</td>
                     <td class="px-4 py-3 text-right font-mono">{{ tx.amount }}</td>
                 </tr>
@@ -81,18 +103,72 @@
     </div>
 
 
-    <div id="connect-wallet-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-        <div class="bg-market-gray border border-market-gold p-8 rounded-lg w-full max-w-md">
-            <h3 id="modal-header" class="text-2xl text-market-gold font-bold mb-4"></h3>
+    <!-- Deposit Modal -->
+    <div id="deposit-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+        <div class="bg-market-gray border border-market-gold p-8 rounded-lg w-full max-w-2xl max-h-screen overflow-y-auto">
+            <h3 class="text-2xl text-market-gold font-bold mb-4">Bitcoin Deposit Address</h3>
             
-            <p class="text-white mb-4">
-                Funding is initiated through a **strictly PGP-encrypted wallet address handshake**. This process ensures the integrity of the deposit address and protects your funds against passive monitoring or address tampering.
-            </p>
-            <p class="text-yellow-400 font-bold mb-6">
-                **STATUS:** Awaiting encrypted wallet connection handshake. Funds will be credited upon 3 network confirmations.
-            </p>
-            <button onclick="hideConnectWallet()" 
-                        class="w-full mt-6 bg-market-gold hover:bg-yellow-400 text-black font-bold py-2 rounded transition duration-150">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- QR Code -->
+                <div class="flex flex-col items-center bg-market-black border border-market-border p-4 rounded-lg">
+                    <img src="{{ qr_code_url }}" alt="Bitcoin Deposit QR Code" class="w-48 h-48 mb-2">
+                    <p class="text-xs text-gray-400 text-center">Scan with your Bitcoin wallet</p>
+                </div>
+                
+                <!-- Address -->
+                <div class="flex flex-col justify-center">
+                    <label class="block text-gray-400 text-sm font-bold mb-2">
+                        Your Deposit Address:
+                    </label>
+                    <div class="flex items-center bg-market-black border border-market-border rounded-lg p-3 mb-4">
+                        <input type="text" 
+                               id="btc-address" 
+                               value="{{ btc_address }}" 
+                               readonly 
+                               class="flex-1 bg-transparent text-market-gold font-mono text-xs outline-none break-all">
+                        <button id="copy-btn" onclick="copyAddress()" 
+                                class="ml-2 bg-market-gold hover:bg-yellow-400 text-black font-bold px-3 py-2 rounded transition text-sm">
+                            Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-yellow-900 bg-opacity-30 border border-yellow-600 rounded-lg p-4 mb-6">
+                <h4 class="text-yellow-400 font-bold mb-2">Important:</h4>
+                <ul class="text-sm text-gray-300 space-y-1">
+                    <li>• Funds require <strong>3 blockchain confirmations</strong> before crediting</li>
+                    <li>• Average confirmation time: 30-60 minutes</li>
+                    <li>• Minimum deposit: ₿0.0001</li>
+                    <li>• Send only from a personal wallet (not from exchanges)</li>
+                </ul>
+            </div>
+
+            <!-- Deposit Confirmation Form -->
+            <form method="POST" action="{{ url_for('wallet') }}" class="space-y-4">
+                <div>
+                    <label class="block text-gray-400 text-sm font-bold mb-2">
+                        Amount Sent (BTC):
+                    </label>
+                    <input type="text" 
+                           name="amount_sent" 
+                           placeholder="0.00000" 
+                           required
+                           class="w-full bg-market-black border border-market-border text-white px-4 py-3 rounded-lg focus:border-market-gold outline-none font-mono">
+                </div>
+                
+                <button type="submit" 
+                        class="w-full bg-green-700 hover:bg-green-600 text-white font-bold py-3 rounded-lg transition duration-150">
+                    I Have Sent Funds
+                </button>
+                
+                <p class="text-xs text-gray-500 text-center">
+                    Click after you have sent Bitcoin to the address above
+                </p>
+            </form>
+            
+            <button onclick="hideDepositModal()" 
+                        class="w-full mt-4 bg-market-gold hover:bg-yellow-400 text-black font-bold py-2 rounded transition duration-150">
                 CLOSE
             </button>
         </div>
@@ -101,13 +177,32 @@
 </div>
 
 <script>
-    function showConnectWallet(action) {
-        document.getElementById('modal-header').innerText = `Secure ${action} via Wallet`;
-        document.getElementById('connect-wallet-modal').classList.remove('hidden');
+    function showDepositModal() {
+        document.getElementById('deposit-modal').classList.remove('hidden');
     }
 
-    function hideConnectWallet() {
-        document.getElementById('connect-wallet-modal').classList.add('hidden');
+    function hideDepositModal() {
+        document.getElementById('deposit-modal').classList.add('hidden');
+    }
+
+    function copyAddress() {
+        const addressInput = document.getElementById('btc-address');
+        const button = document.getElementById('copy-btn');
+        
+        navigator.clipboard.writeText(addressInput.value).then(function() {
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            button.classList.add('bg-green-600');
+            button.classList.remove('bg-market-gold', 'hover:bg-yellow-400');
+            
+            setTimeout(function() {
+                button.textContent = originalText;
+                button.classList.remove('bg-green-600');
+                button.classList.add('bg-market-gold', 'hover:bg-yellow-400');
+            }, 2000);
+        }).catch(function(err) {
+            alert('Failed to copy. Please copy manually.');
+        });
     }
 </script>
 {% endblock %}

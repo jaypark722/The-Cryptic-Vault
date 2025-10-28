@@ -10,6 +10,9 @@ from datetime import datetime
 import gnupg
 import random
 import time
+import qrcode
+from io import BytesIO
+import base64
 
 # Import the honeypot logger
 from honeypot_logger import HoneypotLogger, log_page_view
@@ -35,6 +38,29 @@ gpg = gnupg.GPG(gnupghome=gpg_home)
 ADMIN_ID = 1
 HOT_LISTING_ID = 'DATA-SIM-ORANGE-CUST-B0T'
 
+# Bitcoin Testnet Deposit Lure Configuration
+FAKE_BTC_ADDRESS = 'tb1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh'  # Bitcoin Testnet address
+
+def generate_qr_code(data):
+    """Generate a QR code and return as base64 encoded data URI"""
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+    
+    img = qr.make_image(fill_color="black", back_color="white")
+    
+    # Convert to base64
+    buffered = BytesIO()
+    img.save(buffered, format="PNG")
+    img_str = base64.b64encode(buffered.getvalue()).decode()
+    
+    return f"data:image/png;base64,{img_str}"
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -43,6 +69,7 @@ class User(db.Model):
     cart_json = db.Column(db.String(5000), default='[]')
     pgp_public_key = db.Column(db.Text, nullable=True)
     transaction_history_json = db.Column(db.Text, default='[]')
+    pending_deposit = db.Column(db.Boolean, default=False)
 
     messages_received = db.relationship('Message', backref='recipient', lazy='dynamic', foreign_keys='Message.recipient_id')
     orders = db.relationship('Order', backref='customer', lazy='dynamic')
@@ -97,20 +124,17 @@ def validate_pgp_key(pgp_key_text):
     if not pgp_key_text or not pgp_key_text.strip():
         return False, "PGP key cannot be empty.", None
     
-    # Check for basic PGP structure
     if '-----BEGIN PGP PUBLIC KEY BLOCK-----' not in pgp_key_text:
         return False, "Invalid PGP key format. Must contain BEGIN PGP PUBLIC KEY BLOCK.", None
     
     if '-----END PGP PUBLIC KEY BLOCK-----' not in pgp_key_text:
         return False, "Invalid PGP key format. Must contain END PGP PUBLIC KEY BLOCK.", None
     
-    # Try to import the key
     import_result = gpg.import_keys(pgp_key_text)
     
     if import_result.count == 0:
         return False, "Failed to import PGP key. Please verify the key is valid.", None
     
-    # Get the fingerprint of the imported key
     fingerprint = import_result.fingerprints[0] if import_result.fingerprints else None
     
     if not fingerprint:
@@ -126,7 +150,6 @@ def encrypt_message_for_user(user, plaintext_message):
     if not user.pgp_public_key:
         return False, "User does not have a PGP public key on file."
     
-    # Import the user's public key
     import_result = gpg.import_keys(user.pgp_public_key)
     
     if import_result.count == 0:
@@ -137,7 +160,6 @@ def encrypt_message_for_user(user, plaintext_message):
     if not fingerprint:
         return False, "Could not retrieve fingerprint from user's PGP key."
     
-    # Encrypt the message
     encrypted_data = gpg.encrypt(plaintext_message, fingerprint, always_trust=True)
     
     if not encrypted_data.ok:
@@ -243,7 +265,6 @@ def product_detail(product_id):
     if product is None:
         abort(404)
 
-    # LOG: Product view
     logger.log_event('PRODUCT_VIEW', product_id=product_id, additional_data={
         'product_name': product.get('Product Name (Description)'),
         'price': product.get('Price (BTC)'),
@@ -258,7 +279,6 @@ def add_to_cart(listing_id):
     current_cart.append(listing_id)
     update_current_cart(current_cart)
 
-    # LOG: Cart addition
     logger.log_event('CART_ADD', product_id=listing_id)
 
     return redirect(url_for('cart'))
@@ -325,7 +345,6 @@ def remove_from_cart(listing_id):
             current_cart.remove(listing_id)
             update_current_cart(current_cart)
             
-            # LOG: Cart removal
             logger.log_event('CART_REMOVE', product_id=listing_id)
         except ValueError:
             pass
@@ -345,7 +364,6 @@ def register():
         coupon = request.form.get('coupon', '')
         pgp_key = request.form.get('pgp_key', '').strip()
 
-        # Validate PGP key if provided
         pgp_valid = False
         pgp_error = None
         if pgp_key:
@@ -373,7 +391,8 @@ def register():
             password=password,
             balance=initial_balance,
             pgp_public_key=pgp_key if pgp_valid else None,
-            transaction_history_json=json.dumps(transaction_history)
+            transaction_history_json=json.dumps(transaction_history),
+            pending_deposit=False
         )
 
         try:
@@ -410,7 +429,6 @@ def register():
             session['has_orders'] = Order.query.filter_by(user_id=new_user.id).count() > 0
             session.modified = True
 
-            # LOG: Registration
             logger.log_event('REGISTER', additional_data={
                 'username': username,
                 'used_coupon': coupon == 'REDTEAMBECODE',
@@ -423,7 +441,6 @@ def register():
             db.session.rollback()
             return render_template('register.html', error=f'Database error: {e}')
 
-    # LOG: Registration page view
     logger.log_event('PAGE_VIEW', additional_data={'page': 'register'})
     return render_template('register.html')
 
@@ -456,7 +473,6 @@ def login():
             session['has_orders'] = user.orders.count() > 0
             session.modified = True
 
-            # LOG: Successful login
             logger.log_event('LOGIN', additional_data={
                 'username': username,
                 'user_id': user.id
@@ -464,19 +480,16 @@ def login():
 
             return redirect(url_for('profile'))
         else:
-            # LOG: Failed login attempt
             logger.log_event('LOGIN_FAILED', additional_data={
                 'username': username
             })
             return render_template('login.html', error='Invalid credentials.')
 
-    # LOG: Login page view
     logger.log_event('PAGE_VIEW', additional_data={'page': 'login'})
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
-    # LOG: Logout
     logger.log_event('LOGOUT', additional_data={
         'username': session.get('username')
     })
@@ -512,7 +525,6 @@ def change_password():
         user.password = new_password
         db.session.commit()
         
-        # LOG: Password change
         logger.log_event('PASSWORD_CHANGE', additional_data={
             'user_id': user_id
         })
@@ -583,7 +595,6 @@ def checkout():
     session['has_orders'] = True
     session.modified = True
 
-    # LOG: Purchase event
     logger.log_event('PURCHASE', additional_data={
         'order_id': new_order.id,
         'total': f'₿{total_btc:.5f}',
@@ -607,7 +618,7 @@ def checkout():
             plaintext_message = f"""Order Fulfillment Status: Completed
 Item: Orange Customer Credential Database
 Your secure download link is:
-http://192.168.1.25:5000/static/data/orange.xlsx
+http://10.40.38.153:5000/static/data/orange.xlsx
 """
 
             success, encrypted_or_error = encrypt_message_for_user(user, plaintext_message)
@@ -669,7 +680,6 @@ def download_delivery(token):
     if not os.path.exists(file_path):
         return "File not found on server.", 404
 
-    # LOG: CRITICAL - BAIT FILE DOWNLOAD
     logger.log_event('DOWNLOAD', product_id=HOT_LISTING_ID, additional_data={
         'order_id': order_id,
         'file_name': file_name,
@@ -703,7 +713,6 @@ def profile():
         if not pgp_key:
             error_message = 'Please paste a valid PGP Public Key to verify your account.'
         else:
-            # Validate the PGP key
             is_valid, message, fingerprint = validate_pgp_key(pgp_key)
             
             if not is_valid:
@@ -715,7 +724,6 @@ def profile():
                 session['pgp_verified'] = True
                 success_message = f'PGP Public Key successfully validated and saved. Your account is now VERIFIED.'
                 
-                # LOG: PGP key added
                 logger.log_event('PGP_VERIFIED', additional_data={
                     'user_id': user.id,
                     'username': user.username
@@ -886,7 +894,7 @@ def delete_message(message_id):
 
     return redirect(url_for('messages'))
 
-@app.route('/wallet')
+@app.route('/wallet', methods=['GET', 'POST'])
 @log_page_view(logger)
 def wallet():
     if not session.get('logged_in'):
@@ -894,15 +902,51 @@ def wallet():
 
     user = User.query.get(session['user_id'])
 
+    if request.method == 'POST':
+        # Handle deposit confirmation
+        amount_sent = request.form.get('amount_sent', '0.00000')
+        
+        # Mark pending deposit
+        user.pending_deposit = True
+        db.session.commit()
+        
+        # Log the critical deposit attempt
+        logger.log_event('DEPOSIT_ATTEMPT', additional_data={
+            'user_id': user.id,
+            'username': user.username,
+            'amount_claimed': amount_sent,
+            'btc_address': FAKE_BTC_ADDRESS,
+            'timestamp': datetime.now().isoformat()
+        })
+        
+        flash('Deposit initiated. Awaiting blockchain confirmation (3 confirmations required).', 'success')
+        return redirect(url_for('wallet'))
+
+    # Build transaction history
     try:
         transaction_history = json.loads(user.transaction_history_json)
-        transaction_history.reverse()
     except (json.JSONDecodeError, TypeError):
         transaction_history = []
+    
+    # Add pending deposit to history if active
+    if user.pending_deposit:
+        transaction_history.insert(0, {
+            'type': 'DEPOSIT',
+            'amount': '₿0.00000',
+            'date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'description': 'Pending - Awaiting 3 confirmations',
+            'status': 'PENDING'
+        })
+
+    # Generate QR code for the Bitcoin address
+    qr_code_data_uri = generate_qr_code(FAKE_BTC_ADDRESS)
 
     return render_template('wallet.html',
+                           user=user,
                            balance=user.balance,
-                           history=transaction_history)
+                           btc_address=FAKE_BTC_ADDRESS,
+                           qr_code_url=qr_code_data_uri,
+                           transactions=transaction_history)
 
 @app.route('/support', methods=['GET', 'POST'])
 def support():
@@ -930,7 +974,6 @@ def support():
                 db.session.commit()
                 success = "Support ticket submitted. An administrator will respond via secure message shortly."
                 
-                # LOG: Support ticket submitted
                 logger.log_event('SUPPORT_TICKET', additional_data={
                     'subject': subject,
                     'user_id': session['user_id']
@@ -944,7 +987,6 @@ def support():
     error_message = request.args.get('error')
     success_message = request.args.get('success')
     
-    # LOG: Support page view
     logger.log_event('PAGE_VIEW', additional_data={'page': 'support'})
 
     return render_template('support.html', error=error_message, success=success_message)
@@ -977,7 +1019,6 @@ def vendor():
                 db.session.commit()
                 success = "Vendor application submitted. An administrator will contact you via secure message."
                 
-                # LOG: Vendor application
                 logger.log_event('VENDOR_APPLICATION', additional_data={
                     'specialty': specialty,
                     'user_id': session['user_id']
@@ -991,20 +1032,15 @@ def vendor():
     error_message = request.args.get('error')
     success_message = request.args.get('success')
     
-    # LOG: Vendor page view
     logger.log_event('PAGE_VIEW', additional_data={'page': 'vendor'})
     
     return render_template('vendor.html', error=error_message, success=success_message)
 
 @app.route('/vendor_profile/<int:vendor_id>')
 def vendor_profile(vendor_id):
-    # This route is not fully implemented in your provided context,
-    # but for completeness in a real app, it would fetch vendor info
-    # and display a profile/review page. For now, it's a basic stub.
     return f"Vendor Profile for ID {vendor_id} - Route stub."
 
 
-# ADMIN ROUTES FOR MONITORING
 @app.route('/admin/dashboard')
 def admin_dashboard():
     """Admin dashboard to view honeypot logs"""
@@ -1014,7 +1050,6 @@ def admin_dashboard():
     sessions = logger.get_all_sessions(limit=50)
     recent_events = logger.get_all_events(limit=100)
     
-    # Calculate summary statistics
     total_sessions = len(sessions)
     total_downloads = sum(1 for s in sessions if s['downloads_attempted'] > 0)
     total_purchases = sum(1 for s in sessions if s['purchases_made'] > 0)
@@ -1057,14 +1092,11 @@ def admin_session_detail(session_id):
 
 def setup_admin_user():
     """Initializes the database and creates the admin user if it doesn't exist."""
-    # This must be run inside an app context
     db.create_all()
     
-    # Check if admin exists by username, not ID
     admin_user = User.query.filter_by(username='admin').first()
     
     if not admin_user:
-        # Find the next available ID or use a specific one
         existing_user_1 = User.query.get(1)
         
         if existing_user_1 and existing_user_1.username != 'admin':
@@ -1076,7 +1108,6 @@ def setup_admin_user():
                 pgp_public_key='ADMIN_ACCOUNT'
             )
         else:
-            # Create admin with ID 1
             admin_user = User(
                 id=1,
                 username='admin',
@@ -1092,11 +1123,8 @@ def setup_admin_user():
         print(f"Admin user already exists with ID: {admin_user.id}")
 
 
-# The setup function needs to be executed once when the app starts
 with app.app_context():
     setup_admin_user()
 
-# Standard run block for when you use 'python app.py'
 if __name__ == '__main__':
-    # setup_admin_user() is now outside the if block, so no need to call it here.
     app.run(debug=True, host='0.0.0.0', port=5000)
