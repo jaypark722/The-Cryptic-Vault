@@ -234,6 +234,8 @@ docker rm -f honeypot-instance
 
 ---
 
+## Research Goals
+
 ### Primary Objectives
 
 This honeypot is designed to advance cybersecurity research in the following areas:
