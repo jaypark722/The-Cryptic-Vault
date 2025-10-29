@@ -1,4 +1,4 @@
-# 🕵️ The Cryptic Vault - Advanced Adaptive Honeypot System
+# The Cryptic Vault - Advanced Adaptive Honeypot System
 
 <div align="center">
 
@@ -15,21 +15,21 @@
 
 ---
 
-## 📋 Overview
+## Overview
 
 The Cryptic Vault is a sophisticated honeypot system designed for cybersecurity research that creates dynamic, adaptive fake environments to study malicious actor behavior. Unlike traditional static honeypots, this system analyzes attacker profiles in real-time and generates personalized convincing fake data to maximize behavioral intelligence collection.
 
 ### What Makes This Different?
 
-- **🎭 Dynamic Adaptation**: The system profiles each visitor and adapts its responses based on behavioral patterns
-- **🤖 AI-Powered Content**: Generates convincing fake marketplace data, vendor profiles, and transaction flows
-- **📊 Behavioral Classification**: Automatically categorizes visitors (bots, researchers, casual browsers, serious buyers, advanced threats)
-- **🪤 Multi-Layer Traps**: Includes PGP-encrypted bait files, fake Bitcoin deposits, and realistic order fulfillment
-- **📈 Comprehensive Logging**: Tracks every interaction for deep analysis of attacker tactics, techniques, and procedures (TTPs)
+- ** Dynamic Adaptation**: The system profiles each visitor and adapts its responses based on behavioral patterns
+- ** AI-Powered Content**: Generates convincing fake marketplace data, vendor profiles, and transaction flows
+- ** Behavioral Classification**: Automatically categorizes visitors (bots, researchers, casual browsers, serious buyers, advanced threats)
+- ** Multi-Layer Traps**: Includes PGP-encrypted bait files, fake Bitcoin deposits, and realistic order fulfillment
+- ** Comprehensive Logging**: Tracks every interaction for deep analysis of attacker tactics, techniques, and procedures (TTPs)
 
 ---
 
-## 🎯 Features
+##  Features
 
 ### Core Honeypot Capabilities
 
@@ -57,7 +57,7 @@ The Cryptic Vault is a sophisticated honeypot system designed for cybersecurity 
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ### Technology Stack
 ```
@@ -95,7 +95,7 @@ cryptic-vault/
 
 ---
 
-## 🚀 Installation
+## Installation
 
 ### Prerequisites
 
@@ -137,7 +137,7 @@ cryptic-vault/
 
 ---
 
-## 📖 Usage
+## Usage
 
 ### Deployment Options
 
@@ -234,8 +234,6 @@ docker rm -f honeypot-instance
 
 ---
 
-## 🔬 Research Goals
-
 ### Primary Objectives
 
 This honeypot is designed to advance cybersecurity research in the following areas:
@@ -286,7 +284,7 @@ The system logs:
 
 ---
 
-## 🛡️ Security & Ethics
+## Security & Ethics
 
 ### Safety Features
 
@@ -312,7 +310,7 @@ This tool is provided for educational and authorized security research purposes 
 
 ---
 
-## 📊 Data Analysis
+## Data Analysis
 
 ### Accessing Logs
 
@@ -354,7 +352,7 @@ SELECT * FROM events WHERE event_type = 'DOWNLOAD';
 
 ---
 
-## 🔮 Future Enhancements
+## Future Enhancements
 
 ### Planned Features
 
@@ -378,7 +376,7 @@ SELECT * FROM events WHERE event_type = 'DOWNLOAD';
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 This is a research project. Contributions that enhance the honeypot's realism, logging capabilities, or analytical features are welcome.
 
@@ -393,7 +391,7 @@ This is a research project. Contributions that enhance the honeypot's realism, l
 
 ---
 
-## 📚 References & Inspiration
+## References & Inspiration
 
 - MITRE ATT&CK Framework
 - OWASP Honeypot Project
