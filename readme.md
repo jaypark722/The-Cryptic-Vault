@@ -9,7 +9,7 @@
 
 **An AI-powered, adaptive honeypot simulating a dark web marketplace for cybersecurity research**
 
-[Features](#-features) • [Architecture](#-architecture) • [Installation](#-installation) • [Usage](#-usage) • [Research Goals](#-research-goals)
+[Features](#features) • [Architecture](#architecture) • [Installation](#installation) • [Usage](#usage) • [Research Goals](#research-goals)
 
 </div>
 
@@ -29,7 +29,7 @@ The Cryptic Vault is a sophisticated honeypot system designed for cybersecurity 
 
 ---
 
-##  Features
+## Features
 
 ### Core Honeypot Capabilities
 
