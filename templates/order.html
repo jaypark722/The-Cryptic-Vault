@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}THE CRYPTIC VAULT | Order{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-2xl mx-auto">
+    <h2 class="text-3xl text-market-gold font-bold mb-6">Order Details & Checkout</h2>
+
+    {% if error %}
+        <p class="bg-red-900 border border-red-500 text-white p-3 rounded mb-4">{{ error }}</p>
+    {% endif %}
+
+    <div class="bg-market-gray border border-market-border p-6 rounded-lg mb-6">
+        <h3 class="text-xl text-white font-bold mb-4">Order Summary</h3>
+
+        <div class="space-y-4">
+            {% for item in cart_details %}
+            <div class="flex justify-between items-center border-b border-market-border pb-4">
+                <div>
+                    <p class="text-white font-semibold">{{ item.name }}</p>
+                    <p class="text-sm text-gray-400">Price: {{ item.price }}</p>
+                </div>
+                <p class="text-market-gold font-bold">{{ item.subtotal }}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="mt-6 text-right">
+            <p class="text-lg text-white">Total Amount: <span class="text-market-gold font-bold">{{ total_price }}</span></p>
+            <p class="text-sm text-gray-400">Current Balance: {{ session.balance }}</p>
+        </div>
+    </div>
+
+    {# Coupon is applied on the cart page; no coupon input on the final order page. #}
+
+    <!-- Order Status Section -->
+    {% if is_bait %}
+        <div class="bg-market-gray border border-market-border p-6 rounded-lg mb-6">
+            <div class="flex items-center space-x-2">
+                <span class="text-blue-500 font-bold">SHIPPED</span>
+                <a href="#" class="text-xs bg-blue-700 hover:bg-blue-600 text-white px-3 py-1 rounded">
+                    View Delivery Status
+                </a>
+            </div>
+        </div>
+    {% else %}
+        <div class="bg-market-gray border border-market-border p-6 rounded-lg mb-6">
+            <div class="flex items-center space-x-2">
+                <span class="text-yellow-500 font-bold">PENDING</span>
+                <span class="text-gray-400 text-sm">Awaiting verification</span>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="flex justify-end mt-6">
+        <form method="POST" action="{{ url_for('checkout') }}" class="w-full">
+            <button type="submit" class="w-full bg-market-gold hover:bg-yellow-400 text-black font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline transition duration-150">
+                CONFIRM PURCHASE
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

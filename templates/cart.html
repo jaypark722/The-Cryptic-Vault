@@ -54,6 +54,16 @@
             <span class="text-3xl text-market-gold font-extrabold">{{ total_price }}</span>
         </div>
 
+        <!-- Coupon Entry (apply before proceeding to checkout) -->
+        <div class="mt-4">
+            <form method="POST" action="{{ url_for('apply_coupon') }}" class="flex items-center space-x-2">
+                <input type="text" name="coupon" placeholder="Enter coupon code" 
+                       class="shadow appearance-none border border-market-border bg-white rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline">
+                <button type="submit" class="bg-market-gold hover:bg-yellow-400 text-black font-bold py-2 px-4 rounded transition duration-150">Apply</button>
+            </form>
+            <p class="text-xs text-gray-400 mt-2">Have a coupon? Apply it here before confirming checkout.</p>
+        </div>
+
         <div class="mt-6 flex justify-end">
             <form method="POST" action="{{ url_for('checkout') }}" onsubmit="showProcessing(event)">
                 <button type="submit" 

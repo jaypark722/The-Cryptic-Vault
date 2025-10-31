@@ -138,7 +138,7 @@
                 <h4 class="text-yellow-400 font-bold mb-2">Important:</h4>
                 <ul class="text-sm text-gray-300 space-y-1">
                     <li>• Funds require <strong>3 blockchain confirmations</strong> before crediting</li>
-                    <li>• Average confirmation time: 30-60 minutes</li>
+                    <li>• Average confirmation time: <strong>10-15 minutes</strong></li>
                     <li>• Minimum deposit: ₿0.0001</li>
                     <li>• Send only from a personal wallet (not from exchanges)</li>
                 </ul>
@@ -154,6 +154,7 @@
                            name="amount_sent" 
                            placeholder="0.00000" 
                            required
+                           pattern="[0-9]*\.?[0-9]+"
                            class="w-full bg-market-black border border-market-border text-white px-4 py-3 rounded-lg focus:border-market-gold outline-none font-mono">
                 </div>
                 

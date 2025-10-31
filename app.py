@@ -361,6 +361,7 @@ def register():
 
         username = request.form['username']
         password = request.form['password']
+        confirm_password = request.form.get('confirm_password', '')
         coupon = request.form.get('coupon', '')
         pgp_key = request.form.get('pgp_key', '').strip()
 
@@ -374,6 +375,13 @@ def register():
 
         if User.query.filter_by(username=username).first():
             return render_template('register.html', error='Username already taken.')
+
+        # Password confirmation validation
+        if password != confirm_password:
+            return render_template('register.html', error='Passwords do not match.')
+
+        if len(password) < 8:
+            return render_template('register.html', error='Password must be at least 8 characters long.')
 
         initial_balance = '₿0.000850' if coupon == 'REDTEAMBECODE' else '₿0.00000'
         transaction_history = []
@@ -534,6 +542,140 @@ def change_password():
         db.session.rollback()
         return redirect(url_for('profile', error=f'Database error: {e}'))
 
+
+@app.route('/order')
+def order_page():
+    """Render the checkout/order page where users can review cart, apply coupon, and confirm purchase."""
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+
+    cart_items = get_current_cart()
+
+    # Build cart details (reuse cart logic)
+    item_counts = Counter(cart_items)
+    cart_details = []
+    total_btc = 0.0
+
+    for item_id, qty in item_counts.items():
+        if item_id == 'COUPON-REDTEAM':
+            continue
+
+        listing = get_product_by_id(item_id)
+        if listing:
+            item_price = listing.get('price_float', 0.0)
+            item_name = listing.get('Product Name (Description)', 'Unknown Item')
+
+            subtotal = item_price * qty
+            total_btc += subtotal
+
+            cart_details.append({
+                'id': item_id,
+                'name': item_name,
+                'price': f'₿{item_price:.5f}',
+                'qty': qty,
+                'subtotal': f'₿{subtotal:.5f}'
+            })
+
+    if 'COUPON-REDTEAM' in item_counts:
+        cart_details.append({
+            'id': 'COUPON-REDTEAM',
+            'name': 'REDTEAMBECODE Coupon Credit',
+            'price': '₿0.00000',
+            'qty': item_counts['COUPON-REDTEAM'],
+            'subtotal': '₿0.00000'
+        })
+
+    total_price_formatted = f'₿{total_btc:.5f}'
+
+    # Determine whether the hot/bait listing is present in this cart
+    is_bait = HOT_LISTING_ID in cart_items
+
+    error_message = request.args.get('error')
+    success_message = request.args.get('success')
+
+    return render_template('order.html',
+                           cart_details=cart_details,
+                           total_price=total_price_formatted,
+                           is_bait=is_bait,
+                           error=error_message,
+                           success=success_message)
+
+
+@app.route('/apply_coupon', methods=['POST'])
+def apply_coupon():
+    """Process coupon submissions from the cart page and update user's balance if valid."""
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+
+    try:
+        coupon = request.form.get('coupon', '').strip()
+        if not coupon:
+            return redirect(url_for('cart', error='No coupon code provided.'))
+
+        user = User.query.get(session['user_id'])
+        if not user:
+            return redirect(url_for('login'))
+
+        # Parse transaction history safely
+        transaction_history = json.loads(user.transaction_history_json or '[]')
+        
+        # Prevent reuse of the same coupon on the same account
+        already_used = any((t.get('description', '') == f'Coupon Code: {coupon}') for t in transaction_history)
+
+        if coupon == 'REDTEAMBECODE':
+            if already_used:
+                return redirect(url_for('cart', error='Coupon has already been redeemed on this account.'))
+
+            try:
+                # Safely convert and calculate new balance
+                add_amount = 0.00085
+                current_balance = btc_to_float(user.balance)
+                new_balance = current_balance + add_amount
+                user.balance = f'₿{new_balance:.5f}'
+
+                # Record transaction history
+                transaction_history.append({
+                    'type': 'DEPOSIT',
+                    'amount': f'₿{add_amount:.5f}',
+                    'date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    'description': f'Coupon Code: {coupon}'
+                })
+
+                user.transaction_history_json = json.dumps(transaction_history)
+                db.session.commit()
+
+                session['balance'] = user.balance
+                session.modified = True
+
+                logger.log_event('COUPON_APPLIED', additional_data={
+                            'username': user.username,
+                    'coupon': coupon
+                })
+
+                return redirect(url_for('cart', success='Coupon applied successfully.'))
+
+            except ValueError as ve:
+                # Handle balance conversion errors
+                logger.log_event('COUPON_ERROR', additional_data={
+                    'error': str(ve),
+                    'user_id': user.id,
+                    'balance': user.balance
+                })
+                return redirect(url_for('cart', error='Error processing coupon. Please try again.'))
+
+        # Invalid coupon code
+        return redirect(url_for('cart', error='Invalid coupon code.'))
+
+    except Exception as e:
+        # Log the full error for debugging
+        logger.log_event('COUPON_ERROR', additional_data={
+            'error': str(e),
+            'user_id': user.id if user else None,
+            'coupon': coupon
+        })
+        app.logger.error(f"Coupon application error: {str(e)}")
+        return redirect(url_for('cart', error='An error occurred while processing your coupon.'))
+
 @app.route('/checkout', methods=['POST'])
 def checkout():
     if not session.get('logged_in'):
@@ -570,43 +712,123 @@ def checkout():
         user_id=user.id,
         total_amount=f'₿{total_btc:.5f}',
         items_json=json.dumps(cart_items),
-        status='PROCESSING',
-        encrypted_delivery="Processing delivery... Please wait on the orders page."
+        status='PENDING',  # Start with PENDING, will update to SHIPPED only for bait item
+        encrypted_delivery=None  # Initialize as None, only set for bait item
     )
     db.session.add(new_order)
     db.session.flush()
 
-    transaction_history = json.loads(user.transaction_history_json)
+    # Build a human-friendly order reference that will be shown to users
+    # and shared across all per-item history entries for this transaction.
+    order_ref = f'54987{new_order.id}'
 
-    if total_btc > 0.0:
-        transaction_history.append({
-            'type': 'PURCHASE',
-            'amount': f'-₿{total_btc:.5f}',
+    # Build per-item transaction history entries (one entry per unique item in the cart)
+    transaction_history = json.loads(user.transaction_history_json or '[]')
+
+    # Count items so we can create one record per unique item with quantity
+    item_counts = Counter(purchased_items)
+
+    # Track per-item logging for the honeypot logger as well
+    total_logged_items = 0
+    per_item_totals = []
+
+    for item_id, qty in item_counts.items():
+        # Skip explicit coupon placeholder rows in purchase history - they are handled separately
+        if item_id == 'COUPON-REDTEAM':
+            continue
+
+        listing = get_product_by_id(item_id)
+        if listing:
+            item_price = listing.get('price_float', 0.0)
+            item_total = item_price * qty
+            per_item_totals.append(item_total)
+
+            # Compose a distinct transaction history entry for this item
+            th_entry = {
+                'type': 'PURCHASE',
+                'amount': f'-₿{item_total:.5f}',
+                'date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'description': f'Order #{order_ref} - {listing.get("Product Name (Description)", "Unknown")} x{qty}',
+                'order_id': order_ref,
+                'product_id': item_id,
+                'qty': qty
+            }
+
+            # Insert at the front so new purchases appear first
+            transaction_history.insert(0, th_entry)
+
+            # Log a per-item event to honeypot_logs.db for auditing
+            logger.log_event('PURCHASE_ITEM', product_id=item_id, additional_data={
+                'order_ref': order_ref,
+                'price_each': f'₿{item_price:.5f}',
+                'qty': qty,
+                'item_total': f'₿{item_total:.5f}',
+                'username': user.username
+            })
+
+            total_logged_items += qty
+        else:
+            # Unknown product - still record an entry so the audit trail is complete
+            th_entry = {
+                'type': 'PURCHASE',
+                'amount': f'-₿0.00000',
+                'date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'description': f'Order #{order_ref} - Unknown Product ({item_id}) x{qty}',
+                'order_id': order_ref,
+                'product_id': item_id,
+                'qty': qty
+            }
+            transaction_history.insert(0, th_entry)
+            logger.log_event('PURCHASE_ITEM', product_id=item_id, additional_data={
+                'order_ref': order_ref,
+                'price_each': '₿0.00000',
+                'qty': qty,
+                'item_total': '₿0.00000',
+                'username': user.username
+            })
+
+    # If the cart also included coupon placeholders, optionally record that info
+    if 'COUPON-REDTEAM' in Counter(purchased_items):
+        # Add a descriptive coupon usage entry but do not treat as a purchased product
+        coupon_qty = Counter(purchased_items)['COUPON-REDTEAM']
+        transaction_history.insert(0, {
+            'type': 'COUPON',
+            'amount': '₿0.00000',
             'date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'description': f'Purchase of {len(purchased_items)} item(s) (Order #{new_order.id})'
+            'description': f'Order #{order_ref} - Coupon usage x{coupon_qty}',
+            'order_id': order_ref,
+            'product_id': 'COUPON-REDTEAM',
+            'qty': coupon_qty
         })
 
+    # Persist transaction history and clear the user's cart
     user.transaction_history_json = json.dumps(transaction_history)
     user.cart_json = '[]'
     db.session.commit()
 
+    # Update session state
     session['balance'] = user.balance
     session['cart_count'] = 0
     session['has_orders'] = True
     session.modified = True
 
+    # Log a higher-level purchase event for the overall transaction
     logger.log_event('PURCHASE', additional_data={
+        'order_ref': order_ref,
         'order_id': new_order.id,
         'total': f'₿{total_btc:.5f}',
-        'items_count': len(purchased_items),
+        'unique_items': len(item_counts),
+        'items_count': total_logged_items,
         'contains_bait': HOT_LISTING_ID in cart_items,
         'items': cart_items
     })
 
     final_encrypted_content = None
-    final_status = 'SHIPPED'
+    # Default to PENDING for non-bait items; only the HOT_LISTING_ID (bait) will be set to SHIPPED
+    final_status = 'PENDING'
     prefixed_order_id = f'54987{new_order.id}'
 
+    # Check if this is a bait item purchase (Orange Customer Credential Database)
     if HOT_LISTING_ID in cart_items:
         try:
             file_name = 'orange.xlsx'
@@ -615,6 +837,8 @@ def checkout():
             if not os.path.exists(file_path):
                 raise FileNotFoundError
 
+            # For bait items, set status to SHIPPED and provide encrypted delivery
+            final_status = 'SHIPPED'  # Mark as shipped only for bait item
             plaintext_message = f"""Order Fulfillment Status: Completed
 Item: Orange Customer Credential Database
 Your secure download link is:
@@ -637,15 +861,10 @@ http://10.40.38.153:5000/static/data/orange.xlsx
             final_encrypted_content = f"ERROR: System failed to process delivery ({safe_error_msg}). Contact support."
             final_status = 'ERROR'
     else:
-        plaintext_message = "Your order has been placed. Delivery details for items other than the Orange SIM are pending vendor fulfillment."
-        success, encrypted_or_error = encrypt_message_for_user(user, plaintext_message)
-
-        if success:
-            final_encrypted_content = encrypted_or_error
-        else:
-            final_encrypted_content = "Your order has been placed. Delivery details pending."
-
-        final_status = 'SHIPPED'
+        # Non-bait products should remain PENDING and should not receive a delivery message or download link.
+        # Keep encrypted_delivery minimal or empty; delivery will be handled by vendor later.
+        final_encrypted_content = None
+        final_status = 'PENDING'
 
     with app.app_context():
         order_to_update = Order.query.get(new_order.id)
@@ -758,78 +977,140 @@ def profile():
 def orders():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
-
     user_id = session['user_id']
-    user_orders = Order.query.filter_by(user_id=user_id).order_by(desc(Order.order_date)).all()
 
+    # Prefer showing per-item PURCHASE entries from the user's transaction history
     orders_data = []
-    for order in user_orders:
-        item_name = 'Multiple Items'
-        item_id = 'N/A'
-        item_qty = 0
-        vendor_username = 'System'
-        vendor_id = None
 
+    user = User.query.get(user_id)
+    if user:
         try:
-            item_ids = json.loads(order.items_json)
-            item_qty = len(item_ids)
+            tx_history = json.loads(user.transaction_history_json or '[]')
+        except Exception:
+            tx_history = []
 
-            if item_ids and item_ids[0] == 'COUPON-REDTEAM' and order.status == 'DEPOSIT' and item_qty == 1:
+        for tx in tx_history:
+            # Only consider PURCHASE entries that were created during checkout
+            if tx.get('type') != 'PURCHASE' or not tx.get('order_id'):
                 continue
 
-            if item_qty >= 1:
-                display_id = item_ids[0]
+            display_id = tx.get('order_id')
+            # Try to extract numeric order id (we prefix with '54987' when creating orders)
+            order_db_id = None
+            if isinstance(display_id, str) and display_id.startswith('54987') and display_id[5:].isdigit():
+                try:
+                    order_db_id = int(display_id[5:])
+                except Exception:
+                    order_db_id = None
 
-                if display_id == 'COUPON-REDTEAM' and item_qty > 1:
-                    display_id = item_ids[1]
+            order_obj = Order.query.get(order_db_id) if order_db_id else None
 
-                product = get_product_by_id(display_id)
+            status = order_obj.status if order_obj else 'PENDING'
+            has_delivery = status in ('SHIPPED', 'ERROR')
+            encrypted_delivery = order_obj.encrypted_delivery if order_obj else None
 
-                if product:
-                    vendor_username = product.get('Vendor', 'Unknown Vendor')
-                    vendor_id = None
+            product_id = tx.get('product_id', 'N/A')
+            qty = tx.get('qty', 1)
+            amount = tx.get('amount', '')
+            date = tx.get('date', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
-                    item_name = product.get('Product Name (Description)', 'Unknown Item')
-                    item_id = display_id
+            product_name = 'Unknown Item'
+            vendor_username = 'System'
+            vendor_id = None
 
-                    non_coupon_count = len([id for id in item_ids if id != 'COUPON-REDTEAM'])
-                    if non_coupon_count > 1:
-                        item_name = f"{item_name} (+{non_coupon_count - 1} more items)"
-                    elif non_coupon_count == 1 and 'COUPON-REDTEAM' in item_ids:
-                        item_name = f"{item_name} (w/ Coupon)"
-                    elif non_coupon_count == 0 and 'COUPON-REDTEAM' in item_ids:
-                        item_name = "Coupon Redemption Order"
-                        vendor_username = 'ADMIN'
+            product = get_product_by_id(product_id)
+            if product:
+                product_name = product.get('Product Name (Description)', product_name)
+                vendor_username = product.get('Vendor', vendor_username)
+            elif product_id == 'COUPON-REDTEAM':
+                product_name = 'Coupon Redemption'
+                vendor_username = 'ADMIN'
 
-                elif display_id == 'COUPON-REDTEAM' and item_qty == 1:
-                    item_name = "Coupon Redemption Order"
-                    item_id = 'COUPON-REDTEAM'
-                    vendor_username = 'ADMIN'
-                else:
-                    item_name = f"ERROR: Unknown Product ({display_id})"
-                    item_id = display_id
+            orders_data.append({
+                'id': order_db_id or display_id,
+                'display_id': display_id,
+                'date': date,
+                'total': amount,
+                'status': status,
+                'product_name': product_name,
+                'product_id': product_id,
+                'quantity': qty,
+                'has_delivery': has_delivery,
+                'encrypted_delivery': encrypted_delivery,
+                'vendor_username': vendor_username,
+                'vendor_id': vendor_id
+            })
 
-        except (json.JSONDecodeError, TypeError) as e:
-            item_name = f"Items List Corrupted"
+    # Fallback: if no per-item purchases found, fall back to the original order aggregation
+    if not orders_data:
+        user_orders = Order.query.filter_by(user_id=user_id).order_by(desc(Order.order_date)).all()
+        for order in user_orders:
+            item_name = 'Multiple Items'
             item_id = 'N/A'
-            item_qty = len(item_ids) if 'item_ids' in locals() else 0
+            item_qty = 0
+            vendor_username = 'System'
+            vendor_id = None
 
-        has_delivery = order.status == 'SHIPPED' or order.status == 'ERROR'
+            try:
+                item_ids = json.loads(order.items_json)
+                item_qty = len(item_ids)
 
-        orders_data.append({
-            'id': order.id,
-            'display_id': f'54987{order.id}', 
-            'date': order.order_date.strftime('%Y-%m-%d %H:%M:%S'),
-            'total': order.total_amount,
-            'status': order.status,
-            'product_name': item_name,
-            'product_id': item_id,
-            'quantity': item_qty,
-            'has_delivery': has_delivery,
-            'encrypted_delivery': order.encrypted_delivery,
-            'vendor_username': vendor_username,
-            'vendor_id': vendor_id
-        })
+                if item_ids and item_ids[0] == 'COUPON-REDTEAM' and order.status == 'DEPOSIT' and item_qty == 1:
+                    continue
+
+                if item_qty >= 1:
+                    display_id = item_ids[0]
+
+                    if display_id == 'COUPON-REDTEAM' and item_qty > 1:
+                        display_id = item_ids[1]
+
+                    product = get_product_by_id(display_id)
+
+                    if product:
+                        vendor_username = product.get('Vendor', 'Unknown Vendor')
+                        vendor_id = None
+
+                        item_name = product.get('Product Name (Description)', 'Unknown Item')
+                        item_id = display_id
+
+                        non_coupon_count = len([id for id in item_ids if id != 'COUPON-REDTEAM'])
+                        if non_coupon_count > 1:
+                            item_name = f"{item_name} (+{non_coupon_count - 1} more items)"
+                        elif non_coupon_count == 1 and 'COUPON-REDTEAM' in item_ids:
+                            item_name = f"{item_name} (w/ Coupon)"
+                        elif non_coupon_count == 0 and 'COUPON-REDTEAM' in item_ids:
+                            item_name = "Coupon Redemption Order"
+                            vendor_username = 'ADMIN'
+
+                    elif display_id == 'COUPON-REDTEAM' and item_qty == 1:
+                        item_name = "Coupon Redemption Order"
+                        item_id = 'COUPON-REDTEAM'
+                        vendor_username = 'ADMIN'
+                    else:
+                        item_name = f"ERROR: Unknown Product ({display_id})"
+                        item_id = display_id
+
+            except (json.JSONDecodeError, TypeError) as e:
+                item_name = f"Items List Corrupted"
+                item_id = 'N/A'
+                item_qty = len(item_ids) if 'item_ids' in locals() else 0
+
+            has_delivery = order.status == 'SHIPPED' or order.status == 'ERROR'
+
+            orders_data.append({
+                'id': order.id,
+                'display_id': f'54987{order.id}', 
+                'date': order.order_date.strftime('%Y-%m-%d %H:%M:%S'),
+                'total': order.total_amount,
+                'status': order.status,
+                'product_name': item_name,
+                'product_id': item_id,
+                'quantity': item_qty,
+                'has_delivery': has_delivery,
+                'encrypted_delivery': order.encrypted_delivery,
+                'vendor_username': vendor_username,
+                'vendor_id': vendor_id
+            })
 
     error_message = request.args.get('error')
     success_message = request.args.get('success')
@@ -894,6 +1175,7 @@ def delete_message(message_id):
 
     return redirect(url_for('messages'))
 
+
 @app.route('/wallet', methods=['GET', 'POST'])
 @log_page_view(logger)
 def wallet():
@@ -903,43 +1185,58 @@ def wallet():
     user = User.query.get(session['user_id'])
 
     if request.method == 'POST':
-        # Handle deposit confirmation
         amount_sent = request.form.get('amount_sent', '0.00000')
         
-        # Mark pending deposit
+        try:
+            amount_float = float(amount_sent.replace('₿', ''))
+            if amount_float <= 0:
+                flash('Invalid amount. Please enter a positive value.', 'error')
+                return redirect(url_for('wallet'))
+        except ValueError:
+            flash('Invalid amount format. Please enter a valid BTC amount.', 'error')
+            return redirect(url_for('wallet'))
+        
+        transaction_history = json.loads(user.transaction_history_json)
+        
+        pending_deposit_entry = {
+            'type': 'DEPOSIT',
+            'amount': amount_float,  # Store raw float value without Bitcoin symbol
+            'date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'description': f'Pending - Awaiting 3 confirmations',
+            'status': 'PENDING'
+        }
+        
+        print(f"DEBUG: Creating pending deposit entry: {pending_deposit_entry}")
+        
+        transaction_history.insert(0, pending_deposit_entry)
+        user.transaction_history_json = json.dumps(transaction_history)
+        
+        user.pending_deposit_amount = amount_float  # Already storing raw float
+        
         user.pending_deposit = True
         db.session.commit()
         
-        # Log the critical deposit attempt
+        print(f"DEBUG: Saved transaction history: {user.transaction_history_json}")
+        
         logger.log_event('DEPOSIT_ATTEMPT', additional_data={
             'user_id': user.id,
             'username': user.username,
-            'amount_claimed': amount_sent,
+            'amount_claimed': f'₿{amount_float:.5f}',
             'btc_address': FAKE_BTC_ADDRESS,
             'timestamp': datetime.now().isoformat()
         })
         
         flash('Deposit initiated. Awaiting blockchain confirmation (3 confirmations required).', 'success')
         return redirect(url_for('wallet'))
-
-    # Build transaction history
+    # If GET, render the wallet page with transaction history and QR code
+    transaction_history = []
     try:
-        transaction_history = json.loads(user.transaction_history_json)
-    except (json.JSONDecodeError, TypeError):
+        transaction_history = json.loads(user.transaction_history_json or '[]')
+    except Exception:
         transaction_history = []
-    
-    # Add pending deposit to history if active
-    if user.pending_deposit:
-        transaction_history.insert(0, {
-            'type': 'DEPOSIT',
-            'amount': '₿0.00000',
-            'date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'description': 'Pending - Awaiting 3 confirmations',
-            'status': 'PENDING'
-        })
 
-    # Generate QR code for the Bitcoin address
     qr_code_data_uri = generate_qr_code(FAKE_BTC_ADDRESS)
+    logger.log_event('PAGE_VIEW', additional_data={'page': 'wallet'})
 
     return render_template('wallet.html',
                            user=user,
@@ -1063,10 +1360,186 @@ def admin_dashboard():
         'total_events': sum(s['total_events'] for s in sessions)
     }
     
+    pending_deposits = User.query.filter_by(pending_deposit=True).all()
+    pending_deposits_data = []
+    for user in pending_deposits:
+        try:
+                # Safely obtain the claimed amount: prefer transaction history 'amount',
+                # fall back to a user attribute if present, else 0.0
+                tx_history = json.loads(user.transaction_history_json or '[]')
+                pending_tx = next((tx for tx in tx_history if tx.get('status') == 'PENDING'), None)
+
+                claimed_amount_float = None
+                if pending_tx and 'amount' in pending_tx:
+                    claimed_amount_float = pending_tx.get('amount')
+                else:
+                    # use getattr to avoid AttributeError if the column doesn't exist
+                    claimed_amount_float = getattr(user, 'pending_deposit_amount', None)
+
+                if claimed_amount_float is None:
+                    claimed_amount_float = 0.0
+
+                # Normalize string amounts (strip any currency symbol) to float
+                if isinstance(claimed_amount_float, str):
+                    try:
+                        claimed_amount_float = float(claimed_amount_float.replace('₿', ''))
+                    except Exception:
+                        claimed_amount_float = 0.0
+
+                # Get current balance as raw float
+                try:
+                    current_balance = float(user.balance.replace('₿', '')) if isinstance(user.balance, str) else float(user.balance or 0.0)
+                except Exception:
+                    current_balance = 0.0
+
+                pending_deposits_data.append({
+                    'user_id': user.id,
+                    'username': user.username,
+                    'current_balance': f'₿{current_balance:.5f}',
+                    'pending_since': pending_tx.get('date') if pending_tx else datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    'claimed_amount_display': f'₿{claimed_amount_float:.5f}',
+                    'claimed_amount_raw': claimed_amount_float
+                })
+        except Exception as e:
+            print(f"Error processing pending deposit for user {user.id}: {e}")
+            pass
+    
+    # Debug: print pending deposits data to server logs to verify template input
+    print(f"DEBUG: pending_deposits_data (count={len(pending_deposits_data)}): {pending_deposits_data}")
     return render_template('admin_dashboard.html', 
-                         sessions=sessions, 
-                         events=recent_events,
-                         stats=stats)
+                          sessions=sessions, 
+                          events=recent_events,
+                          stats=stats,
+                          pending_deposits=pending_deposits_data)
+
+
+
+def reject_deposit(user_id):
+    """Admin route to reject a pending deposit"""
+    if not session.get('logged_in') or session.get('username').lower() != 'admin':
+        abort(403)
+    
+    user = User.query.get(user_id)
+    if not user or not user.pending_deposit:
+        flash('Invalid user or no pending deposit found.', 'error')
+        return redirect(url_for('admin_dashboard'))
+    
+    try:
+        user.pending_deposit = False
+        user.pending_deposit_amount = None  # Clear the pending amount
+        
+        # Remove pending transaction from history
+        transaction_history = json.loads(user.transaction_history_json)
+        transaction_history = [tx for tx in transaction_history if tx.get('status') != 'PENDING']
+        user.transaction_history_json = json.dumps(transaction_history)
+        
+        db.session.commit()
+        
+        # Log the event
+        logger.log_event('ADMIN_DEPOSIT_REJECTED', additional_data={
+            'admin_user': session.get('username'),
+            'target_user_id': user_id,
+            'target_username': user.username,
+            'timestamp': datetime.now().isoformat()
+        })
+        
+        flash(f'❌ Deposit rejected for user {user.username}.', 'warning')
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error rejecting deposit: {e}', 'error')
+    
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/confirm_deposit/<int:user_id>', methods=['POST'])
+def admin_confirm_deposit(user_id):
+    """Admin route to confirm a pending deposit"""
+    if not session.get('logged_in') or session.get('username').lower() != 'admin':
+        abort(403)
+    
+    user = User.query.get(user_id)
+    if not user or not user.pending_deposit:
+        flash('Invalid user or no pending deposit found.', 'error')
+        return redirect(url_for('admin_dashboard'))
+    
+    deposit_amount = request.form.get('amount', '0.00100')
+    
+    try:
+        # Convert input to raw float, removing Bitcoin symbol if present
+        amount_float = float(deposit_amount.replace('₿', ''))
+        
+        # Get current balance as raw float
+        current_balance = btc_to_float(user.balance)
+        new_balance = current_balance + amount_float
+        
+        # Store formatted balance only for final display
+        user.balance = f'₿{new_balance:.5f}'
+        user.pending_deposit = False
+        user.pending_deposit_amount = None  # Clear the pending amount
+        
+        # Update transaction history with raw float values
+        transaction_history = json.loads(user.transaction_history_json)
+        for tx in transaction_history:
+            if tx.get('status') == 'PENDING':
+                tx['status'] = 'CONFIRMED'
+                tx['amount'] = amount_float  # Store raw float value
+                tx['description'] = f'Bitcoin deposit confirmed (3/3 confirmations)'
+                break
+        
+        user.transaction_history_json = json.dumps(transaction_history)
+        db.session.commit()
+        
+        logger.log_event('ADMIN_DEPOSIT_CONFIRMED', additional_data={
+            'admin_user': session.get('username'),
+            'target_user_id': user_id,
+            'target_username': user.username,
+            'amount_confirmed': f'₿{amount_float:.5f}',
+            'new_balance': user.balance,
+            'timestamp': datetime.now().isoformat()
+        })
+        
+        flash(f'✅ Deposit of ₿{amount_float:.5f} confirmed for user {user.username}. New balance: {user.balance}', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error confirming deposit: {e}', 'error')
+    
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/reject_deposit/<int:user_id>', methods=['POST'])
+def reject_deposit(user_id):
+    """Admin route to reject a pending deposit"""
+    if not session.get('logged_in') or session.get('username').lower() != 'admin':
+        abort(403)
+    
+    user = User.query.get(user_id)
+    if not user or not user.pending_deposit:
+        flash('Invalid user or no pending deposit found.', 'error')
+        return redirect(url_for('admin_dashboard'))
+    
+    try:
+        user.pending_deposit = False
+        
+        transaction_history = json.loads(user.transaction_history_json)
+        transaction_history = [tx for tx in transaction_history if tx.get('status') != 'PENDING']
+        user.transaction_history_json = json.dumps(transaction_history)
+        
+        db.session.commit()
+        
+        logger.log_event('ADMIN_DEPOSIT_REJECTED', additional_data={
+            'admin_user': session.get('username'),
+            'target_user_id': user_id,
+            'target_username': user.username,
+            'timestamp': datetime.now().isoformat()
+        })
+        
+        flash(f'❌ Deposit rejected for user {user.username}.', 'warning')
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error rejecting deposit: {e}', 'error')
+    
+    return redirect(url_for('admin_dashboard'))
 
 @app.route('/admin/export_logs')
 def export_logs():

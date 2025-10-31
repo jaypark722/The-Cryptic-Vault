@@ -23,13 +23,16 @@
             <i class="fas fa-eye-slash absolute right-3 top-1/2 toggle-icon cursor-pointer text-gray-600" 
                 id="toggle-password" onclick="togglePassword('password')"></i>
         </div>
+
+    <div class="mb-4 relative">
+        <label for="confirm_password" class="block text-gray-400 text-sm font-bold mb-2">Confirm Password</label>
+        <input type="password" id="confirm_password" name="confirm_password" required 
+            class="shadow appearance-none border border-market-border bg-white rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline">
+        <i class="fas fa-eye-slash absolute right-3 top-1/2 toggle-icon cursor-pointer text-gray-600" 
+        id="toggle-confirm_password" onclick="togglePassword('confirm_password')"></i>
+    </div>
         
-        <div class="mb-4">
-            <label for="coupon" class="block text-gray-400 text-sm font-bold mb-2">Registration Coupon (Optional)</label>
-            <input type="text" id="coupon" name="coupon" 
-                    class="shadow appearance-none border border-market-border bg-white rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline">
-            <p class="text-xs text-market-gold mt-1">Enter **REDTEAMBECODE** for an initial balance of **₿0.000850**.</p>
-        </div>
+    <!-- Registration coupon entry removed (moved to checkout). -->
         
         <div class="mb-6">
             <label for="pgp_key" class="block text-red-400 text-sm font-bold mb-2">PGP Public Key (Optional)</label>

@@ -62,6 +62,9 @@
                         <a href="{{ url_for('wallet') }}" class="text-xs bg-green-700 hover:bg-green-600 text-white px-2 py-1 rounded-sm">View Wallet</a>
                     {% elif order.status == 'PROCESSING' %}
                         <span class="text-yellow-500 font-bold text-xs">PROCESSING</span>
+                    {% elif order.status == 'PENDING' %}
+                        <span class="text-yellow-500 font-bold text-xs">PENDING</span>
+                        <span class="text-xs text-gray-400">Awaiting verification</span>
                     {% elif order.status == 'SHIPPED' or order.status == 'ERROR' %}
                         <span class="{% if order.status == 'SHIPPED' %}text-blue-500{% else %}text-red-500{% endif %} font-bold text-xs">{{ order.status }}</span>
                         {% if order.has_delivery %}

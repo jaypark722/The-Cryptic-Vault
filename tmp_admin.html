@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADMIN | Honeypot Monitor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'market-black': '#0a0a0a',
+                        'market-gold': '#ffcc00', // Primary accent color
+                        'market-gray': '#1f1f1f',
+                        'market-border': '#333333',
+                    },
+                    fontFamily: {
+                        mono: ['Inter', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script>
+        // JS Function for Show/Hide Password Toggle
+        (function() {
+            window.togglePassword = function(id) {
+                const passwordInput = document.getElementById(id);
+                const toggleIcon = document.getElementById(`toggle-${id}`);
+
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    toggleIcon.classList.remove('fa-eye-slash');
+                    toggleIcon.classList.add('fa-eye');
+                } else {
+                    passwordInput.type = 'password';
+                    toggleIcon.classList.remove('fa-eye');
+                    toggleIcon.classList.add('fa-eye-slash');
+                }
+            };
+            
+            // NEW: Function to show processing spinner and disable button
+            window.showProcessing = function(event) {
+                // event.submitter is the button that was clicked (modern browsers)
+                const button = event.submitter || event.target.querySelector('button[type="submit"]');
+
+                if (button) {
+                    // Disable button to prevent double-click
+                    button.disabled = true;
+                    
+                    // Store original text and change content to spinner
+                    button.setAttribute('data-original-html', button.innerHTML);
+                    
+                    // Apply classes to visually grey out the button (Tailwind classes)
+                    if (button.classList.contains('bg-market-gold')) {
+                        button.classList.remove('bg-market-gold', 'hover:bg-yellow-400', 'text-black');
+                        button.classList.add('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
+                    } else if (button.classList.contains('bg-green-700')) {
+                        button.classList.remove('bg-green-700', 'hover:bg-green-600', 'text-white');
+                        button.classList.add('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
+                    }
+
+                    // Store the HTML string in a variable to reduce linter issues
+                    const processingHtml = '<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>PROCESSING...';
+                    button.innerHTML = processingHtml;
+                }
+            };
+        })();
+    </script>
+
+    <style>
+        .toggle-icon {
+            /* Adjusting position to center vertically in the input field */
+            transform: translateY(10px); 
+        }
+        /* NEW: Minimal CSS for the spinning wheel */
+        .spinner-border {
+            display: inline-block;
+            width: 1.25rem;
+            height: 1.25rem;
+            vertical-align: middle;
+            border: .2em solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spinner-border .75s linear infinite;
+        }
+        @keyframes spinner-border {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-market-black text-gray-300 font-mono min-h-screen flex flex-col">
+
+    <div class="bg-market-gray border-b border-market-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-2 text-sm">
+        <a href="/" class="font-bold text-lg text-market-gold tracking-wider">THE CRYPTIC VAULT</a>
+        <nav class="space-x-4">
+            
+            
+                <a href="/profile" class="text-gray-400 hover:text-market-gold">PROFILE</a>
+                <a href="/orders" class="text-gray-400 hover:text-market-gold">ORDERS</a>
+            
+
+            <a href="/cart" class="text-gray-400 hover:text-market-gold">
+                CART 
+                
+                    
+                
+                
+                
+            </a>
+            
+            <a href="/messages" class="text-gray-400 hover:text-market-gold relative">
+                MESSAGES 
+                
+                
+            </a>
+            
+            
+            
+            
+                
+                
+            
+            
+            <span class="text-gray-400">PGP: <span class="text-green-500 font-bold" id="pgp-status">VERIFIED</span></span>
+            
+            
+                <a href="/wallet" id="balance-link" class="text-market-gold hover:text-white font-bold transition-colors">BALANCE: ₿999.99999</a>
+                <span class="text-white font-bold">Welcome, admin</span>
+                <a href="/logout" id="auth-action-link" class="text-red-400 hover:text-white font-bold">LOGOUT</a>
+            
+        </nav>
+    </div>
+</div>
+
+<div class="bg-market-black border-b border-market-gold shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+        <nav class="flex space-x-1">
+            
+            <a href="/" 
+                class="px-5 py-3 font-bold transition-colors 
+                
+                    text-market-gold hover:bg-market-gray
+                "
+            >HOME</a>
+            
+            <a href="/listings" 
+                class="px-5 py-3 font-bold transition-colors 
+                
+                    text-market-gold hover:bg-market-gray
+                "
+            >LISTINGS</a>
+            
+            
+            
+            
+            <a href="/support" 
+                class="px-5 py-3 font-bold transition-colors 
+                
+                    text-market-gold hover:bg-market-gray
+                "
+            >SUPPORT</a>
+            
+            <a href="/vendor" 
+                class="px-5 py-3 font-bold transition-colors 
+                
+                    text-market-gold hover:bg-market-gray
+                "
+            >BECOME A VENDOR</a>
+            
+        </nav>
+        
+        <form id="search-form" class="flex items-center space-x-2" action="/listings" method="GET">
+            <input type="text" name="q" id="search-input" placeholder="Search Listings..." 
+                    class="p-2 bg-market-black border border-market-gold text-white focus:ring-market-gold focus:border-market-gold w-64 text-sm rounded-sm" 
+                    value="" />
+            <button type="submit" class="bg-market-gold text-black font-bold px-4 py-2 hover:bg-yellow-400 transition duration-150 rounded-sm">GO</button>
+        </form>
+    </div>
+</div> 
+
+    <div class="container mx-auto max-w-7xl flex-grow flex p-8 space-x-8">
+
+        <aside class="w-64 flex-shrink-0">
+            <div class="bg-market-gray border border-market-border p-4 mb-6 rounded-md">
+                <h3 class="text-market-gold text-lg font-bold border-b border-market-border pb-2 mb-3">PRODUCT CATEGORIES</h3>
+                
+                <ul class="space-y-2 text-sm">
+                    <li><a href="/listings?cat=data" class="text-white hover:text-market-gold">Data & Leaks</a></li>
+                    <li><a href="/listings?cat=exploit" class="text-white hover:text-market-gold">Malware & Exploits</a></li>
+                    <li><a href="/listings?cat=cards" class="text-white hover:text-market-gold">Cards / CVVS / Fullz</a></li>
+                    <li><a href="/listings?cat=forged" class="text-white hover:text-market-gold">Forged Documents</a></li>
+                    <li><a href="/listings?cat=services" class="text-white hover:text-market-gold">Hacking Services</a></li>
+                    <li><a href="/listings?cat=pharma" class="text-red-400 hover:text-market-gold">Drugs & Pharmaceuticals</a></li>
+                    <li><a href="/listings?cat=counterfeit" class="text-white hover:text-market-gold">Counterfeit Money</a></li>
+                    <li><a href="/listings?cat=guns" class="text-red-400 hover:text-market-gold">Weapons & Ammo</a></li>
+                </ul>
+
+                <a href="/listings" class="block w-full bg-market-gold text-center text-black font-bold py-1 mt-4 hover:bg-yellow-400 transition duration-150 text-xs rounded-sm">VIEW ALL LISTINGS</a>
+            </div>
+        </aside>
+
+        <main class="flex-grow">
+            
+
+<div class="p-6 bg-market-gray border border-red-500 rounded-lg shadow-xl mb-8">
+<p class="text-2xl text-red-500 font-bold mb-3 border-b border-market-border pb-2"> HONEYPOT MONITORING DASHBOARD </p>
+<a href="/admin/export_logs" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-150 shadow-lg inline-block">
+📥 EXPORT ALL LOGS (JSON)
+</a>
+</div>
+
+<!-- Flash Messages -->
+
+
+
+
+
+<!-- Pending Deposits Section -->
+
+
+
+<div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+
+<div class="bg-market-gray border border-green-500 p-4 rounded-lg text-center shadow-lg">
+    <h3 class="text-green-500 text-sm mb-1">TOTAL SESSIONS</h3>
+    <div class="text-3xl text-red-500 font-bold">5</div>
+</div>
+
+<div class="bg-market-gray border border-green-500 p-4 rounded-lg text-center shadow-lg">
+    <h3 class="text-green-500 text-sm mb-1">TOTAL EVENTS</h3>
+    <div class="text-3xl text-red-500 font-bold">21</div>
+</div>
+
+<div class="bg-market-gray border border-green-500 p-4 rounded-lg text-center shadow-lg">
+    <h3 class="text-green-500 text-sm mb-1">REGISTRATIONS</h3>
+    <div class="text-3xl text-red-500 font-bold">1</div>
+</div>
+
+<div class="bg-market-gray border border-green-500 p-4 rounded-lg text-center shadow-lg">
+    <h3 class="text-green-500 text-sm mb-1">PURCHASES</h3>
+    <div class="text-3xl text-red-500 font-bold">0</div>
+</div>
+
+<div class="bg-market-gray border border-red-700 p-4 rounded-lg text-center shadow-lg animate-pulse">
+    <h3 class="text-red-500 text-sm mb-1">🎯 BAIT DOWNLOADS</h3>
+    <div class="text-3xl text-red-500 font-extrabold">0</div>
+</div>
+
+
+</div>
+
+<div class="space-y-8">
+
+<div class="bg-market-gray border border-green-500 p-6 rounded-lg shadow-xl overflow-x-auto">
+    <h2 class="text-red-500 font-bold text-xl mb-4 border-b border-market-border pb-2">🔍 ACTIVE SESSIONS</h2>
+    <table class="w-full text-left text-sm text-gray-400">
+        <thead class="text-xs text-red-500 uppercase bg-gray-800">
+            <tr>
+                <th scope="col" class="px-3 py-2">Session ID</th>
+                <th scope="col" class="px-3 py-2">IP Address</th>
+                <th scope="col" class="px-3 py-2">First Seen</th>
+                <th scope="col" class="px-3 py-2">Last Seen</th>
+                <th scope="col" class="px-3 py-2">Events</th>
+                <th scope="col" class="px-3 py-2">Pages</th>
+                <th scope="col" class="px-3 py-2">Products</th>
+                <th scope="col" class="px-3 py-2">Cart</th>
+                <th scope="col" class="px-3 py-2">Downloads</th>
+                <th scope="col" class="px-3 py-2">Purchases</th>
+                <th scope="col" class="px-3 py-2">Reg.</th>
+                <th scope="col" class="px-3 py-2">Profile</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2">
+                    <a href="/admin/session/9b15f818-2bed-4f2a-8df0-f08a49cbb1d0" class="text-cyan-400 hover:text-cyan-300 font-mono text-xs">
+                        9b15f818-2be...
+                    </a>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2 text-xs">2025-10-30 10:45:07.360860</td>
+                <td class="px-3 py-2 text-xs">2025-10-30 10:45:07.391503</td>
+                <td class="px-3 py-2 font-semibold">2</td>
+                <td class="px-3 py-2"></td>
+                <td class="px-3 py-2"></td>
+                <td class="px-3 py-2"></td>
+                <td class="px-3 py-2">
+                    
+                        0
+                    
+                </td>
+                <td class="px-3 py-2">0</td>
+                <td class="px-3 py-2 text-xl font-bold">✗</td>
+                <td class="px-3 py-2">N/A</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2">
+                    <a href="/admin/session/c809cbaa-1d01-4e67-8a38-6e36d0ac935f" class="text-cyan-400 hover:text-cyan-300 font-mono text-xs">
+                        c809cbaa-1d0...
+                    </a>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2 text-xs">2025-10-30 10:44:28.158803</td>
+                <td class="px-3 py-2 text-xs">2025-10-30 10:44:28.184622</td>
+                <td class="px-3 py-2 font-semibold">2</td>
+                <td class="px-3 py-2"></td>
+                <td class="px-3 py-2"></td>
+                <td class="px-3 py-2"></td>
+                <td class="px-3 py-2">
+                    
+                        0
+                    
+                </td>
+                <td class="px-3 py-2">0</td>
+                <td class="px-3 py-2 text-xl font-bold">✗</td>
+                <td class="px-3 py-2">N/A</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2">
+                    <a href="/admin/session/dbf33a1e-3bd5-4f47-87a7-693ff120540b" class="text-cyan-400 hover:text-cyan-300 font-mono text-xs">
+                        dbf33a1e-3bd...
+                    </a>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2 text-xs">2025-10-30 10:42:05.756534</td>
+                <td class="px-3 py-2 text-xs">2025-10-30 10:42:05.757619</td>
+                <td class="px-3 py-2 font-semibold">1</td>
+                <td class="px-3 py-2"></td>
+                <td class="px-3 py-2"></td>
+                <td class="px-3 py-2"></td>
+                <td class="px-3 py-2">
+                    
+                        0
+                    
+                </td>
+                <td class="px-3 py-2">0</td>
+                <td class="px-3 py-2 text-xl font-bold">✗</td>
+                <td class="px-3 py-2">N/A</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2">
+                    <a href="/admin/session/e476ccf8-d1ea-4014-9344-d29d3e23905e" class="text-cyan-400 hover:text-cyan-300 font-mono text-xs">
+                        e476ccf8-d1e...
+                    </a>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2 text-xs">2025-10-30 10:41:47.687674</td>
+                <td class="px-3 py-2 text-xs">2025-10-30 10:42:05.414959</td>
+                <td class="px-3 py-2 font-semibold">5</td>
+                <td class="px-3 py-2"></td>
+                <td class="px-3 py-2"></td>
+                <td class="px-3 py-2"></td>
+                <td class="px-3 py-2">
+                    
+                        0
+                    
+                </td>
+                <td class="px-3 py-2">0</td>
+                <td class="px-3 py-2 text-xl font-bold">✗</td>
+                <td class="px-3 py-2">N/A</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2">
+                    <a href="/admin/session/aaf774b0-f8d9-4796-a026-579b73ef324c" class="text-cyan-400 hover:text-cyan-300 font-mono text-xs">
+                        aaf774b0-f8d...
+                    </a>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2 text-xs">2025-10-30 10:41:27.874391</td>
+                <td class="px-3 py-2 text-xs">2025-10-30 10:41:47.365461</td>
+                <td class="px-3 py-2 font-semibold">11</td>
+                <td class="px-3 py-2"></td>
+                <td class="px-3 py-2"></td>
+                <td class="px-3 py-2"></td>
+                <td class="px-3 py-2">
+                    
+                        0
+                    
+                </td>
+                <td class="px-3 py-2">0</td>
+                <td class="px-3 py-2 text-xl font-bold">✓</td>
+                <td class="px-3 py-2">N/A</td>
+            </tr>
+            
+        </tbody>
+    </table>
+</div>
+
+<div class="bg-market-gray border border-green-500 p-6 rounded-lg shadow-xl overflow-x-auto">
+    <h2 class="text-red-500 font-bold text-xl mb-4 border-b border-market-border pb-2">📋 RECENT EVENTS (Last 100)</h2>
+    <table class="w-full text-left text-sm text-gray-400">
+        <thead class="text-xs text-red-500 uppercase bg-gray-800">
+            <tr>
+                <th scope="col" class="px-3 py-2">Timestamp</th>
+                <th scope="col" class="px-3 py-2">Event Type</th>
+                <th scope="col" class="px-3 py-2">IP Address</th>
+                <th scope="col" class="px-3 py-2">User</th>
+                <th scope="col" class="px-3 py-2">Endpoint</th>
+                <th scope="col" class="px-3 py-2">Product ID</th>
+                <th scope="col" class="px-3 py-2">Additional Data</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2 text-xs">2025-10-30 10:45:07.392465</td>
+                <td class="px-3 py-2">
+                    
+                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-gray-600 text-white">
+                        PAGE_VIEW
+                    </span>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2">admin</td>
+                <td class="px-3 py-2">/profile</td>
+                <td class="px-3 py-2 text-xs font-mono">-</td>
+                <td class="px-3 py-2 text-xs text-gray-500">{&#39;page&#39;: &#39;profile&#39;}</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2 text-xs">2025-10-30 10:45:07.364672</td>
+                <td class="px-3 py-2">
+                    
+                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-cyan-400 text-black">
+                        LOGIN
+                    </span>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2">admin</td>
+                <td class="px-3 py-2">/login</td>
+                <td class="px-3 py-2 text-xs font-mono">-</td>
+                <td class="px-3 py-2 text-xs text-gray-500">{&#39;username&#39;: &#39;admin&#39;, &#39;user_id&#39;: 1}</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2 text-xs">2025-10-30 10:44:28.185015</td>
+                <td class="px-3 py-2">
+                    
+                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-gray-600 text-white">
+                        PAGE_VIEW
+                    </span>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2">admin</td>
+                <td class="px-3 py-2">/profile</td>
+                <td class="px-3 py-2 text-xs font-mono">-</td>
+                <td class="px-3 py-2 text-xs text-gray-500">{&#39;page&#39;: &#39;profile&#39;}</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2 text-xs">2025-10-30 10:44:28.159828</td>
+                <td class="px-3 py-2">
+                    
+                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-cyan-400 text-black">
+                        LOGIN
+                    </span>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2">admin</td>
+                <td class="px-3 py-2">/login</td>
+                <td class="px-3 py-2 text-xs font-mono">-</td>
+                <td class="px-3 py-2 text-xs text-gray-500">{&#39;username&#39;: &#39;admin&#39;, &#39;user_id&#39;: 1}</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2 text-xs">2025-10-30 10:42:05.757764</td>
+                <td class="px-3 py-2">
+                    
+                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-gray-600 text-white">
+                        PAGE_VIEW
+                    </span>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2">Anonymous</td>
+                <td class="px-3 py-2">/</td>
+                <td class="px-3 py-2 text-xs font-mono">-</td>
+                <td class="px-3 py-2 text-xs text-gray-500">{&#39;page&#39;: &#39;index&#39;}</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2 text-xs">2025-10-30 10:42:05.416114</td>
+                <td class="px-3 py-2">
+                    
+                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-gray-600 text-white">
+                        LOGOUT
+                    </span>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2">admin</td>
+                <td class="px-3 py-2">/logout</td>
+                <td class="px-3 py-2 text-xs font-mono">-</td>
+                <td class="px-3 py-2 text-xs text-gray-500">{&#39;username&#39;: &#39;admin&#39;}</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2 text-xs">2025-10-30 10:41:52.794788</td>
+                <td class="px-3 py-2">
+                    
+                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-gray-600 text-white">
+                        PAGE_VIEW
+                    </span>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2">admin</td>
+                <td class="px-3 py-2">/profile</td>
+                <td class="px-3 py-2 text-xs font-mono">-</td>
+                <td class="px-3 py-2 text-xs text-gray-500">{&#39;page&#39;: &#39;profile&#39;}</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2 text-xs">2025-10-30 10:41:52.735556</td>
+                <td class="px-3 py-2">
+                    
+                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-cyan-400 text-black">
+                        LOGIN
+                    </span>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2">admin</td>
+                <td class="px-3 py-2">/login</td>
+                <td class="px-3 py-2 text-xs font-mono">-</td>
+                <td class="px-3 py-2 text-xs text-gray-500">{&#39;username&#39;: &#39;admin&#39;, &#39;user_id&#39;: 1}</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2 text-xs">2025-10-30 10:41:48.606981</td>
+                <td class="px-3 py-2">
+                    
+                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-gray-600 text-white">
+                        PAGE_VIEW
+                    </span>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2">Anonymous</td>
+                <td class="px-3 py-2">/login</td>
+                <td class="px-3 py-2 text-xs font-mono">-</td>
+                <td class="px-3 py-2 text-xs text-gray-500">{&#39;page&#39;: &#39;login&#39;}</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2 text-xs">2025-10-30 10:41:47.688735</td>
+                <td class="px-3 py-2">
+                    
+                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-gray-600 text-white">
+                        PAGE_VIEW
+                    </span>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2">Anonymous</td>
+                <td class="px-3 py-2">/</td>
+                <td class="px-3 py-2 text-xs font-mono">-</td>
+                <td class="px-3 py-2 text-xs text-gray-500">{&#39;page&#39;: &#39;index&#39;}</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2 text-xs">2025-10-30 10:41:47.366084</td>
+                <td class="px-3 py-2">
+                    
+                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-gray-600 text-white">
+                        LOGOUT
+                    </span>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2">test</td>
+                <td class="px-3 py-2">/logout</td>
+                <td class="px-3 py-2 text-xs font-mono">-</td>
+                <td class="px-3 py-2 text-xs text-gray-500">{&#39;username&#39;: &#39;test&#39;}</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2 text-xs">2025-10-30 10:41:44.023639</td>
+                <td class="px-3 py-2">
+                    
+                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-gray-600 text-white">
+                        PAGE_VIEW
+                    </span>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2">test</td>
+                <td class="px-3 py-2">/wallet</td>
+                <td class="px-3 py-2 text-xs font-mono">-</td>
+                <td class="px-3 py-2 text-xs text-gray-500">{&#39;page&#39;: &#39;wallet&#39;}</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2 text-xs">2025-10-30 10:41:43.996879</td>
+                <td class="px-3 py-2">
+                    
+                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-gray-600 text-white">
+                        PAGE_VIEW
+                    </span>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2">test</td>
+                <td class="px-3 py-2">/wallet</td>
+                <td class="px-3 py-2 text-xs font-mono">-</td>
+                <td class="px-3 py-2 text-xs text-gray-500">{&#39;page&#39;: &#39;wallet&#39;}</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2 text-xs">2025-10-30 10:41:43.708143</td>
+                <td class="px-3 py-2">
+                    
+                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-yellow-600 text-black">
+                        DEPOSIT_ATTEMPT
+                    </span>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2">test</td>
+                <td class="px-3 py-2">/wallet</td>
+                <td class="px-3 py-2 text-xs font-mono">-</td>
+                <td class="px-3 py-2 text-xs text-gray-500">{&#39;user_id&#39;: 2, &#39;username&#39;: &#39;test&#39;, &#39;amount_claimed&#39;: &#39;₿1234.00000&#39;, &#39;btc_address&#39;: &#39;tb1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh&#39;, &#39;timestamp&#39;: &#39;2025-10-30T10:41:43.705548&#39;}</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2 text-xs">2025-10-30 10:41:43.673974</td>
+                <td class="px-3 py-2">
+                    
+                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-gray-600 text-white">
+                        PAGE_VIEW
+                    </span>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2">test</td>
+                <td class="px-3 py-2">/wallet</td>
+                <td class="px-3 py-2 text-xs font-mono">-</td>
+                <td class="px-3 py-2 text-xs text-gray-500">{&#39;page&#39;: &#39;wallet&#39;}</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2 text-xs">2025-10-30 10:41:38.995777</td>
+                <td class="px-3 py-2">
+                    
+                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-gray-600 text-white">
+                        PAGE_VIEW
+                    </span>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2">test</td>
+                <td class="px-3 py-2">/wallet</td>
+                <td class="px-3 py-2 text-xs font-mono">-</td>
+                <td class="px-3 py-2 text-xs text-gray-500">{&#39;page&#39;: &#39;wallet&#39;}</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2 text-xs">2025-10-30 10:41:38.949668</td>
+                <td class="px-3 py-2">
+                    
+                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-gray-600 text-white">
+                        PAGE_VIEW
+                    </span>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2">test</td>
+                <td class="px-3 py-2">/wallet</td>
+                <td class="px-3 py-2 text-xs font-mono">-</td>
+                <td class="px-3 py-2 text-xs text-gray-500">{&#39;page&#39;: &#39;wallet&#39;}</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2 text-xs">2025-10-30 10:41:35.559088</td>
+                <td class="px-3 py-2">
+                    
+                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-gray-600 text-white">
+                        PAGE_VIEW
+                    </span>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2">test</td>
+                <td class="px-3 py-2">/profile</td>
+                <td class="px-3 py-2 text-xs font-mono">-</td>
+                <td class="px-3 py-2 text-xs text-gray-500">{&#39;page&#39;: &#39;profile&#39;}</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2 text-xs">2025-10-30 10:41:35.532540</td>
+                <td class="px-3 py-2">
+                    
+                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-green-500 text-black">
+                        REGISTER
+                    </span>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2">test</td>
+                <td class="px-3 py-2">/register</td>
+                <td class="px-3 py-2 text-xs font-mono">-</td>
+                <td class="px-3 py-2 text-xs text-gray-500">{&#39;username&#39;: &#39;test&#39;, &#39;used_coupon&#39;: False, &#39;pgp_verified&#39;: False}</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2 text-xs">2025-10-30 10:41:29.584694</td>
+                <td class="px-3 py-2">
+                    
+                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-gray-600 text-white">
+                        PAGE_VIEW
+                    </span>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2">Anonymous</td>
+                <td class="px-3 py-2">/register</td>
+                <td class="px-3 py-2 text-xs font-mono">-</td>
+                <td class="px-3 py-2 text-xs text-gray-500">{&#39;page&#39;: &#39;register&#39;}</td>
+            </tr>
+            
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2 text-xs">2025-10-30 10:41:27.875644</td>
+                <td class="px-3 py-2">
+                    
+                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded bg-gray-600 text-white">
+                        PAGE_VIEW
+                    </span>
+                </td>
+                <td class="px-3 py-2">172.17.0.1</td>
+                <td class="px-3 py-2">Anonymous</td>
+                <td class="px-3 py-2">/</td>
+                <td class="px-3 py-2 text-xs font-mono">-</td>
+                <td class="px-3 py-2 text-xs text-gray-500">{&#39;page&#39;: &#39;index&#39;}</td>
+            </tr>
+            
+        </tbody>
+    </table>
+</div>
+
+
+</div>
+
+        </main>
+    </div>
+
+    <footer class="bg-market-gray text-center py-3 border-t border-market-border text-gray-500 text-xs mt-auto">
+        <p>This service is only accessible via Tor Browser. <span class="text-green-500 font-bold">MARKET ONLINE V5.0</span></p>
+    </footer>
+
+    <script src="/static/js/product_loader.js"></script>
+    
+</body>
+</html>
