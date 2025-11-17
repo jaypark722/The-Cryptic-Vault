@@ -1,0 +1,8 @@
+### Proprietary LLM Prompt and Custom Integration Logic (Redacted)
+
+This file serves as a placeholder for the highly customized Python modules and LLM prompts used to generate the dynamic, adaptive deception content (vendor profiles, fake product details, transaction flows). This specialized logic represents the proprietary intelligence developed during the hackathon.
+
+**Professional Disclaimer:**
+This repository contains the architecture and proof-of-concept code for the Cryptic Vault. The full production system, including the proprietary LLM integration workflows and custom log ingestion pipelines, is available for demonstration upon request during an interview.
+
+The current public application runs using static JSON data for the marketplace (see static/data/products.json).

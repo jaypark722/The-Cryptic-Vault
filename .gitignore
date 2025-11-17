@@ -1,0 +1,25 @@
+# Python secrets and environments
+venv/
+__pycache__/
+*.pyc
+*.env
+
+# Docker and OS
+.DS_Store
+
+# Databases (created on run)
+database/
+*.db
+instance/
+
+# SSH Keys and GPG
+ssh_host_key
+ssh_host_key.pub
+gpg_home/
+
+# Logs
+*.log
+honeypot_logs_export.json
+
+# Placeholder for future secrets
+secrets.yml

@@ -25,7 +25,8 @@ ENABLE_GPT5 = os.environ.get('ENABLE_GPT5', '1').lower() in ('1', 'true', 'yes',
 
 app = Flask(__name__)
 
-app.secret_key = 'your_super_secret_key_change_me'
+# Use environment variable for secret key in production, fallback for POC demo
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'demo_secret_key_change_in_production')
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 DB_PATH = os.path.join(basedir, 'database', 'users.db')
