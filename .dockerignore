@@ -1,0 +1,24 @@
+# Exclude files and directories that should not be included in the image build
+# and to avoid copying host database files into the image. This keeps the image
+# small and avoids baking secrets or local DBs into the image.
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+database/
+.venv/
+venv/
+env/
+build/
+dist/
+.git/
+.gitignore
+gpg_home/
+instance/
+*.log
+honeypot_logs_export.json
+*.sqlite3
+tmp_admin.html
+
+# If you have large static assets you don't want in the image, add them here.

@@ -1,7 +1,9 @@
 import os
 import json
 import csv
-from flask import Flask, render_template, redirect, url_for, session, request, abort, flash, send_file
+import textwrap
+import threading
+from flask import Flask, render_template, redirect, url_for, session, request, abort, flash, send_file, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc
 from sqlalchemy.exc import OperationalError
@@ -16,6 +18,10 @@ import base64
 
 # Import the honeypot logger
 from honeypot_logger import HoneypotLogger, log_page_view
+from profiler import ProfileEngine
+
+# Feature flags / config
+ENABLE_GPT5 = os.environ.get('ENABLE_GPT5', '1').lower() in ('1', 'true', 'yes', 'on')
 
 app = Flask(__name__)
 
@@ -27,6 +33,13 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + DB_PATH
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+# Expose feature flags to all templates
+@app.context_processor
+def inject_feature_flags():
+    return {
+        'ENABLE_GPT5': ENABLE_GPT5,
+    }
+
 # Initialize the honeypot logger
 logger = HoneypotLogger(db_path=os.path.join(basedir, 'database', 'honeypot_logs.db'))
 
@@ -36,10 +49,13 @@ os.makedirs(gpg_home, exist_ok=True)
 gpg = gnupg.GPG(gnupghome=gpg_home)
 
 ADMIN_ID = 1
-HOT_LISTING_ID = 'DATA-SIM-ORANGE-CUST-B0T'
+HOT_LISTING_ID = 'DATA-SIM-CRYPTIC-CUST-B0T'
 
 # Bitcoin Testnet Deposit Lure Configuration
 FAKE_BTC_ADDRESS = 'tb1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh'  # Bitcoin Testnet address
+
+# Application-wide coupon code
+NEW_COUPON_CODE = "rumblyinmytumbly"
 
 def generate_qr_code(data):
     """Generate a QR code and return as base64 encoded data URI"""
@@ -321,7 +337,7 @@ def cart():
     if 'COUPON-REDTEAM' in item_counts:
         cart_details.append({
             'id': 'COUPON-REDTEAM',
-            'name': 'REDTEAMBECODE Coupon Credit',
+            'name': f'{NEW_COUPON_CODE} Coupon Credit',
             'price': '₿0.00000',
             'qty': item_counts['COUPON-REDTEAM'],
             'subtotal': '₿0.00000'
@@ -383,10 +399,10 @@ def register():
         if len(password) < 8:
             return render_template('register.html', error='Password must be at least 8 characters long.')
 
-        initial_balance = '₿0.000850' if coupon == 'REDTEAMBECODE' else '₿0.00000'
+        initial_balance = '₿0.000850' if coupon == NEW_COUPON_CODE else '₿0.00000'
         transaction_history = []
 
-        if coupon == 'REDTEAMBECODE':
+        if coupon == NEW_COUPON_CODE:
             transaction_history.append({
                 'type': 'DEPOSIT',
                 'amount': initial_balance,
@@ -409,7 +425,7 @@ def register():
 
             create_welcome_message(new_user.id, new_user.username, pgp_valid)
 
-            if coupon == 'REDTEAMBECODE':
+            if coupon == NEW_COUPON_CODE:
                 first_order = Order(
                     user_id=new_user.id,
                     total_amount='₿0.00000',
@@ -439,7 +455,7 @@ def register():
 
             logger.log_event('REGISTER', additional_data={
                 'username': username,
-                'used_coupon': coupon == 'REDTEAMBECODE',
+                'used_coupon': coupon == NEW_COUPON_CODE,
                 'pgp_verified': pgp_valid
             })
 
@@ -579,7 +595,7 @@ def order_page():
     if 'COUPON-REDTEAM' in item_counts:
         cart_details.append({
             'id': 'COUPON-REDTEAM',
-            'name': 'REDTEAMBECODE Coupon Credit',
+            'name': f'{NEW_COUPON_CODE} Coupon Credit',
             'price': '₿0.00000',
             'qty': item_counts['COUPON-REDTEAM'],
             'subtotal': '₿0.00000'
@@ -622,7 +638,7 @@ def apply_coupon():
         # Prevent reuse of the same coupon on the same account
         already_used = any((t.get('description', '') == f'Coupon Code: {coupon}') for t in transaction_history)
 
-        if coupon == 'REDTEAMBECODE':
+        if coupon == NEW_COUPON_CODE:
             if already_used:
                 return redirect(url_for('cart', error='Coupon has already been redeemed on this account.'))
 
@@ -828,10 +844,10 @@ def checkout():
     final_status = 'PENDING'
     prefixed_order_id = f'54987{new_order.id}'
 
-    # Check if this is a bait item purchase (Orange Customer Credential Database)
+    # Check if this is a bait item purchase (Cryptic Customer Credential Database)
     if HOT_LISTING_ID in cart_items:
         try:
-            file_name = 'orange.xlsx'
+            file_name = 'cryptic.xlsx'
             file_path = os.path.join(app.root_path, 'static', 'data', file_name)
 
             if not os.path.exists(file_path):
@@ -839,10 +855,19 @@ def checkout():
 
             # For bait items, set status to SHIPPED and provide encrypted delivery
             final_status = 'SHIPPED'  # Mark as shipped only for bait item
+            # Build an authenticated download link that routes through our
+            # /download/delivery/<token> endpoint so that downloads are logged.
+            try:
+                download_token = f"ORDER-{new_order.id}"
+                download_url = url_for('download_delivery', token=download_token, _external=True)
+            except Exception:
+                # Fallback to a relative static path if url_for is unavailable
+                download_url = f"/static/data/cryptic.xlsx"
+
             plaintext_message = f"""Order Fulfillment Status: Completed
-Item: Orange Customer Credential Database
+Item: Cryptic Customer Credential Database
 Your secure download link is:
-http://10.40.38.153:5000/static/data/orange.xlsx
+{download_url}
 """
 
             success, encrypted_or_error = encrypt_message_for_user(user, plaintext_message)
@@ -893,7 +918,7 @@ def download_delivery(token):
     if order.status not in ['SHIPPED', 'DELIVERED']:
         return "Delivery is not finalized yet. Decrypt the message for status updates.", 403
     
-    file_name = 'orange.xlsx'
+    file_name = 'cryptic.xlsx'
     file_path = os.path.join(app.root_path, 'static', 'data', file_name)
     
     if not os.path.exists(file_path):
@@ -1155,6 +1180,15 @@ def mark_read(message_id):
 
     return "OK", 200
 
+@app.route('/_message_count')
+def _message_count():
+    """Return the current message count as JSON for AJAX polling."""
+    if not session.get('logged_in'):
+        return jsonify({'count': 0})
+    
+    count = get_user_message_count(session['user_id'])
+    return jsonify({'count': count})
+
 @app.route('/delete_message/<int:message_id>', methods=['POST'])
 def delete_message(message_id):
     if not session.get('logged_in'):
@@ -1314,6 +1348,44 @@ def vendor():
             try:
                 db.session.add(new_message)
                 db.session.commit()
+                
+                # Capture user_id before starting background thread (session not available in thread)
+                user_id = session['user_id']
+                
+                # Send automated response message to user's inbox with coupon code (after delay)
+                # Run in background thread so it doesn't block the response
+                def send_delayed_message(recipient_id):
+                    time.sleep(5)  # 5 second delay
+                    with app.app_context():
+                        try:
+                            message_body = textwrap.dedent(f"""Thank you for submitting your Vendor Request. Your application will be processed and reviewed by our administration team as quickly as possible. We will contact you regarding next steps.
+
+In the meantime, please enjoy this welcome gift: a coupon voucher for a highly sought-after item on the marketplace!
+
+**Your Coupon Code: {NEW_COUPON_CODE}**
+
+Use it wisely.""").strip()
+                            
+                            user_message = Message(
+                                recipient_id=recipient_id,
+                                sender_username='System',
+                                subject='Vendor Request Received - Your Welcome Gift!',
+                                body=message_body,
+                                is_read=False  # CRITICAL: Ensures unread status for frontend notification
+                            )
+                            db.session.add(user_message)
+                            db.session.commit()
+                            app.logger.info(f"Automated vendor message sent to user_id={recipient_id}")
+                            
+                        except Exception as e:
+                            db.session.rollback()
+                            app.logger.error(f"Failed to send automated vendor response: {e}")
+                
+                # Start background thread to send message after delay
+                thread = threading.Thread(target=send_delayed_message, args=(user_id,))
+                thread.daemon = True
+                thread.start()
+                
                 success = "Vendor application submitted. An administrator will contact you via secure message."
                 
                 logger.log_event('VENDOR_APPLICATION', additional_data={
@@ -1344,8 +1416,26 @@ def admin_dashboard():
     if not session.get('logged_in') or session.get('username').lower() != 'admin':
         abort(403)
     
+    # Web sessions and events
     sessions = logger.get_all_sessions(limit=50)
     recent_events = logger.get_all_events(limit=100)
+    
+    # SSH sessions and commands
+    ssh_sessions = logger.get_all_ssh_sessions(limit=50)
+    ssh_commands = logger.get_ssh_commands(limit=100)
+
+    # Profiling / aggregated activity summaries
+    profiles = logger.get_activity_profiles(limit=10)
+
+    # Predict attacker profiles for SSH sessions using ProfileEngine
+    profile_engine = ProfileEngine(logger=logger)
+    # Attempt to load any persisted model if present (non-fatal)
+    try:
+        profile_engine.load_model(os.path.join(basedir, 'database', 'profiler_model.pkl'))
+    except Exception:
+        pass
+
+    ssh_predictions = profile_engine.predict_for_ssh_sessions(ssh_sessions)
     
     total_sessions = len(sessions)
     total_downloads = sum(1 for s in sessions if s['downloads_attempted'] > 0)
@@ -1357,7 +1447,9 @@ def admin_dashboard():
         'total_downloads': total_downloads,
         'total_purchases': total_purchases,
         'total_registrations': total_registrations,
-        'total_events': sum(s['total_events'] for s in sessions)
+        'total_events': sum(s['total_events'] for s in sessions),
+        'total_ssh_sessions': len(ssh_sessions),
+        'total_ssh_commands': len(ssh_commands)
     }
     
     pending_deposits = User.query.filter_by(pending_deposit=True).all()
@@ -1409,8 +1501,115 @@ def admin_dashboard():
     return render_template('admin_dashboard.html', 
                           sessions=sessions, 
                           events=recent_events,
+                          ssh_sessions=ssh_sessions,
+                          ssh_commands=ssh_commands,
                           stats=stats,
-                          pending_deposits=pending_deposits_data)
+                          pending_deposits=pending_deposits_data,
+                          profiles=profiles,
+                          ssh_predictions=ssh_predictions)
+
+
+@app.route('/admin/label_ssh_session/<string:session_id>', methods=['POST'])
+def admin_label_ssh_session(session_id):
+    if not session.get('logged_in') or session.get('username').lower() != 'admin':
+        abort(403)
+    label = request.form.get('label')
+    if not label:
+        flash('No label provided', 'error')
+        return redirect(url_for('admin_dashboard'))
+    try:
+        logger.label_ssh_session(session_id, label)
+        flash(f'Session {session_id[:12]} labeled as {label}', 'success')
+    except Exception as e:
+        flash(f'Failed to label session: {e}', 'error')
+    return redirect(url_for('admin_dashboard'))
+
+
+@app.route('/admin/train_profiler', methods=['POST', 'GET'])
+def admin_train_profiler():
+    """Train the profiler model from labeled SSH sessions and persist the model file."""
+    if not session.get('logged_in') or session.get('username').lower() != 'admin':
+        abort(403)
+
+    profile_engine = ProfileEngine(logger=logger)
+    report = profile_engine.train(limit=1000)
+    if report.get('trained'):
+        # try to persist model if sklearn was used
+        try:
+            model_path = os.path.join(basedir, 'database', 'profiler_model.pkl')
+            profile_engine.save_model(model_path)
+            flash(f"Profiler trained and saved ({report.get('num_examples')} examples).", 'success')
+        except Exception as e:
+            flash(f"Model trained but failed to save: {e}", 'warning')
+    else:
+        reason = report.get('reason', 'unknown')
+        flash(f"Profiler not trained: {reason}", 'warning')
+
+    return redirect(url_for('admin_dashboard'))
+
+
+@app.route('/admin/export_labeled_ssh', methods=['GET'])
+def admin_export_labeled_ssh():
+    """Export labeled SSH sessions as CSV for offline analysis."""
+    if not session.get('logged_in') or session.get('username').lower() != 'admin':
+        abort(403)
+
+    labeled = []
+    try:
+        rows = logger.get_all_ssh_sessions(limit=10000)
+        for r in rows:
+            if r.get('label'):
+                labeled.append(r)
+    except Exception as e:
+        flash(f"Failed to retrieve labeled sessions: {e}", 'error')
+        return redirect(url_for('admin_dashboard'))
+
+    # Create CSV in-memory
+    import io, csv
+    si = io.StringIO()
+    cw = csv.writer(si)
+    cw.writerow(['session_id', 'ip_address', 'username', 'start_time', 'end_time', 'command_count', 'label'])
+    for r in labeled:
+        cw.writerow([r.get('session_id'), r.get('ip_address'), r.get('username'), r.get('start_time'), r.get('end_time'), r.get('command_count'), r.get('label')])
+    output = si.getvalue()
+
+    from flask import Response
+    return Response(output, mimetype='text/csv', headers={"Content-Disposition": "attachment;filename=labeled_ssh_sessions.csv"})
+
+
+@app.route('/admin/run_predictions', methods=['POST'])
+def admin_run_predictions():
+    """Run batch predictions for unlabeled SSH sessions and persist predicted labels."""
+    if not session.get('logged_in') or session.get('username').lower() != 'admin':
+        abort(403)
+
+    profile_engine = ProfileEngine(logger=logger)
+    # try to load persisted model (optional)
+    try:
+        profile_engine.load_model(os.path.join(basedir, 'database', 'profiler_model.pkl'))
+    except Exception:
+        pass
+
+    # Get all ssh sessions (limit large)
+    sessions = logger.get_all_ssh_sessions(limit=10000)
+    unlabeled = [s for s in sessions if not s.get('label')]
+    if not unlabeled:
+        flash('No unlabeled SSH sessions found to predict.', 'info')
+        return redirect(url_for('admin_dashboard'))
+
+    preds = profile_engine.predict_for_ssh_sessions(unlabeled)
+    updated = 0
+    for sid, meta in preds.items():
+        label = meta.get('label')
+        if label:
+            try:
+                logger.label_ssh_session(sid, label)
+                updated += 1
+            except Exception:
+                pass
+
+    flash(f'Predictions applied to {updated} sessions.', 'success')
+    return redirect(url_for('admin_dashboard'))
 
 
 

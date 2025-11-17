@@ -84,7 +84,7 @@ cryptic-vault/
 ├── static/
 │   └── data/
 │       ├── products.json # Marketplace inventory
-│       └── orange.xlsx   # Bait file (honeypot asset)
+│       └── cryptic.xlsx   # Bait file (honeypot asset)
 └── templates/            # Jinja2 HTML templates
     ├── base.html
     ├── index.html
@@ -278,11 +278,10 @@ The system logs:
 
 | Profile Type | Indicators | Honeypot Response |
 |-------------|-----------|-------------------|
-| **Bot/Scraper** | Rapid requests, no JavaScript, suspicious UA | Serve all content, track patterns |
-| **Researcher** | Reads docs, long sessions, no purchases | Standard experience + detailed logs |
-| **Casual Viewer** | Short session, slow browsing, no cart | Normal marketplace behavior |
-| **Serious Buyer** | Cart usage, PGP setup, wallet checks | Send promotional messages, show deals |
-| **Advanced Threat** | SQL injection, path traversal, exploit attempts | Deploy advanced traps, fake admin panels |
+| **Scanner** | Rapid requests, no JavaScript, suspicious UA | Serve all content, track patterns |
+| **Interactive Recon** | Manual system info commands (uname -a, whoami, ip a), file system exploration (ls -laR, find / -name), checking configuration or installed packages (dpkg -l) | Inject soft bait. Collect detailed behavioral data for ML profiling. |
+| **Fraudster** | Repeated failed sudo attempts, interaction with /etc/passwd or /etc/group, setting up unauthorized SSH keys or cron jobs for persistence | Escalate lure with high-value offer/Canary Token. Log all financial inputs and transactions. |
+| **Data Exfiltrator** | Execution of commands like tar, zip, scp, rsync. Accessing system files (e.g., /etc/shadow). Attempting to read or move the Canary Token file. | Trigger immediate alert on token access. Allow simulated file access and deploy session slowdown traps. |
 
 ---
 

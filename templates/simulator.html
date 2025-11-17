@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Terminal Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom CSS for a terminal look */
+        body {
+            background-color: #1a1a1a;
+            font-family: 'Fira Code', monospace;
+            color: #ffffff;
+            line-height: 1.4;
+        }
+        .terminal-container {
+            max-width: 900px;
+            height: 80vh;
+            margin: 40px auto;
+            border-radius: 12px;
+            background-color: #0d0d0d;
+            box-shadow: 0 10px 30px rgba(0, 255, 100, 0.2);
+            overflow: hidden;
+            border: 1px solid #00ff64;
+            display: flex;
+            flex-direction: column;
+        }
+        .output-area {
+            flex-grow: 1;
+            padding: 16px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .input-area {
+            display: flex;
+            padding: 12px 16px;
+            border-top: 1px solid #00ff64;
+            background-color: #1a1a1a;
+        }
+        .prompt {
+            color: #00ff64;
+            font-weight: bold;
+            flex-shrink: 0;
+            margin-right: 8px;
+        }
+        .command-input {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            width: 100%;
+            outline: none;
+            caret-color: #00ff64;
+        }
+        .blink-caret::after {
+            content: '_';
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            from, to { color: transparent }
+            50% { color: #00ff64 }
+        }
+        .loading-dot {
+            color: #00ff64;
+            display: inline-block;
+            animation: pulse-dot 1s infinite;
+        }
+        .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Scrollbar styling for a cleaner look */
+        .output-area::-webkit-scrollbar {
+            width: 8px;
+        }
+        .output-area::-webkit-scrollbar-thumb {
+            background-color: #00cc52;
+            border-radius: 4px;
+        }
+        .output-area::-webkit-scrollbar-track {
+            background-color: #1a1a1a;
+        }
+        /* Custom formatting for AI explanations and code */
+        .ai-explanation {
+            color: #38bdf8; /* Sky Blue */
+            border-left: 2px solid #38bdf8;
+            padding-left: 10px;
+            margin: 5px 0;
+            white-space: pre-wrap; /* Preserve formatting for multi-line explanations */
+        }
+        .ai-code-block {
+            color: #f97316; /* Orange */
+            background-color: #262626;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 5px 0;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="terminal-container">
+        <!-- Terminal Output -->
+        <div id="output" class="output-area">
+            <div class="text-green-400">
+                Welcome to Gemini OS (v1.1.0) with ✨ AI Tools!<br>
+                Type 'help' to see available shell commands.<br>
+                Use **man-ai [command]** for an AI explanation.<br>
+                Use **llm-code [task]** for coding help.<br>
+                <br>
+            </div>
+        </div>
+
+        <!-- Terminal Input -->
+        <div class="input-area">
+            <span class="prompt">user@gemini-sim:~$&nbsp;</span>
+            <input type="text" id="command-input" class="command-input" autofocus autocomplete="off" />
+        </div>
+    </div>
+
+    <script>
+        // Constants for API Call
+        const MODEL_NAME = "gemini-2.5-flash-preview-09-2025";
+        const API_URL_BASE = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent`;
+        const API_KEY = ""; // This will be automatically provided by the environment
+
+        // DOM elements
+        const outputElement = document.getElementById('output');
+        const inputElement = document.getElementById('command-input');
+        const promptText = 'user@gemini-sim:~$&nbsp;';
+
+        // LLM System Instruction for standard terminal commands
+        const TERMINAL_SYSTEM_INSTRUCTION = `
+            You are an expert command-line terminal simulation. Your responses MUST adhere strictly to the format of a typical Unix/Linux shell output.
+            
+            RULES:
+            1. Respond ONLY with the text output that the command would produce. DO NOT include any conversational text, explanations, or filler.
+            2. If a command is invalid (e.g., a function you cannot simulate), respond with an error message like: "bash: [command]: command not found".
+            3. Maintain a continuous context (chat history) for related commands (e.g., 'cd', 'ls', 'mkdir').
+            4. If the user asks a question not related to a command, respond with: "bash: operation failed: not a valid command".
+            5. Simulate common commands like 'ls', 'cd', 'pwd', 'mkdir', 'echo', 'cat', 'whoami', 'date'.
+        `;
+
+        // LLM System Instruction for the man-ai explainer
+        const EXPLAINER_SYSTEM_INSTRUCTION = `
+            You are a helpful and concise technical command line expert. 
+            The user will provide a command or concept. Your response MUST be a clear explanation of its purpose, syntax, and one example of its usage. 
+            Format your output clearly, using a professional but friendly tone. DO NOT use the terminal shell output format. 
+            Do not use markdown code blocks; instead, use plain text formatting.
+        `;
+
+        // LLM System Instruction for the llm-code generator/debugger
+        const CODE_SYSTEM_INSTRUCTION = `
+            You are an expert software developer and debugger. 
+            The user will provide a coding task or a code snippet for debugging. Your response MUST contain the solution code or the corrected code.
+            Wrap all code output in a markdown code block (e.g., \`\`\`python\n...\n\`\`\`). Explain your code correction or solution concisely BEFORE the code block. DO NOT use the terminal shell output format.
+        `;
+
+        let chatHistory = [];
+        let currentPath = '/home/user'; // Basic state for shell simulation
+
+        // Utility to scroll to the bottom of the output
+        function scrollToBottom() {
+            outputElement.scrollTop = outputElement.scrollHeight;
+        }
+
+        // Adds a user's command to the output history
+        function displayCommand(command) {
+            const commandLine = `<span class="prompt">user@gemini-sim:${currentPath}$nbsp;</span><span class="text-white">${command}</span>`;
+            outputElement.innerHTML += commandLine + '<br>';
+        }
+
+        // Adds the LLM's response to the output history
+        function displayResponse(response, responseType = 'terminal') {
+            if (responseType === 'explainer') {
+                outputElement.innerHTML += `<div class="ai-explanation">${response}</div><br>`;
+            } else if (responseType === 'code') {
+                // Look for the markdown code block and separate it from the explanation
+                const codeBlockMatch = response.match(/```(\w+)?\n([\s\S]*?)```/);
+                
+                if (codeBlockMatch) {
+                    const fullCode = codeBlockMatch[0];
+                    const explanation = response.replace(fullCode, '').trim();
+                    const codeContent = codeBlockMatch[2];
+
+                    if (explanation) {
+                         outputElement.innerHTML += `<div class="ai-explanation">${explanation}</div>`;
+                    }
+                    outputElement.innerHTML += `<div class="ai-code-block">${codeContent}</div><br>`;
+                } else {
+                    // Fallback for non-formatted text from code-generator
+                    outputElement.innerHTML += `<div class="ai-explanation">Code Output (Warning: not formatted as block): ${response}</div><br>`;
+                }
+
+            } else {
+                // Default terminal response
+                outputElement.innerHTML += `<span class="text-white">${response}</span><br>`;
+            }
+        }
+
+        // Tries to call the Gemini API with exponential backoff
+        async function fetchWithRetry(url, payload, retries = 3) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.status === 429) {
+                        const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                        console.warn(`Rate limit exceeded. Retrying in ${delay / 1000}s...`);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue; // Retry the loop
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    return response;
+
+                } catch (error) {
+                    if (i === retries - 1) throw error;
+                    // Log to console but do not display to user
+                    console.error(`Attempt ${i + 1} failed:`, error.message);
+                }
+            }
+        }
+
+        // Function to send command to Gemini
+        async function processCommand(fullCommand) {
+            const command = fullCommand.trim();
+            if (command === '') return;
+
+            // 1. Display command
+            displayCommand(command);
+
+            const parts = command.split(/\s+/);
+            const primaryCommand = parts[0].toLowerCase();
+            const argument = parts.slice(1).join(' ');
+
+            let systemInstruction = TERMINAL_SYSTEM_INSTRUCTION;
+            let responseType = 'terminal';
+            let contents = [...chatHistory, { role: "user", parts: [{ text: command }] }];
+
+            // 2. Handle client-side commands
+            if (primaryCommand === 'clear') {
+                outputElement.innerHTML = `<div class="text-green-400">Terminal cleared.</div><br>`;
+                chatHistory = []; // Reset history
+                scrollToBottom();
+                return;
+            }
+
+            // 3. Handle LLM-powered special commands
+            if (primaryCommand === 'man-ai') {
+                if (!argument) {
+                    displayResponse("man-ai: usage: man-ai [command or concept]", 'terminal');
+                    return;
+                }
+                systemInstruction = EXPLAINER_SYSTEM_INSTRUCTION;
+                responseType = 'explainer';
+                // Only send the current command for explanation, not the whole history
+                contents = [{ role: "user", parts: [{ text: `Explain the command or concept: ${argument}` }] }];
+                chatHistory.push({ role: "user", parts: [{ text: command }] }); // Log the command
+
+            } else if (primaryCommand === 'llm-code') {
+                if (!argument) {
+                    displayResponse("llm-code: usage: llm-code [task or code snippet]", 'terminal');
+                    return;
+                }
+                systemInstruction = CODE_SYSTEM_INSTRUCTION;
+                responseType = 'code';
+                // Only send the current task/code
+                contents = [{ role: "user", parts: [{ text: `Task: ${argument}` }] }];
+                chatHistory.push({ role: "user", parts: [{ text: command }] }); // Log the command
+
+            } else {
+                // Handle standard shell commands, maintaining history
+                chatHistory.push({ role: "user", parts: [{ text: command }] });
+                // Simple CD simulation (for display only, real state is complex and handled by LLM)
+                if (primaryCommand === 'cd' && argument) {
+                    if (argument === '..') {
+                        const lastSlash = currentPath.lastIndexOf('/');
+                        currentPath = lastSlash > 0 ? currentPath.substring(0, lastSlash) : '/home/user';
+                    } else if (argument === '~' || argument === '/home/user') {
+                        currentPath = '/home/user';
+                    } else if (argument.startsWith('/')) {
+                        currentPath = argument;
+                    } else {
+                        currentPath = `${currentPath}/${argument}`;
+                    }
+                    // Prevent the terminal from thinking 'cd' has an output, unless it's an error
+                    // The LLM will still process 'cd' to influence 'ls'
+                }
+            }
+            
+            // 4. Prepare API payload
+            const payload = {
+                contents: contents,
+                systemInstruction: { parts: [{ text: systemInstruction }] },
+                config: {
+                    temperature: 0.1
+                }
+            };
+
+            // 5. Show loading indicator
+            const loadingPrompt = `<span class="prompt text-green-400">Gemini processing...</span><br>`;
+            outputElement.innerHTML += loadingPrompt;
+            scrollToBottom();
+
+            try {
+                const url = `${API_URL_BASE}?key=${API_KEY}`;
+                const response = await fetchWithRetry(url, payload);
+                const result = await response.json();
+
+                const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || "bash: operation failed: LLM output error.";
+
+                // 6. Replace loading indicator with response
+                outputElement.lastChild.previousSibling.remove(); // Remove the loading prompt line
+                displayResponse(text, responseType);
+
+                // 7. Update chat history for terminal commands
+                if (responseType === 'terminal') {
+                    chatHistory.push({ role: "model", parts: [{ text: text }] });
+                }
+                // For 'man-ai' and 'llm-code', we do not add the long AI response to history to avoid context length issues for the main shell simulation.
+
+            } catch (error) {
+                // Remove loading prompt
+                outputElement.lastChild.previousSibling.remove();
+                
+                const errorMessage = `bash: operation failed: Network or API Error. Check console for details.`;
+                displayResponse(errorMessage);
+                // Only pop if it was a standard terminal command added just before the call
+                if (responseType === 'terminal') { chatHistory.pop(); } 
+                console.error("API Call Failed:", error);
+            } finally {
+                scrollToBottom();
+            }
+        }
+
+        // Event Listener for the input field
+        inputElement.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const command = inputElement.value.trim();
+                inputElement.value = ''; // Clear input field
+                processCommand(command);
+            }
+        });
+
+        // Add the blinking cursor effect on load
+        inputElement.placeholder = ' '; // Ensure placeholder is empty but exists for focus
+        inputElement.classList.add('blink-caret');
+
+        // Focus the input field on load
+        window.onload = () => inputElement.focus();
+    </script>
+</body>
+</html>

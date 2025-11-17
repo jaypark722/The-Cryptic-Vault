@@ -57,10 +57,10 @@
 </div>
 {% endif %}
 
-<div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+<div class="grid grid-cols-2 md:grid-cols-7 gap-4 mb-8">
 
 <div class="bg-market-gray border border-green-500 p-4 rounded-lg text-center shadow-lg">
-    <h3 class="text-green-500 text-sm mb-1">TOTAL SESSIONS</h3>
+    <h3 class="text-green-500 text-sm mb-1">WEB SESSIONS</h3>
     <div class="text-3xl text-red-500 font-bold">{{ stats.total_sessions }}</div>
 </div>
 
@@ -84,13 +84,172 @@
     <div class="text-3xl text-red-500 font-extrabold">{{ stats.total_downloads }}</div>
 </div>
 
+<div class="bg-market-gray border border-cyan-500 p-4 rounded-lg text-center shadow-lg">
+    <h3 class="text-cyan-500 text-sm mb-1">🔐 SSH SESSIONS</h3>
+    <div class="text-3xl text-cyan-400 font-bold">{{ stats.total_ssh_sessions }}</div>
+</div>
+
+<div class="bg-market-gray border border-cyan-500 p-4 rounded-lg text-center shadow-lg">
+    <h3 class="text-cyan-500 text-sm mb-1">⌨️ SSH COMMANDS</h3>
+    <div class="text-3xl text-cyan-400 font-bold">{{ stats.total_ssh_commands }}</div>
+</div>
 
 </div>
 
 <div class="space-y-8">
 
+<!-- PROFILING SUMMARY -->
+<div class="bg-market-gray border border-purple-500 p-6 rounded-lg shadow-xl overflow-x-auto">
+    <h2 class="text-purple-400 font-bold text-xl mb-4 border-b border-purple-600 pb-2">📊 ACTIVITY PROFILES</h2>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="p-4 bg-gray-900 rounded">
+            <h3 class="text-sm text-gray-300">Top IPs</h3>
+            <ul class="text-xs text-gray-400 mt-2">
+                {% for ip, cnt in profiles.top_ips %}
+                <li class="truncate">{{ loop.index }}. <span class="text-yellow-300 font-mono">{{ ip }}</span> — {{ cnt }}</li>
+                {% else %}
+                <li class="text-gray-500">No IP data</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="p-4 bg-gray-900 rounded">
+            <h3 class="text-sm text-gray-300">Top SSH Commands</h3>
+            <ul class="text-xs text-gray-400 mt-2">
+                {% for cmd, cnt in profiles.top_ssh_commands %}
+                <li class="truncate">{{ loop.index }}. <span class="font-mono text-cyan-300">{{ cmd }}</span> — {{ cnt }}</li>
+                {% else %}
+                <li class="text-gray-500">No SSH command data</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="p-4 bg-gray-900 rounded">
+            <h3 class="text-sm text-gray-300">Top Web Paths</h3>
+            <ul class="text-xs text-gray-400 mt-2">
+                {% for path, cnt in profiles.top_web_paths %}
+                <li class="truncate">{{ loop.index }}. <span class="text-red-300">{{ path }}</span> — {{ cnt }}</li>
+                {% else %}
+                <li class="text-gray-500">No web path data</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="p-4 bg-gray-900 rounded">
+            <h3 class="text-sm text-gray-300">User & Session Averages</h3>
+            <div class="text-xs text-gray-400 mt-2 space-y-1">
+                <div>SSH Sessions: <span class="font-mono text-cyan-300">{{ profiles.total_ssh_sessions or 0 }}</span></div>
+                <div>SSH Commands: <span class="font-mono text-cyan-300">{{ profiles.total_ssh_commands or 0 }}</span></div>
+                <div>Avg Cmd / SSH Session: <span class="font-mono text-green-300">{{ "%.2f"|format(profiles.avg_commands_per_ssh_session or 0) }}</span></div>
+                <div>Web Sessions: <span class="font-mono text-red-300">{{ profiles.total_web_sessions or 0 }}</span></div>
+                <div>Avg Events / Web Session: <span class="font-mono text-green-300">{{ "%.2f"|format(profiles.avg_events_per_web_session or 0) }}</span></div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-4 flex gap-2">
+        <form method="POST" action="{{ url_for('admin_train_profiler') }}">
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded">Train Profiler</button>
+        </form>
+        <form method="GET" action="{{ url_for('admin_export_labeled_ssh') }}">
+            <button type="submit" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">Export Labeled SSH CSV</button>
+        </form>
+        <form method="POST" action="{{ url_for('admin_run_predictions') }}">
+            <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-4 rounded">Run Predictions</button>
+        </form>
+    </div>
+</div>
+
+<!-- SSH HONEYPOT SECTION -->
+<div class="bg-market-gray border border-cyan-500 p-6 rounded-lg shadow-xl overflow-x-auto">
+    <h2 class="text-cyan-400 font-bold text-xl mb-4 border-b border-cyan-600 pb-2">🔐 SSH HONEYPOT SESSIONS</h2>
+    {% if ssh_sessions %}
+    <table class="w-full text-left text-sm text-gray-400">
+        <thead class="text-xs text-cyan-400 uppercase bg-gray-800">
+            <tr>
+                <th scope="col" class="px-3 py-2">Session ID</th>
+                <th scope="col" class="px-3 py-2">IP Address</th>
+                <th scope="col" class="px-3 py-2">Username</th>
+                <th scope="col" class="px-3 py-2">Start Time</th>
+                <th scope="col" class="px-3 py-2">End Time</th>
+                <th scope="col" class="px-3 py-2">Commands</th>
+                <th scope="col" class="px-3 py-2">Profile</th>
+                <th scope="col" class="px-3 py-2">Label</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in ssh_sessions %}
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2">
+                    <span class="text-cyan-400 font-mono text-xs">{{ s.session_id[:16] }}...</span>
+                </td>
+                <td class="px-3 py-2 text-yellow-400 font-semibold">{{ s.ip_address }}</td>
+                <td class="px-3 py-2 text-green-400">{{ s.username }}</td>
+                <td class="px-3 py-2 text-xs">{{ s.start_time }}</td>
+                <td class="px-3 py-2 text-xs">{{ s.end_time or 'Active' }}</td>
+                <td class="px-3 py-2 font-bold text-cyan-300">{{ s.command_count }}</td>
+                <td class="px-3 py-2 text-xs text-purple-300 font-semibold">
+                    {% set pred = ssh_predictions.get(s.session_id) %}
+                    {{ pred.label if pred else 'n/a' }}
+                </td>
+                <td class="px-3 py-2">
+                    <form method="POST" action="{{ url_for('admin_label_ssh_session', session_id=s.session_id) }}" class="flex gap-2">
+                        <select name="label" class="bg-gray-800 text-xs text-gray-300 p-1 rounded">
+                            <option value="data_exfiltrator">data_exfiltrator</option>
+                            <option value="fraudster">fraudster</option>
+                            <option value="interactive_recon">interactive_recon</option>
+                            <option value="scanner">scanner</option>
+                        </select>
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white text-xs px-2 py-1 rounded">Label</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-gray-500 text-center py-4">No SSH sessions recorded yet</p>
+    {% endif %}
+</div>
+
+<!-- SSH COMMANDS SECTION -->
+<div class="bg-market-gray border border-cyan-500 p-6 rounded-lg shadow-xl overflow-x-auto">
+    <h2 class="text-cyan-400 font-bold text-xl mb-4 border-b border-cyan-600 pb-2">⌨️ SSH COMMANDS (Last 100)</h2>
+    {% if ssh_commands %}
+    <table class="w-full text-left text-sm text-gray-400">
+        <thead class="text-xs text-cyan-400 uppercase bg-gray-800">
+            <tr>
+                <th scope="col" class="px-3 py-2">Timestamp</th>
+                <th scope="col" class="px-3 py-2">Session</th>
+                <th scope="col" class="px-3 py-2">Command</th>
+                <th scope="col" class="px-3 py-2">Response Preview</th>
+                <th scope="col" class="px-3 py-2">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cmd in ssh_commands %}
+            <tr class="bg-market-gray border-b border-market-border hover:bg-gray-800">
+                <td class="px-3 py-2 text-xs">{{ cmd.timestamp }}</td>
+                <td class="px-3 py-2 text-xs font-mono text-cyan-500">{{ cmd.session_id[:12] }}...</td>
+                <td class="px-3 py-2 font-mono text-yellow-300">{{ cmd.command }}</td>
+                <td class="px-3 py-2 text-xs text-gray-500 max-w-xs truncate">{{ cmd.response[:100] }}...</td>
+                <td class="px-3 py-2">
+                    {% if cmd.success %}
+                        <span class="text-green-500 font-bold">✓</span>
+                    {% else %}
+                        <span class="text-red-500 font-bold">✗</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-gray-500 text-center py-4">No SSH commands recorded yet</p>
+    {% endif %}
+</div>
+
 <div class="bg-market-gray border border-green-500 p-6 rounded-lg shadow-xl overflow-x-auto">
-    <h2 class="text-red-500 font-bold text-xl mb-4 border-b border-market-border pb-2">🔍 ACTIVE SESSIONS</h2>
+    <h2 class="text-red-500 font-bold text-xl mb-4 border-b border-market-border pb-2">🔍 ACTIVE WEB SESSIONS</h2>
     <table class="w-full text-left text-sm text-gray-400">
         <thead class="text-xs text-red-500 uppercase bg-gray-800">
             <tr>

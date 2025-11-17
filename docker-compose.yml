@@ -1,0 +1,28 @@
+version: '3.8'
+
+# docker-compose configuration to run the Flask honeypot with a bind mount
+# mapping the host's ./database folder to the container's /app/database.
+# This ensures the SQLite files (honeypot_logs.db, users.db) persist
+# across container stop/remove/rebuild events.
+services:
+  web:
+    build: .
+    container_name: cryptic-vault-web
+    ports:
+      - "5000:5000"
+      - "2222:2222"
+    environment:
+      - FLASK_APP=app.py
+    # Bind mount host ./database to container /app/database (read-write).
+    # On Linux the relative path ./database will be resolved from the
+    # directory where `docker-compose` is run. On Windows (Docker Desktop)
+    # ensure the folder is shared via Docker Desktop settings or use an
+    # absolute path (for example: C:\path\to\project\database).
+    volumes:
+      - ./database:/app/database:rw
+    # Restart policy keeps the container running after reboots/errors
+    restart: unless-stopped
+
+# Optionally define a named volume (uncomment to use named volume instead of bind mount):
+# volumes:
+#   cryptic_vault_db:

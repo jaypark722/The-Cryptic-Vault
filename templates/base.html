@@ -125,10 +125,52 @@
     </div>
 
     <footer class="bg-market-gray text-center py-3 border-t border-market-border text-gray-500 text-xs mt-auto">
-        <p>This service is only accessible via Tor Browser. <span class="text-green-500 font-bold">MARKET ONLINE V5.0</span></p>
+        <p>This service is only accessible via Tor Browser. <span class="text-green-500 font-bold">MARKET ONLINE V5.2</span></p>
     </footer>
 
-    <script src="{{ url_for('static', filename='js/product_loader.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/product_loader.js') }}"></script>
+    
+    {% if session.get('logged_in') %}
+    <script>
+    // Auto-refresh message count in header every 10 seconds for logged-in users
+    (function autoRefreshMessageCount() {
+        setInterval(function() {
+            fetch("{{ url_for('_message_count') }}", { credentials: 'same-origin' })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    var cnt = data.count || 0;
+                    var el = document.getElementById('message-count');
+                    if (cnt > 0) {
+                        if (el) {
+                            el.textContent = cnt;
+                        } else {
+                            // Create badge if it doesn't exist
+                            var msgLink = document.querySelector("a[href='{{ url_for('messages') }}']");
+                            if (msgLink) {
+                                msgLink.innerHTML = 'MESSAGES (<span class="text-red-500 font-bold" id="message-count">' + cnt + '</span>)';
+                            }
+                        }
+                    } else {
+                        // Remove badge if count is 0
+                        if (el) {
+                            var msgLink = document.querySelector("a[href='{{ url_for('messages') }}']");
+                            if (msgLink) {
+                                msgLink.innerHTML = 'MESSAGES';
+                            }
+                        }
+                    }
+                })
+                .catch(function(err) {
+                    console.error('Failed to fetch message count:', err);
+                });
+        }, 10000); // Every 10 seconds
+    })();
+    </script>
+    {% endif %}
+    
+</body>
+</html>
+
     
 </body>
 </html>

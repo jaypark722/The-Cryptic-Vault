@@ -63,8 +63,15 @@ def run_command(command, check_success=True, shell=False, ignore_errors=None):
         return False
 
 def relaunch_app():
+    # Check for command-line arguments
+    FRESH_START = "--fresh" in sys.argv
+    
     print("=" * 70)
     print("    Cryptic Vault - Relaunch/Rebuild Process")
+    if FRESH_START:
+        print("    MODE: Fresh Start (databases will be reset)")
+    else:
+        print("    MODE: Persistent (databases will be preserved)")
     print("=" * 70)
 
     # 1. Stop and remove the old container instance
@@ -86,15 +93,34 @@ def relaunch_app():
     
     print("✓ Old container cleaned up.")
 
-    # 2. Delete database files for fresh start
-    print(f"\n[Step 2/5] Deleting database files...")
-    for db_file in DB_FILES:
-        db_path = os.path.join("database", db_file)
-        if os.path.exists(db_path):
-            os.remove(db_path)
-            print(f"  ✓ Removed {db_path}")
+    # 2. Conditionally handle database files based on mode
+    if FRESH_START:
+        print(f"\n[Step 2/5] Deleting database files (fresh start mode)...")
+        for db_file in DB_FILES:
+            db_path = os.path.join("database", db_file)
+            if os.path.exists(db_path):
+                os.remove(db_path)
+                print(f"  ✓ Removed {db_path}")
+            else:
+                print(f"  - {db_path} not found (skipping)")
+        print("✓ Fresh start - databases cleared.")
+    else:
+        print(f"\n[Step 2/5] Preserving existing database files...")
+        db_exists = False
+        for db_file in DB_FILES:
+            db_path = os.path.join("database", db_file)
+            if os.path.exists(db_path):
+                file_size = os.path.getsize(db_path)
+                print(f"  ✓ Found {db_path} ({file_size} bytes)")
+                db_exists = True
+            else:
+                print(f"  - {db_path} not found (will be created on first run)")
+        
+        if db_exists:
+            print("✓ Existing databases will persist across this relaunch.")
         else:
-            print(f"  - {db_path} not found (skipping)")
+            print("✓ No existing databases found - fresh databases will be created.")
+        print("\n  💡 TIP: Use 'python relaunch.py --fresh' to reset databases")
 
     # Ensure database directory exists
     os.makedirs("database", exist_ok=True)
@@ -127,15 +153,18 @@ def relaunch_app():
     # Add static data mount if directory exists
     if os.path.exists(static_data_path):
         docker_run_cmd.extend(["-v", f"{static_data_path}:/app/static/data"])
+        print(f"  ℹ️  Mounting static data directory: {static_data_path}")
     
     # Add container name and image at the end
     docker_run_cmd.extend(["--name", CONTAINER_NAME, IMAGE_NAME])
+    
+    print(f"  ℹ️  Mounting database directory: {db_abs_path}")
     
     if not run_command(docker_run_cmd):
         print("\n❌ CRITICAL: Container launch failed.")
         sys.exit(1)
 
-    print(f"✓ Container launched.")
+    print(f"✓ Container launched with persistent volume mounts.")
     
     # 5. Wait for application to initialize
     print(f"\n[Step 5/5] Waiting for application to initialize...")
@@ -173,6 +202,12 @@ def relaunch_app():
     print(f"   Name: {CONTAINER_NAME}")
     print(f"   Image: {IMAGE_NAME}")
     
+    # Show persistence status
+    if FRESH_START:
+        print(f"\n⚠️  Mode: Fresh Start (all previous data cleared)")
+    else:
+        print(f"\n💾 Mode: Persistent (data preserved across relaunches)")
+    
     # Show container status
     print("\n--- Container Status ---")
     run_command(["docker", "ps", "-f", f"name={CONTAINER_NAME}"], check_success=False)
@@ -188,14 +223,53 @@ def relaunch_app():
     print(f"🔄 Restart container:  docker restart {CONTAINER_NAME}")
     print(f"🐚 Access shell:       docker exec -it {CONTAINER_NAME} /bin/bash")
     print(f"🗑️  Remove container:   docker rm -f {CONTAINER_NAME}")
+    print(f"🔍 Check databases:    ls -lh ./database/")
+    print(f"📊 Query users:        sqlite3 ./database/users.db 'SELECT username FROM user;'")
+    
+    # Show persistence commands
+    print("\n--- Persistence Commands ---")
+    print(f"♻️  Fresh start:        python relaunch.py --fresh")
+    print(f"💾 Persistent mode:    python relaunch.py (default)")
+    print(f"📦 Backup databases:   cp -r ./database ./database_backup")
+    print(f"📥 Restore backup:     rm -rf ./database && mv ./database_backup ./database")
+    print("\n")
+
+def show_help():
+    """Display help information"""
+    print("=" * 70)
+    print("    Cryptic Vault - Relaunch Script Help")
+    print("=" * 70)
+    print("\nUsage:")
+    print("  python relaunch.py          - Relaunch with persistent databases")
+    print("  python relaunch.py --fresh  - Relaunch with fresh databases (reset)")
+    print("  python relaunch.py --help   - Show this help message")
+    print("\nPersistence:")
+    print("  By default, databases are preserved across relaunches.")
+    print("  Use --fresh flag to completely reset all data.")
+    print("\nDatabase Files:")
+    for db_file in DB_FILES:
+        print(f"  - ./database/{db_file}")
+    print("\nExamples:")
+    print("  # Normal relaunch (keeps all data)")
+    print("  python relaunch.py")
+    print()
+    print("  # Fresh start (deletes all users, logs, orders)")
+    print("  python relaunch.py --fresh")
     print("\n")
 
 if __name__ == "__main__":
     try:
+        # Check for help flag
+        if "--help" in sys.argv or "-h" in sys.argv:
+            show_help()
+            sys.exit(0)
+        
         relaunch_app()
     except KeyboardInterrupt:
         print("\n\n⚠️  Process interrupted by user.")
         sys.exit(1)
     except Exception as e:
         print(f"\n\n❌ Unexpected error: {e}")
+        import traceback
+        traceback.print_exc()
         sys.exit(1)

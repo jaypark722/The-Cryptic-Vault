@@ -1,4 +1,4 @@
-#!/home/admin/cryptic-vault/venv/bin/python3
+#!/home/admin/cryptic-vault-v6/venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys

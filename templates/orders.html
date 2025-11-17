@@ -105,11 +105,11 @@
             <p class="text-sm text-market-gold mb-2">Delivery Message for Order **#{{ delivered_order.display_id }}**:</p>
 
             {# Conditional Instruction Block for Hot Listing #}
-            {% if delivered_order.product_id == 'DATA-SIM-ORANGE-CUST-B0T' and delivered_order.status == 'SHIPPED' %}
+            {% if delivered_order.product_id == 'DATA-SIM-CRYPTIC-CUST-B0T' and delivered_order.status == 'SHIPPED' %}
             <div class="bg-market-black border border-yellow-500/50 p-3 rounded mb-3">
                 <p class="text-yellow-300 font-semibold mb-2">📥 SECURE DOWNLOAD LINK ENCRYPTED:</p>
                 <p class="text-sm text-gray-300 mb-3">
-                    The content below contains your **one-time, secure download link** for the Orange Customer Database.
+                    The content below contains your **one-time, secure download link** for the Cryptic Customer Database.
                     You **must** copy the entire PGP block (including <code class="bg-gray-700 px-1 rounded">-----BEGIN PGP MESSAGE-----</code> and <code class="bg-gray-700 px-1 rounded">-----END PGP MESSAGE-----</code>) 
                     and decrypt it using a PGP decryption tool with the passphrase provided below.
                 </p>
