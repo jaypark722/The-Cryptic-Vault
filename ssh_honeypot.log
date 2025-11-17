@@ -7693,3 +7693,92 @@ You are simulating a REAL Linux terminal session. You must NEVER break character
 2025-11-07 10:45:08,760 - ssh_honeypot - INFO - User requested exit for session 28c1f9ce-1c43-4265-80c8-330eebf4b9a0
 2025-11-07 10:45:08,762 - paramiko.transport - DEBUG - [chan 0] EOF sent (0)
 2025-11-07 10:45:08,764 - paramiko.transport - ERROR - Socket exception: Bad file descriptor (9)
+2025-11-17 16:26:37,000 - __main__ - ERROR - Failed to start SSH Honeypot: No module named 'flask'
+2025-11-17 16:27:07,118 - __main__ - ERROR - Failed to start SSH Honeypot: No module named 'flask'
+2025-11-17 16:27:59,253 - asyncio - DEBUG - Using proactor: IocpProactor
+2025-11-17 16:27:59,253 - gemini_worker - INFO - Gemini worker started
+2025-11-17 16:27:59,290 - __main__ - INFO - Starting SSH Honeypot server...
+2025-11-17 16:27:59,290 - ssh_honeypot - INFO - SSH Honeypot listening on 0.0.0.0:2222
+2025-11-17 16:28:18,094 - paramiko.transport - DEBUG - starting thread (server mode): 0x4ee72510
+2025-11-17 16:28:18,094 - paramiko.transport - DEBUG - Local version/idstring: SSH-2.0-OpenSSH_8.2p1 Ubuntu-4ubuntu0.5
+2025-11-17 16:28:18,094 - paramiko.transport - DEBUG - Remote version/idstring: SSH-2.0-OpenSSH_9.9
+2025-11-17 16:28:18,094 - paramiko.transport - INFO - Connected (version 2.0, client OpenSSH_9.9)
+2025-11-17 16:28:18,104 - paramiko.transport - DEBUG - === Key exchange possibilities ===
+2025-11-17 16:28:18,104 - paramiko.transport - DEBUG - kex algos: sntrup761x25519-sha512, sntrup761x25519-sha512@openssh.com, mlkem768x25519-sha256, curve25519-sha256, curve25519-sha256@libssh.org, ecdh-sha2-nistp256, ecdh-sha2-nistp384, ecdh-sha2-nistp521, diffie-hellman-group-exchange-sha256, diffie-hellman-group16-sha512, diffie-hellman-group18-sha512, diffie-hellman-group14-sha256, ext-info-c, kex-strict-c-v00@openssh.com
+2025-11-17 16:28:18,104 - paramiko.transport - DEBUG - server key: ssh-ed25519-cert-v01@openssh.com, ecdsa-sha2-nistp256-cert-v01@openssh.com, ecdsa-sha2-nistp384-cert-v01@openssh.com, ecdsa-sha2-nistp521-cert-v01@openssh.com, sk-ssh-ed25519-cert-v01@openssh.com, sk-ecdsa-sha2-nistp256-cert-v01@openssh.com, rsa-sha2-512-cert-v01@openssh.com, rsa-sha2-256-cert-v01@openssh.com, ssh-ed25519, ecdsa-sha2-nistp256, ecdsa-sha2-nistp384, ecdsa-sha2-nistp521, sk-ssh-ed25519@openssh.com, sk-ecdsa-sha2-nistp256@openssh.com, rsa-sha2-512, rsa-sha2-256
+2025-11-17 16:28:18,104 - paramiko.transport - DEBUG - client encrypt: chacha20-poly1305@openssh.com, aes128-ctr, aes192-ctr, aes256-ctr, aes128-gcm@openssh.com, aes256-gcm@openssh.com
+2025-11-17 16:28:18,104 - paramiko.transport - DEBUG - server encrypt: chacha20-poly1305@openssh.com, aes128-ctr, aes192-ctr, aes256-ctr, aes128-gcm@openssh.com, aes256-gcm@openssh.com
+2025-11-17 16:28:18,106 - paramiko.transport - DEBUG - client mac: umac-64-etm@openssh.com, umac-128-etm@openssh.com, hmac-sha2-256-etm@openssh.com, hmac-sha2-512-etm@openssh.com, hmac-sha1-etm@openssh.com, umac-64@openssh.com, umac-128@openssh.com, hmac-sha2-256, hmac-sha2-512, hmac-sha1
+2025-11-17 16:28:18,106 - paramiko.transport - DEBUG - server mac: umac-64-etm@openssh.com, umac-128-etm@openssh.com, hmac-sha2-256-etm@openssh.com, hmac-sha2-512-etm@openssh.com, hmac-sha1-etm@openssh.com, umac-64@openssh.com, umac-128@openssh.com, hmac-sha2-256, hmac-sha2-512, hmac-sha1
+2025-11-17 16:28:18,106 - paramiko.transport - DEBUG - client compress: none, zlib@openssh.com
+2025-11-17 16:28:18,106 - paramiko.transport - DEBUG - server compress: none, zlib@openssh.com
+2025-11-17 16:28:18,106 - paramiko.transport - DEBUG - client lang: <none>
+2025-11-17 16:28:18,106 - paramiko.transport - DEBUG - server lang: <none>
+2025-11-17 16:28:18,106 - paramiko.transport - DEBUG - kex follows: False
+2025-11-17 16:28:18,106 - paramiko.transport - DEBUG - === Key exchange agreements ===
+2025-11-17 16:28:18,106 - paramiko.transport - DEBUG - Strict kex mode: True
+2025-11-17 16:28:18,106 - paramiko.transport - DEBUG - Kex: curve25519-sha256@libssh.org
+2025-11-17 16:28:18,107 - paramiko.transport - DEBUG - HostKey: rsa-sha2-512
+2025-11-17 16:28:18,107 - paramiko.transport - DEBUG - Cipher: aes128-ctr
+2025-11-17 16:28:18,107 - paramiko.transport - DEBUG - MAC: hmac-sha2-256-etm@openssh.com
+2025-11-17 16:28:18,107 - paramiko.transport - DEBUG - Compression: none
+2025-11-17 16:28:18,107 - paramiko.transport - DEBUG - === End of kex handshake ===
+2025-11-17 16:28:18,110 - paramiko.transport - DEBUG - Resetting outbound seqno after NEWKEYS due to strict mode
+2025-11-17 16:28:18,110 - paramiko.transport - DEBUG - kex engine KexCurve25519 specified hash_algo <built-in function openssl_sha256>
+2025-11-17 16:28:21,894 - paramiko.transport - DEBUG - Switch to new keys ...
+2025-11-17 16:28:21,894 - paramiko.transport - DEBUG - Resetting inbound seqno after NEWKEYS due to strict mode
+2025-11-17 16:28:21,900 - paramiko.transport - DEBUG - Auth request (type=none) service=ssh-connection, username=root
+2025-11-17 16:28:21,900 - paramiko.transport - INFO - Auth rejected (none).
+2025-11-17 16:28:24,083 - paramiko.transport - DEBUG - Auth request (type=password) service=ssh-connection, username=root
+2025-11-17 16:28:24,284 - paramiko.transport - INFO - Auth granted (password).
+2025-11-17 16:28:24,284 - paramiko.transport - DEBUG - [chan 0] Max packet in: 32768 bytes
+2025-11-17 16:28:24,284 - paramiko.transport - DEBUG - [chan 0] Max packet out: 16384 bytes
+2025-11-17 16:28:24,284 - paramiko.transport - DEBUG - Secsh channel 0 (session) opened.
+2025-11-17 16:28:24,286 - ssh_honeypot - INFO - Starting shell handler for session 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:24,286 - paramiko.transport - DEBUG - Received global request "no-more-sessions@openssh.com"
+2025-11-17 16:28:24,286 - ssh_honeypot - DEBUG - Channel info - Client: 127.0.0.1, Username: root, Session: 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:24,286 - ssh_honeypot - DEBUG - Sending welcome message to 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:24,286 - ssh_honeypot - DEBUG - Starting command loop for 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:24,286 - ssh_honeypot - DEBUG - Sending prompt to 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:24,288 - ssh_honeypot - DEBUG - Waiting for input from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:24,288 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:26,675 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:27,175 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:27,309 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:27,658 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:27,734 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:27,925 - gemini_terminal - INFO - Initialized static terminal session 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:27,925 - gemini_terminal - INFO - Session 29ee0aa7-a93f-43fa-bf84-a835956b6e49: Executing command 'ls'
+2025-11-17 16:28:28,580 - gemini_terminal - DEBUG - Static response found for 'ls'
+2025-11-17 16:28:28,823 - ssh_honeypot - DEBUG - Sending prompt to 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:28,823 - ssh_honeypot - DEBUG - Waiting for input from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:28,823 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:32,795 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:32,796 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:32,911 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:33,440 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:33,529 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:33,611 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:33,939 - gemini_terminal - INFO - Session 29ee0aa7-a93f-43fa-bf84-a835956b6e49: Executing command 'whoami'
+2025-11-17 16:28:34,330 - gemini_terminal - DEBUG - Static response found for 'whoami'
+2025-11-17 16:28:34,932 - ssh_honeypot - DEBUG - Sending prompt to 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:34,932 - ssh_honeypot - DEBUG - Waiting for input from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:28:34,933 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:29:02,285 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:29:02,348 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:29:02,461 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:29:03,097 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:29:03,363 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:29:03,531 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:29:03,766 - gemini_terminal - INFO - Session 29ee0aa7-a93f-43fa-bf84-a835956b6e49: Executing command 'cd..'
+2025-11-17 16:29:04,300 - gemini_terminal - DEBUG - No static response for 'cd..', returning error
+2025-11-17 16:29:04,623 - ssh_honeypot - DEBUG - Sending prompt to 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:29:04,623 - ssh_honeypot - DEBUG - Waiting for input from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:29:04,623 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:29:23,316 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:29:23,480 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:29:23,993 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:29:24,049 - ssh_honeypot - DEBUG - Reading character from 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:29:24,362 - ssh_honeypot - INFO - User requested exit for session 29ee0aa7-a93f-43fa-bf84-a835956b6e49
+2025-11-17 16:29:24,926 - paramiko.transport - DEBUG - [chan 0] EOF sent (0)
+2025-11-17 16:29:24,928 - paramiko.transport - ERROR - Socket exception: An operation was attempted on something that is not a socket (10038)
