@@ -17,6 +17,7 @@
 
 ## Overview
 
+
 The Cryptic Vault is a **self-evolving hybrid deception platform** designed for advanced cybersecurity research that creates dynamic, adaptive fake environments to study malicious actor behavior. This platform uniquely combines two sophisticated attack surfaces: a fully functional **dark web marketplace frontend** and an **interactive SSH honeypot**, both enhanced with **LLM-powered content generation** (using models like Google Gemini or OpenAI) and **machine learning-driven behavioral analysis**.
 
 Unlike traditional static honeypots, this system continuously learns from attacker interactions through a feedback loop: it collects telemetry, analyzes behavioral patterns using machine learning algorithms, trains predictive models, and automatically adjusts its deception strategies to maximize engagement and intelligence collection. The admin dashboard serves as the central hub for this self-evolving capability, allowing researchers to label sessions, retrain classification models, and deploy adaptive content in real-time.
