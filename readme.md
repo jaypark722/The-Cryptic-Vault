@@ -64,354 +64,196 @@ The Cryptic Vault is a sophisticated honeypot system designed for cybersecurity 
 Frontend:  Tailwind CSS, Jinja2 Templates
 Backend:   Flask 2.3.3, SQLAlchemy
 Database:  SQLite (users.db + honeypot_logs.db)
-Security:  python-gnupg, PGP encryption
-Container: Docker (for isolation and deployment)
-Logging:   Custom HoneypotLogger class
-```
-
-### System Components
-```
-cryptic-vault/
-├── app.py                  # Main Flask application
-├── honeypot_logger.py      # Event tracking and analytics
-├── init_db.py             # Database initialization script
-├── relaunch.py            # Automated deployment script
-├── Dockerfile             # Container configuration
-├── requirements.txt       # Python dependencies
-├── database/              # SQLite databases (created on first run)
-│   ├── users.db          # User accounts and orders
-│   └── honeypot_logs.db  # Event tracking database
-├── static/
-│   └── data/
-│       ├── products.json # Marketplace inventory
-│       └── cryptic.xlsx   # Bait file (honeypot asset)
-└── templates/            # Jinja2 HTML templates
-    ├── base.html
-    ├── index.html
-    ├── wallet.html
-    ├── orders.html
-    └── admin_dashboard.html
-```
-
----
-
-## Installation
-
-### Prerequisites
-
-- **Docker** (required for containerized deployment)
-- **Python 3.12+** (if running on host)
-- **Git** (to clone repository)
-
-### Quick Start (Recommended)
-
-1. **Clone the repository:**
-```bash
-   git clone https://github.com/yourusername/cryptic-vault.git
-   cd cryptic-vault
-```
-
-2. **Launch with automated script:**
-```bash
-   python relaunch.py
-```
-
-   This script will:
-   - Stop and remove any existing containers
-   - Delete old databases for a fresh start
-   - Build the Docker image
-   - Launch the container with proper volume mounts
-   - Initialize the database automatically
-
-3. **Access the honeypot:**
-```
-   http://localhost:5000
-```
-
-4. **Admin Access:**
-```
-   Username: admin
-   Password: adminadmin
-   Dashboard: http://localhost:5000/admin/dashboard
-```
-
----
-
-## Usage
-
-### Deployment Options
-
-#### Option 1: Automated Docker Deployment (Recommended)
-
-Use `relaunch.py` for complete automation:
-```bash
-python relaunch.py
-```
-
-**When to use `relaunch.py`:**
-- ✅ First-time setup
-- ✅ After code changes (rebuilds container)
-- ✅ When you want a fresh database
-- ✅ To reset the entire honeypot environment
-- ✅ Production/research deployments
-
-**What it does:**
-1. Cleans up old containers
-2. Deletes existing databases
-3. Builds new Docker image
-4. Launches container with volume mounts
-5. Shows live logs and status
-
-#### Option 2: Manual Database Initialization
-
-If running on the **host machine** (without Docker):
-```bash
-# First time only - initialize database
-python init_db.py
+ # The Cryptic Vault — A Self‑Evolving Hybrid Deception Platform
 
-# Then run the application
-python app.py
-```
-
-**When to use `init_db.py`:**
-- ✅ Running directly on host (no Docker)
-- ✅ Manual database setup/reset
-- ✅ Development environment
-- ✅ Troubleshooting database issues
-
-**Note:** `relaunch.py` handles database initialization automatically, so you typically don't need `init_db.py` when using Docker.
-
-### Deployment Environments
-
-#### Ubuntu VM Deployment (Recommended for Research)
-```bash
-# Update system
-sudo apt update && sudo apt upgrade -y
+ <div align="center">
 
-# Install Docker
-sudo apt install docker.io -y
-sudo systemctl start docker
-sudo systemctl enable docker
-sudo usermod -aG docker $USER
-
-# Clone and launch
-git clone https://github.com/yourusername/cryptic-vault.git
-cd cryptic-vault
-python relaunch.py
-```
+ ![Python](https://img.shields.io/badge/Python-3.12-blue)
+ ![Flask](https://img.shields.io/badge/Flask-2.3-green)
+ ![Docker](https://img.shields.io/badge/Docker-Recommended-blue)
+ ![Research](https://img.shields.io/badge/License-Research-red)
 
-#### Host Machine Deployment (Development)
-```bash
-# Install Python dependencies
-pip install -r requirements.txt
+ **An adaptive, machine-assisted deception platform that combines a realistic darkweb marketplace lure with SSH-based interaction traps and LLM-driven content to study and engage adversaries.**
 
-# Initialize database
-python init_db.py
+ Features • Architecture • Installation • Usage • Research & ML
 
-# Run application
-python app.py
+ </div>
 
-# Access at http://localhost:5000
-```
+ ---
 
-### Container Management
-```bash
-# View live logs
-docker logs -f honeypot-instance
+ ## High-level Summary
 
-# Stop container
-docker stop honeypot-instance
+ The Cryptic Vault is a research-focused, hybrid deception platform built to attract, engage, and profile malicious actors through highly convincing fake assets.
 
-# Restart container
-docker restart honeypot-instance
+ At its core this project is self‑evolving: telemetry from the marketplace UI and SSH lures feeds an admin-driven machine learning pipeline that refines attacker profiles, updates deception content and policies, and automates tailored responses. The result is a continuous feedback loop that increases engagement fidelity and improves the quality of behavioral intelligence over time.
 
-# Access container shell
-docker exec -it honeypot-instance /bin/bash
+ Key capabilities at a glance:
+ - Dual-lure approach: a darkweb marketplace frontend + SSH honeypot/backdoor-style interaction surface
+ - LLM-assisted content generation (integrates with LLM backends such as Gemini / OpenAI for contextual fake outputs)
+ - Admin dashboard for labeling, training, analyzing, and deploying profile-driven deception
+ - Machine learning components for profiling, prediction and dynamic content selection
+ - Full event logging, exports, and research-ready artifacts
 
-# Remove container
-docker rm -f honeypot-instance
-```
+ This README describes the platform in high level, lists technical components, and explains how the pieces work together so researchers can deploy, extend and study attacker behavior.
 
----
+ ---
 
-## Research Goals
+ ## Core Concepts — What makes this a "self‑evolving" deception platform
 
-### Primary Objectives
+ - Continuous telemetry: every request, event, and interaction (marketplace actions, SSH commands, file downloads, PGP submissions) is recorded and available for analysis.
+ - Human-in-the-loop training: analysts can label sessions and outcomes in the admin UI; labeled data is fed back into model training jobs to improve classification and prediction.
+ - Automated policy & content rollout: trained models or simple heuristics can be used to select or generate new deception assets (product listings, vendor messages, faux admin responses) that are deployed without manual template edits.
+ - LLM augmentation: an LLM worker (e.g., the included gemini_worker.py / gemini_terminal.py helpers) can synthesize realistic vendor replies, product descriptions, dispute conversations and other contextual text that increases believability.
 
-This honeypot is designed to advance cybersecurity research in the following areas:
+ Together these elements produce an automated loop: observe → label → train → deploy → observe. That is the essence of the self‑evolving behavior.
 
-1. **Behavioral Analysis of Malicious Actors**
-   - Profile attacker sophistication levels
-   - Map attack patterns and methodologies
-   - Identify reconnaissance techniques
-   - Study decision-making processes
+ ---
 
-2. **Dynamic Honeypot Adaptation**
-   - Real-time attacker classification
-   - Personalized fake environment generation
-   - Adaptive response strategies
-   - Maximize engagement time for data collection
+ ## Features (expanded)
 
-3. **AI-Powered Deception**
-   - LLM-generated marketplace content
-   - Realistic vendor personalities
-   - Dynamic pricing and inventory
-   - Convincing fake reviews and disputes
+ - Hybrid deception surfaces
+   - Realistic marketplace: listings, carts, checkout flows, messaging, vendor pages and simulated disputes.
+   - SSH lure: interactive SSH sessions, fake file systems, canary tokens and command-response traps to capture manual reconnaissance and scripted attacks.
 
-4. **Threat Intelligence Collection**
-   - TTPs (Tactics, Techniques, Procedures)
-   - Tools and exploit attempts
-   - Credential harvesting methods
-   - Bitcoin/cryptocurrency abuse patterns
+ - Machine learning and profiling
+   - Session-level profiling (feature extraction from event sequences)
+   - Supervised and unsupervised components (classification, clustering, anomaly scoring)
+   - Predictive scoring (likelihood of escalation, credential reuse, persistence attempts)
+   - Admin-driven retraining: labels from the dashboard are used for periodic retraining and model updates.
 
-### Data Collection
-
-The system logs:
-- Complete user journeys from entry to exit
-- All interactions with marketplace features
-- PGP key submissions (for OSINT analysis)
-- Download attempts of bait files
-- Failed authentication attempts
-- Time-based behavioral patterns
-
-### Attacker Profiles (Classification System)
+ - LLM integration (content synthesis)
+   - Optional LLM worker that generates dynamic marketplace text, vendor replies and simulated logs to increase realism.
+   - Designed to plug into any LLM API (Gemini/OpenAI-like endpoints); connectors and a worker script are provided to demonstrate the pattern.
 
-| Profile Type | Indicators | Honeypot Response |
-|-------------|-----------|-------------------|
-| **Scanner** | Rapid requests, no JavaScript, suspicious UA | Serve all content, track patterns |
-| **Interactive Recon** | Manual system info commands (uname -a, whoami, ip a), file system exploration (ls -laR, find / -name), checking configuration or installed packages (dpkg -l) | Inject soft bait. Collect detailed behavioral data for ML profiling. |
-| **Fraudster** | Repeated failed sudo attempts, interaction with /etc/passwd or /etc/group, setting up unauthorized SSH keys or cron jobs for persistence | Escalate lure with high-value offer/Canary Token. Log all financial inputs and transactions. |
-| **Data Exfiltrator** | Execution of commands like tar, zip, scp, rsync. Accessing system files (e.g., /etc/shadow). Attempting to read or move the Canary Token file. | Trigger immediate alert on token access. Allow simulated file access and deploy session slowdown traps. |
+ - High-fidelity lures
+   - PGP key handling and encrypted messages to mimic real darkweb trade workflows
+   - Testnet cryptocurrency addresses used as bait (no real funds)
+   - Downloadable bait files (fully controlled and benign) with attribution and tracking
 
----
+ - Rich telemetry & analysis
+   - Fine-grained events (page view, product view, cart actions, login attempts, downloads, SSH commands)
+   - Exports in JSON/CSV for offline ML and integration with analysis tools
+   - Admin dashboard for session inspection, labeling, and metric visualization
 
-## Security & Ethics
+ - Safety & isolation
+   - Docker-friendly deployment for environment containment
+   - Designed to run in isolated, authorized research environments only
 
-### Safety Features
+ ---
 
-- **Testnet Bitcoin Addresses**: No real cryptocurrency can be sent
-- **Isolated Environment**: Docker containerization prevents host compromise
-- **No Real Illegal Content**: All "products" are fake data
-- **Controlled Bait Files**: Honeypot files are benign and tracked
+ ## Architecture & Components
 
-### Ethical Considerations
+ This repository contains modular components that implement the different surfaces and the orchestration layer.
 
-⚠️ **This system is for authorized cybersecurity research only.**
+ - Frontend & web: Flask + Jinja2 templates serving the marketplace UI and admin dashboard (files such as `app.py`, templates under `templates/`, and static assets in `static/`).
+ - Marketplace data: canned or generated product inventories in `static/data/products.json` and helper scripts like `product_loader.js`.
+ - SSH lure: SSH honeypot entrypoints and configuration (`ssh_honeypot.py`, `run_ssh_honeypot.py`, `ssh_config.py`, `ssh_host_key`) that accept connections and present interactive traps.
+ - LLM worker: scripts such as `gemini_worker.py` and `gemini_terminal.py` demonstrate the pattern of sending contextual prompts to an LLM and returning synthesized content to the platform.
+ - Admin & orchestration: `admin_dashboard.html` and admin endpoints in `app.py` for labeling sessions, starting/stopping data exports, and kicking off retraining jobs.
+ - Persistence and logs: SQLite databases under `database/` by default (e.g., `honeypot_logs.db`), plus JSON exports like `honeypot_logs_export.json` for analysis.
+ - Utility scripts: `init_db.py`, `relaunch.py` (automation), `convert_to_json.py`, export helpers, and `profiler.py` for lightweight feature extraction.
 
-- Only deploy in controlled environments
-- Comply with all applicable laws and regulations
-- Obtain proper authorization before deployment
-- Do not use for entrapment or malicious purposes
-- Respect privacy laws regarding data collection
-- Anonymize and protect collected research data
+ Assumption: the repo includes example worker scripts and a simple ML pipeline that can be extended with scikit-learn, PyTorch, or other libraries. If you plan to use a specific framework, update `requirements.txt` and the worker scripts accordingly.
 
-### Legal Disclaimer
+ ---
 
-This tool is provided for educational and authorized security research purposes only. Users are responsible for ensuring their use complies with all applicable laws, regulations, and ethical guidelines. The authors assume no liability for misuse.
+ ## Machine Learning — how the platform learns
 
----
+ This section describes the intended ML workflow (designed for research flexibility):
 
-## Data Analysis
+ 1. Data collection: events and session traces are exported (JSON/SQLite). Important fields include timestamped event sequences, user-agent, IP (if available in controlled environment), command traces from SSH, and bait-file interactions.
+ 2. Feature engineering: `profiler.py` and admin tooling extract sequence-based features (counts, time deltas, command patterns, TF-IDF of textual commands, etc.).
+ 3. Model training: supervised classifiers for profile labels (scanner, recon, fraudster, exfiltrator), clustering for emergent groups, and anomaly detection for novel behaviors. Training can be run offline or scheduled from the dashboard.
+ 4. Deployment: model artifacts produce scored outputs (profiles, risk scores) that the platform uses to select content templates or LLM prompts.
+ 5. Feedback: analyst labels from the admin UI are merged back into training data to refine models on the next iteration.
 
-### Accessing Logs
+ Typical model types used: logistic regression / random forest for interpretable classification, k-means / HDBSCAN for clustering, and lightweight sequence models for time-based patterns. LLMs are used for text synthesis, not for core detection logic (although they can assist with feature extraction or enrichment).
 
-**Via Admin Dashboard:**
-```
-http://localhost:5000/admin/dashboard
-```
+ Notes & assumption: The README references ML techniques generally; concrete implementations/dependencies will vary by research needs. The repo includes starter code and examples rather than a production ML platform.
 
-**Export Data:**
-```
-http://localhost:5000/admin/export_logs
-```
+ ---
 
-**Direct Database Access:**
-```bash
-# Access logs database
-sqlite3 database/honeypot_logs.db
+ ## Installation & Quick Start
 
-# Example queries
-SELECT * FROM sessions WHERE downloads_attempted > 0;
-SELECT * FROM events WHERE event_type = 'DOWNLOAD';
-```
+ These are high-level instructions. Use the included `relaunch.py` to automate most steps in a Docker-friendly way. On Windows, prefer running inside WSL2 / an Ubuntu VM for Docker compatibility.
 
-### Event Types Tracked
+ Prerequisites
+ - Docker (recommended for isolation)
+ - Python 3.10+ (host-side development)
+ - Git
 
-- `PAGE_VIEW` - All page visits
-- `REGISTER` - New account creation
-- `LOGIN` / `LOGIN_FAILED` - Authentication attempts
-- `LOGOUT` - Session termination
-- `PRODUCT_VIEW` - Specific product views
-- `CART_ADD` / `CART_REMOVE` - Shopping cart actions
-- `PURCHASE` - Order placement
-- `DOWNLOAD` - Bait file downloads (CRITICAL)
-- `DEPOSIT_ATTEMPT` - Fake Bitcoin deposits (HIGH VALUE)
-- `PGP_VERIFIED` - PGP key submission
-- `SUPPORT_TICKET` - Support requests
-- `VENDOR_APPLICATION` - Vendor registration attempts
-- `PASSWORD_CHANGE` - Account modifications
+ Quick start (recommended - containerized):
+ 1. Clone the repo and change directory.
+ 2. Build and run with the automation script: `python relaunch.py` (this script orchestrates Docker build/run and database initialization).
+ 3. Browse the marketplace at `http://localhost:5000` and visit the admin dashboard at `/admin/dashboard`.
 
----
+ Host (development) option:
+ - Install dependencies: `pip install -r requirements.txt`
+ - Initialize DB: `python init_db.py`
+ - Run: `python app.py`
 
-## Future Enhancements
+ For SSH lure testing, run `run_ssh_honeypot.py` or start the `ssh_honeypot` service as documented in repo scripts (ensure proper, authorized test environment).
 
-### Planned Features
+ ---
 
-- [ ] **LLM Integration**: OpenAI API for dynamic content generation
-- [ ] **Advanced Profiler**: Machine learning-based attacker classification
-- [ ] **Automated Responses**: Bot-driven vendor messages
-- [ ] **Fake Admin Panel**: Honeypot within honeypot
-- [ ] **Network Traffic Analysis**: Packet-level monitoring
-- [ ] **Tor Hidden Service**: Deploy as .onion site
-- [ ] **Multi-Tenant**: Support multiple concurrent honeypot instances
-- [ ] **Alert System**: Real-time notifications for high-value events
-- [ ] **MISP Integration**: Export threat intelligence to MISP platform
-- [ ] **Elasticsearch Backend**: Advanced log analysis and visualization
+ ## Usage Highlights — admin capabilities
 
-### Research Extensions
+ - Live session inspection: see full event timelines, SSH command transcripts, and bait file interactions.
+ - Labeling: mark sessions as specific attacker types or outcomes (e.g., 'exfiltration', 'credential harvest').
+ - Retraining: schedule or trigger retraining jobs from the dashboard to refresh prediction models.
+ - Content rollout: push new generated assets (via LLM worker or templates) and measure engagement uplift.
+ - Export: export session logs and event data (JSON/CSV) for offline research and model training.
 
-- Integration with threat intelligence platforms
-- Automated attacker fingerprinting
-- Cross-honeypot correlation analysis
-- Long-term behavioral trend analysis
+ Example exports: `honeypot_logs_export.json` contains a sample export for quick analysis.
 
----
+ ---
 
-## Contributing
+ ## Safety, Ethics & Legal
 
-This is a research project. Contributions that enhance the honeypot's realism, logging capabilities, or analytical features are welcome.
+ Important: this project is explicitly for authorized research, education and defensive cybersecurity work. It must be run only in controlled environments by personnel who understand the legal and ethical constraints.
 
-### Areas for Contribution
+ Safety considerations implemented in the platform:
+ - Use of testnet cryptocurrency addresses (no real funds)
+ - Docker/container isolation recommended to reduce host risk
+ - All bait files are benign and tracked for attribution
 
-- More realistic marketplace content
-- Additional bait file types
-- Enhanced attacker profiling algorithms
-- Better admin dashboard visualizations
-- Additional trap mechanisms
-- Documentation improvements
+ Ethics & legal: obtain permission before deploying, respect privacy laws, do not use this platform for entrapment or offensive operations. The authors accept no responsibility for misuse.
 
----
+ ---
 
-## References & Inspiration
+ ## Files & Notable Scripts (quick reference)
 
-- MITRE ATT&CK Framework
-- OWASP Honeypot Project
-- Kippo SSH Honeypot
-- Modern Honey Network
-- Dark Web Marketplace Research
+ - `app.py` — main Flask app and HTTP endpoints
+ - `ssh_honeypot.py`, `run_ssh_honeypot.py`, `ssh_config.py` — SSH lure and configuration
+ - `gemini_worker.py`, `gemini_terminal.py` — example LLM worker/adapter scripts (plug in API keys to experiment)
+ - `honeypot_logger.py` — centralized event logging
+ - `init_db.py` — initialize SQLite DBs
+ - `relaunch.py` — orchestration automation for Docker runs
+ - `convert_to_json.py`, `profiler.py` — utility and feature-engineering helpers
+ - `honeypot_logs_export.json` — example export
+ - `static/data/products.json` — marketplace inventory (seed data)
 
----
+ ---
 
-## 📄 License
+ ## Extending & Research Suggestions
 
-This project is licensed for research and educational purposes only.
+ - Replace the example ML components with your preferred stack (scikit-learn, XGBoost, PyTorch, etc.).
+ - Implement an offline training pipeline that consumes exports and outputs versioned models.
+ - Integrate with MISP, Elastic, or a SIEM for operational threat intelligence workflows.
+ - Experiment with different LLM prompt templates to measure the impact on adversary engagement.
 
----
+ ---
 
-<div align="center">
+ ## Contributing
 
-**⚠️ Use Responsibly | 🔬 For Research Only | 🛡️ Authorized Environments Only**
+ Contributions that improve realism, logging fidelity, ML pipelines, or analysis tooling are welcome. Please open an issue or PR describing the intended change and the research rationale.
 
-Made with 🐍 Python & ☕ Coffee for Cybersecurity Research
+ ---
 
-</div>
+ ## Disclaimer & License
+
+ For research and educational use only. Run in controlled environments and comply with applicable law. The maintainers are not responsible for misuse.
+
+ ---
+
+ Made for cybersecurity research — use responsibly.
