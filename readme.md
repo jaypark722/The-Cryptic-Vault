@@ -196,11 +196,11 @@ python relaunch.py
 ```
 
 **When to use `relaunch.py`:**
-- ✅ First-time setup
-- ✅ After code changes (rebuilds container)
-- ✅ When you want a fresh database
-- ✅ To reset the entire honeypot environment
-- ✅ Production/research deployments
+- First-time setup
+- After code changes (rebuilds container)
+- When you want a fresh database
+- To reset the entire honeypot environment
+- Production/research deployments
 
 **What it does:**
 1. Cleans up old containers
@@ -221,10 +221,10 @@ python app.py
 ```
 
 **When to use `init_db.py`:**
-- ✅ Running directly on host (no Docker)
-- ✅ Manual database setup/reset
-- ✅ Development environment
-- ✅ Troubleshooting database issues
+- Running directly on host (no Docker)
+- Manual database setup/reset
+- Development environment
+- Troubleshooting database issues
 
 **Note:** `relaunch.py` handles database initialization automatically, so you typically don't need `init_db.py` when using Docker.
 
@@ -507,7 +507,7 @@ This is a research project. Contributions that enhance the honeypot's realism, l
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed for research and educational purposes only.
 
@@ -515,8 +515,8 @@ This project is licensed for research and educational purposes only.
 
 <div align="center">
 
-**⚠️ Use Responsibly | 🔬 For Research Only | 🛡️ Authorized Environments Only**
+**Use Responsibly | For Research Only | Authorized Environments Only**
 
-Made with 🐍 Python & ☕ Coffee for Cybersecurity Research
+Made with Python & Coffee for Cybersecurity Research
 
 </div>
