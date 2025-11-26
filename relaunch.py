@@ -23,7 +23,9 @@ def run_command(command, check_success=True, shell=False, ignore_errors=None):
             check=False,
             shell=shell,
             capture_output=True,
-            text=True
+            text=True,
+            encoding='utf-8',
+            errors='replace'
         )
         
         # Print output if available
@@ -174,7 +176,9 @@ def relaunch_app():
     result = subprocess.run(
         ["docker", "ps", "-q", "-f", f"name={CONTAINER_NAME}"],
         capture_output=True,
-        text=True
+        text=True,
+        encoding='utf-8',
+        errors='replace'
     )
     
     if not result.stdout.strip():
